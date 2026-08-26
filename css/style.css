@@ -224,8 +224,8 @@ a{color:inherit;text-decoration:none;}
 .brand-story{width:100%;background:var(--white);}
 .brand-story__content{width:100%;padding:48px;}
 .brand-story__logo{width:auto;height:80px;display:block;margin:0 auto 24px;background:transparent;object-fit:contain;}
-.brand-story__content h2{font-family:var(--font-yeongwol);font-size:30px;text-align:center;}
-.brand-story__desc{font-family:var(--font-yeongwol);font-size:15px;line-height:1.8;text-align:center;color:var(--gray-dark);margin-bottom:32px;}
+.brand-story__content h2{font-family:var(--font-yeongwol);font-size:40px;font-weight:400;text-align:center;}
+.brand-story__desc{font-family:var(--font-yeongwol);font-size:15px;font-weight:400;line-height:1.8;text-align:center;color:var(--gray-dark);margin-bottom:32px;}
 .brand-story__layout{display:grid;grid-template-columns:4fr 7fr;align-items:start;gap:32px;width:100%;}
 .brand-story__images{width:100%;}
 .brand-story__images img{width:100%;height:auto;display:block;}
