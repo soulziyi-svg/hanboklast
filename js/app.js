@@ -726,14 +726,20 @@
     const toggle = $('#roamToggle');
     let x = window.innerWidth / 2, y = window.innerHeight / 2;
     let vx = (Math.random() - 0.5) * 1.2, vy = (Math.random() - 0.5) * 1.2;
-    let raf;
+    let raf, facing = 'right';
     function step() {
       x += vx; y += vy;
       const maxX = window.innerWidth - 80, maxY = window.innerHeight - 80;
       if (x < 0 || x > maxX) { vx *= -1; x = Math.max(0, Math.min(x, maxX)); }
       if (y < 100 || y > maxY) { vy *= -1; y = Math.max(100, Math.min(y, maxY)); }
       icon.style.transform = `translate(${x}px, ${y}px)`;
-      icon.src = vx < 0 ? 'img/좌좌.png' : 'img/우우.png';
+      const nextFacing = vx < 0 ? 'left' : 'right';
+      if (nextFacing !== facing) {
+        facing = nextFacing;
+        icon.src = facing === 'left'
+          ? 'img/좌좌.gif?v=20260827-roam-gif'
+          : 'img/우우.gif?v=20260827-roam-gif';
+      }
       raf = requestAnimationFrame(step);
     }
     function start() { icon.hidden = false; if (!raf) step(); }
