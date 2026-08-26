@@ -246,7 +246,9 @@
         imgwrap.appendChild(img);
       });
       const hoverImg = document.createElement('img');
-      hoverImg.src = imgPath(c.dir, c.productOnly);
+      // 달빛하얀소복은 DB 이미지 순서와 관계없이 실제 상품 단독컷을 사용합니다.
+      const hoverFile = c.slug === 'dalbitwhayansobok' ? '정면.png' : c.productOnly;
+      hoverImg.src = imgPath(c.dir, hoverFile);
       hoverImg.alt = `${c.name} 상품 단독 이미지`;
       hoverImg.className = 'is-hover';
       imgwrap.appendChild(hoverImg);
