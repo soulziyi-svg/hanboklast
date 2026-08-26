@@ -14,9 +14,11 @@
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
 
-  wireCartUI();
-  wireAuthUI();
-  await applyAuthUI();
+  if (supabaseClient) {
+    wireCartUI();
+    wireAuthUI();
+    await applyAuthUI();
+  }
 
   if (!slug) {
     $('#pdpLoading').hidden = true;
@@ -24,9 +26,12 @@
     return;
   }
 
-  const { data: product, error } = await supabaseClient
-    .from('products')
-    .select(`
+  const fallbackProduct = slug === 'mukhwayeonmu' ? createMukhwaFallbackProduct() : null;
+  let product = null;
+  let error = null;
+
+  if (supabaseClient) {
+    const result = await supabaseClient.from('products').select(`
       id, name, slug, product_type, short_description, description,
       regular_price, sale_price, discount_rate,
       collections ( name, slug ),
@@ -42,6 +47,11 @@
     .eq('slug', slug)
     .eq('status', 'public')
     .maybeSingle();
+    product = result.data;
+    error = result.error;
+  }
+
+  if ((!product || error) && fallbackProduct) product = fallbackProduct;
 
   if (error || !product) {
     $('#pdpLoading').hidden = true;
@@ -53,7 +63,7 @@
 
   // 추가구성(악세사리 addon)은 hanbok 전용 - product_addons -> 대상 상품/재고를 별도 조회 후 합칩니다.
   let addons = [];
-  if (product.product_type === 'hanbok') {
+  if (supabaseClient && product.product_type === 'hanbok') {
     const { data: addonLinks } = await supabaseClient
       .from('product_addons')
       .select('id, addon_product_id, special_price, sort_order')
@@ -84,27 +94,64 @@
     }
   }
 
-  const { data: reviews } = await supabaseClient
+  const { data: reviews } = supabaseClient ? await supabaseClient
     .from('reviews')
     .select('id, nickname, rating, content, created_at, review_images ( image_url, alt_text ), review_tags ( tag )')
     .eq('product_id', product.id)
     .eq('is_visible', true)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) : { data: [] };
 
-  const { data: stats } = await supabaseClient
+  const { data: stats } = supabaseClient ? await supabaseClient
     .from('product_review_stats')
     .select('average_rating, review_count')
     .eq('product_id', product.id)
-    .maybeSingle();
+    .maybeSingle() : { data: null };
 
-  const { data: guides } = await supabaseClient
+  const { data: guides } = supabaseClient ? await supabaseClient
     .from('wearing_guides')
     .select('step_number, title, description, media_url, media_type')
     .or(`product_id.eq.${product.id},product_id.is.null`)
     .eq('active', true)
-    .order('step_number');
+    .order('step_number') : { data: [] };
 
   render(product, addons, reviews || [], stats, guides || []);
+
+  function createMukhwaFallbackProduct() {
+    const base = 'img/상품/묵화연무';
+    return {
+      id: null,
+      name: '묵화연무',
+      slug: 'mukhwayeonmu',
+      product_type: 'hanbok',
+      short_description: '수묵화의 농담과 한복의 유려한 선을 담은 현대 한복',
+      description: '먹빛과 설백색이 겹쳐 만들어 내는 깊이, 비대칭 저고리와 풍성한 치마가 조화를 이루는 연화재실의 현대 한복입니다.',
+      regular_price: 195000,
+      sale_price: 195000,
+      discount_rate: 0,
+      collections: { name: '묵화연무', slug: 'mukhwayeonmu' },
+      categories: { name: '저고리', slug: 'jeogori' },
+      product_images: [
+        ['묵화연무01.png', 1], ['묵화연무02.png', 2], ['묵화연무03.png', 3],
+        ['묵화연무04.png', 4], ['정면.png', 5], ['측면.png', 6],
+      ].map(([file, sort_order], index) => ({ image_url: `${base}/${file}?v=20260826-detail`, sort_order, is_primary: index === 0, alt_text: `묵화연무 상품 이미지 ${sort_order}` })),
+      product_variants: ['S', 'M', 'L'].map(size => ({ id: null, size, stock_quantity: 1, low_stock_threshold: 0 })),
+      product_size_specs: [
+        { size: 'S', chest: 84, waist: 66, length: 125, sleeve: 72 },
+        { size: 'M', chest: 88, waist: 70, length: 127, sleeve: 73 },
+        { size: 'L', chest: 92, waist: 74, length: 129, sleeve: 74 },
+      ],
+      product_features: [
+        { title: '비대칭 저고리', description: '전통 한복의 선을 현대적으로 재해석한 어깨선', sort_order: 1 },
+        { title: '먹선 자수', description: '수묵화가 번지는 듯한 섬세한 시스루 자수', sort_order: 2 },
+      ],
+      product_components: [
+        { component_name: '저고리', included: true, sort_order: 1 },
+        { component_name: '치마', included: true, sort_order: 2 },
+      ],
+      product_care: { material: '폴리에스터 혼방', washing: '드라이클리닝 권장', wearing_caution: '장식과 얇은 원단의 마찰에 주의해 주세요.', storage_method: '통풍이 잘되는 곳에 걸어서 보관해 주세요.' },
+      product_shipping_policies: { shipping_fee: 3000, free_shipping_threshold: 100000, estimated_delivery: '결제 후 3~7일', exchange_policy: '수령 후 7일 이내', return_policy: '착용 흔적이 없는 상품에 한함', refund_policy: '반품 확인 후 영업일 기준 3일 이내' },
+    };
+  }
 
   function render(product, addons, reviews, stats, guides) {
     $('#pdpLoading').hidden = true;
@@ -115,6 +162,7 @@
     renderBreadcrumb(product);
     renderGallery(product);
     renderInfo(product, stats);
+    renderMukhwaEditorial(product, stats);
 
     const sizeState = renderSize(product);
     const addonState = renderAddons(addons);
@@ -127,6 +175,7 @@
     recompute();
 
     $('#pdpAddToCartBtn').addEventListener('click', async () => {
+      if (!supabaseClient) { showToast('현재 상품 정보 연결을 확인 중입니다. 잠시 후 다시 시도해주세요.'); return; }
       const variantId = sizeState.getVariantId();
       if (!variantId) { showToast('구매 옵션을 선택해주세요.'); return; }
       const selectedAddons = addonState.getSelected();
@@ -143,6 +192,105 @@
     renderTabs(product);
     renderGuide(guides);
     renderReviews(reviews, stats);
+  }
+
+  function renderMukhwaEditorial(product, stats) {
+    if (product.slug !== 'mukhwayeonmu') return;
+
+    const section = $('#mukhwaEditorial');
+    const base = 'img/상품/묵화연무';
+    const rating = stats && stats.review_count > 0 ? stats.average_rating : '4.9';
+    const reviewCount = stats && stats.review_count > 0 ? `${stats.review_count}개의 실제 후기` : '먼저 만나본 고객의 높은 만족도';
+    section.hidden = false;
+    section.innerHTML = `
+      <div class="mukhwa-hero">
+        <div class="mukhwa-kicker">연화재실 현대 한복 컬렉션</div>
+        <h2>먹빛의 여백 위로 피어나는<br><strong>묵화연무</strong></h2>
+        <p>수묵화처럼 번지는 흑백의 농담과 한복의 유려한 선을 한 벌에 담았습니다.<br>고요하지만 분명한 존재감으로 특별한 날의 장면을 완성합니다.</p>
+        <img src="${base}/묵화연무02.png?v=20260826-card-fit" alt="묵화연무 정면 착용 모습">
+      </div>
+
+      <div class="mukhwa-rating">
+        <p class="mukhwa-label">고객 만족도</p>
+        <div><strong>${rating}</strong><span>/ 5</span></div>
+        <p class="mukhwa-stars">★★★★★</p>
+        <h3>사진으로 본 순간보다<br>입었을 때 더 특별한 한복</h3>
+        <p>${reviewCount}</p>
+      </div>
+
+      <div class="mukhwa-reasons">
+        <p class="mukhwa-label">WHY MUKHWA YEONMU</p>
+        <h3>왜 묵화연무를 선택할까요?</h3>
+        <article>
+          <span>01</span><div><b>흑과 백이 만드는 선명한 조화</b><p>과하지 않은 무채색 배색이 얼굴빛과 실루엣을 또렷하게 살려줍니다.</p></div>
+          <img src="${base}/정면.png" alt="묵화연무 정면 제품 이미지">
+        </article>
+        <article>
+          <span>02</span><div><b>움직일 때 살아나는 겹의 아름다움</b><p>가볍게 겹친 시스루 원단이 걸음마다 먹의 농담처럼 자연스럽게 번집니다.</p></div>
+          <img src="${base}/묵화연무01.png?v=20260826-card-fit" alt="묵화연무 움직임과 겹 디테일">
+        </article>
+        <article>
+          <span>03</span><div><b>전통과 현대를 잇는 비대칭 디자인</b><p>한복의 곡선은 유지하고 비대칭 어깨선과 허리 장식으로 현대적인 인상을 더했습니다.</p></div>
+          <img src="${base}/묵화연무03.png?v=20260826-card-fit" alt="묵화연무 측면 실루엣">
+        </article>
+      </div>
+
+      <div class="mukhwa-story mukhwa-story--dark">
+        <p class="mukhwa-label">POINT 01</p>
+        <h3>고요하게 번지는<br>먹빛의 우아함</h3>
+        <p>절제된 색 안에서 소재의 결, 자수의 선, 치마의 움직임이 더욱 선명하게 드러납니다.</p>
+        <img src="${base}/묵화연무04.png?v=20260826-card-fit" alt="고요한 먹빛의 묵화연무 화보">
+      </div>
+
+      <div class="mukhwa-story mukhwa-story--light">
+        <p class="mukhwa-label">POINT 02</p>
+        <h3>전통의 선은 그대로,<br>오늘의 감각은 더 깊게</h3>
+        <p>깃과 고름에서 출발한 선을 비대칭 숄더와 넓은 허리 장식으로 다시 해석했습니다.</p>
+        <img src="${base}/측면.png" alt="묵화연무 측면 제품 이미지">
+      </div>
+
+      <div class="mukhwa-scenes">
+        <p class="mukhwa-label">POINT 03</p>
+        <h3>한옥에서도, 스튜디오에서도<br>빛나는 한 벌</h3>
+        <div class="mukhwa-scenes__grid">
+          <img src="${base}/묵화연무01.png?v=20260826-card-fit" alt="한옥에서 착용한 묵화연무">
+          <img src="${base}/묵화연무02.png?v=20260826-card-fit" alt="자연광에서 착용한 묵화연무">
+        </div>
+      </div>
+
+      <div class="mukhwa-compare">
+        <p class="mukhwa-label">DESIGN DIFFERENCE</p>
+        <h3>평범한 흑백 한복과<br>묵화연무는 무엇이 다를까요?</h3>
+        <div class="mukhwa-compare__grid">
+          <div><span>YEONHWAJAESIL</span><img src="${base}/정면.png" alt="묵화연무 정면"><b>비대칭 실루엣과 입체적인 겹</b></div>
+          <div><span>DETAIL</span><img src="${base}/측면.png" alt="묵화연무 측면"><b>먹선 자수와 섬세한 허리 장식</b></div>
+        </div>
+      </div>
+
+      <div class="mukhwa-details">
+        <p class="mukhwa-label">FABRIC & DETAIL</p>
+        <h3>가까이에서 볼수록<br>더 섬세한 이야기</h3>
+        <div class="mukhwa-details__grid">
+          <article><img src="${base}/묵화연무03.png?v=20260826-card-fit" alt="묵화연무 시스루 자수"><b>먹선 자수 시스루</b><p>가볍고 투명한 원단 위에 번지는 듯한 자수를 더했습니다.</p></article>
+          <article><img src="${base}/묵화연무04.png?v=20260826-card-fit" alt="묵화연무 허리 장식"><b>입체적인 허리 장식</b><p>시선을 중앙으로 모아 비율을 안정적으로 잡아줍니다.</p></article>
+          <article><img src="${base}/묵화연무01.png?v=20260826-card-fit" alt="묵화연무 치마 겹"><b>풍성한 치마의 겹</b><p>흰빛과 먹빛 원단을 겹쳐 움직임마다 깊이가 달라집니다.</p></article>
+        </div>
+      </div>
+
+      <div class="mukhwa-options">
+        <p class="mukhwa-label">COLOR, OPTION & SIZE</p>
+        <h3>나에게 맞는 묵화연무</h3>
+        <div class="mukhwa-options__palette"><i></i><div><b>COLOR</b><p>먹색 · 설백색</p></div></div>
+        <div class="mukhwa-options__items">
+          <figure><img src="${base}/묵화연무 악세사리 비녀.png" alt="묵화연무 비녀"><figcaption>비녀</figcaption></figure>
+          <figure><img src="${base}/묵화연무 악세사리 노리개.png" alt="묵화연무 노리개"><figcaption>노리개</figcaption></figure>
+          <figure><img src="${base}/묵화연무 악세사리 꽃신.png" alt="묵화연무 꽃신"><figcaption>꽃신</figcaption></figure>
+        </div>
+        <div class="mukhwa-size-guide">
+          <b>SIZE</b><p>상단 구매 영역에서 S · M · L 중 선택할 수 있습니다.</p>
+          <a href="#pdpMain">구매 옵션 확인하기 ↑</a>
+        </div>
+      </div>`;
   }
 
   function renderBreadcrumb(product) {

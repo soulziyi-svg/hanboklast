@@ -9,6 +9,7 @@
 }
 
 body{background:var(--pdp-bg);}
+.pdp-main[hidden],.pdp-purchase-info[hidden],.pdp-guide[hidden],.pdp-reviews[hidden],.mukhwa-editorial[hidden]{display:none;}
 
 .pdp{padding-top:100px;}
 
@@ -72,6 +73,67 @@ body{background:var(--pdp-bg);}
 .pdp-total-row strong{font-size:22px;color:var(--pdp-pink);}
 .pdp-add-cart-btn{width:100%;height:48px;background:var(--black);color:#fff;font-size:15px;}
 
+/* 묵화연무 전용 에디토리얼 상세페이지 */
+.mukhwa-editorial{width:min(860px,100%);margin:40px auto 0;background:#f7f1e9;color:#292522;overflow:hidden;}
+.mukhwa-editorial img{width:100%;height:auto;display:block;}
+.mukhwa-label{margin:0 0 12px;font-size:11px;letter-spacing:.2em;color:#9c806b;font-weight:800;}
+.mukhwa-hero{padding:72px 64px 0;text-align:left;background:#f4ede4;}
+.mukhwa-kicker{font-size:12px;color:#8b7565;letter-spacing:.08em;margin-bottom:18px;}
+.mukhwa-hero h2,.mukhwa-rating h3,.mukhwa-reasons>h3,.mukhwa-story h3,.mukhwa-scenes h3,.mukhwa-compare h3,.mukhwa-details h3,.mukhwa-options h3{font-family:var(--font-yeongwol);font-weight:400;line-height:1.25;}
+.mukhwa-hero h2{font-size:48px;margin:0 0 18px;}
+.mukhwa-hero h2 strong{font-size:64px;font-weight:400;color:#27211e;}
+.mukhwa-hero>p{font-size:15px;line-height:1.8;color:#6e6259;margin-bottom:36px;}
+.mukhwa-hero>img{max-height:900px;object-fit:cover;object-position:center 32%;}
+.mukhwa-rating{padding:72px 64px;background:#fbf7f1;}
+.mukhwa-rating>div{display:flex;align-items:flex-end;gap:8px;}
+.mukhwa-rating>div strong{font-family:Georgia,serif;font-size:88px;font-weight:400;line-height:1;}
+.mukhwa-rating>div span{font-size:24px;margin-bottom:10px;color:#77695f;}
+.mukhwa-stars{color:#a17b5f;letter-spacing:.25em;margin:14px 0 22px;}
+.mukhwa-rating h3{font-size:34px;margin:0 0 14px;}
+.mukhwa-rating>p:last-child{font-size:13px;color:#8b7d73;}
+.mukhwa-reasons{padding:72px 64px;background:#f4ede4;}
+.mukhwa-reasons>h3{font-size:38px;margin:0 0 38px;}
+.mukhwa-reasons article{display:grid;grid-template-columns:44px 1fr 240px;gap:18px;align-items:center;padding:22px 0;border-top:1px solid #d9cabe;}
+.mukhwa-reasons article>span{font-family:Georgia,serif;font-size:34px;color:#b79b86;}
+.mukhwa-reasons article b{font-size:16px;}
+.mukhwa-reasons article p{font-size:13px;line-height:1.65;color:#75675d;}
+.mukhwa-reasons article img{width:240px;height:170px;object-fit:cover;object-position:center 28%;}
+.mukhwa-story{padding:72px 64px 0;}
+.mukhwa-story h3,.mukhwa-scenes h3{font-size:42px;margin:0 0 14px;}
+.mukhwa-story>p:not(.mukhwa-label),.mukhwa-scenes>p:not(.mukhwa-label){font-size:14px;line-height:1.8;margin-bottom:30px;}
+.mukhwa-story>img{max-height:920px;object-fit:cover;object-position:center 25%;}
+.mukhwa-story--dark{background:#292725;color:#f8f2eb;}
+.mukhwa-story--dark .mukhwa-label{color:#ccb5a3;}
+.mukhwa-story--dark>p:not(.mukhwa-label){color:#cfc6bf;}
+.mukhwa-story--light{background:#f8f4ee;color:#302925;}
+.mukhwa-scenes{padding:72px 64px;background:#e9dfd5;}
+.mukhwa-scenes__grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mukhwa-scenes__grid img{height:640px;object-fit:cover;}
+.mukhwa-compare{padding:72px 64px;background:#f8f4ee;text-align:center;}
+.mukhwa-compare>h3,.mukhwa-details>h3,.mukhwa-options>h3{font-size:38px;margin:0 0 36px;}
+.mukhwa-compare__grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.mukhwa-compare__grid div{background:#fff;padding:16px;}
+.mukhwa-compare__grid span{display:block;font-size:10px;letter-spacing:.18em;color:#9b7c67;margin-bottom:10px;}
+.mukhwa-compare__grid img{height:430px;object-fit:contain;background:#faf8f5;}
+.mukhwa-compare__grid b{display:block;font-size:14px;margin-top:14px;}
+.mukhwa-details{padding:72px 64px;background:#eee5dc;}
+.mukhwa-details__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.mukhwa-details article{background:#f9f5f0;padding-bottom:18px;}
+.mukhwa-details article img{height:310px;object-fit:cover;}
+.mukhwa-details article b,.mukhwa-details article p{display:block;margin:14px 14px 0;}
+.mukhwa-details article p{font-size:12px;line-height:1.6;color:#786b61;}
+.mukhwa-options{padding:72px 64px;background:#faf7f1;}
+.mukhwa-options__palette{display:flex;align-items:center;gap:14px;margin:0 0 28px;}
+.mukhwa-options__palette i{display:block;width:72px;height:72px;border-radius:50%;background:linear-gradient(90deg,#f4f0e9 50%,#292929 50%);border:1px solid #d5ccc4;}
+.mukhwa-options__palette p{margin:4px 0 0;font-size:13px;color:#76685e;}
+.mukhwa-options__items{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.mukhwa-options__items figure{margin:0;text-align:center;}
+.mukhwa-options__items img{aspect-ratio:1/1;object-fit:contain;background:#fff;}
+.mukhwa-options__items figcaption{font-size:13px;margin-top:8px;}
+.mukhwa-size-guide{margin-top:32px;padding:24px;border-top:1px solid #d8cec5;border-bottom:1px solid #d8cec5;text-align:center;}
+.mukhwa-size-guide p{font-size:13px;color:#76685e;}
+.mukhwa-size-guide a{display:inline-block;margin-top:8px;padding:10px 18px;background:#292522;color:#fff;font-size:13px;}
+
 /* 구매정보 탭 */
 .pdp-purchase-info{max-width:1400px;margin:0 auto;padding:40px 24px;border-top:1px solid #eee;}
 .pdp-tabs{display:flex;gap:0;border-bottom:1px solid #ddd;}
@@ -105,4 +167,11 @@ body{background:var(--pdp-bg);}
   .pdp-main{grid-template-columns:1fr;}
   .pdp-guide-steps{grid-template-columns:repeat(2,1fr);}
   .pdp-reviews .review-grid{grid-template-columns:repeat(2,1fr);}
+  .mukhwa-hero,.mukhwa-rating,.mukhwa-reasons,.mukhwa-story,.mukhwa-scenes,.mukhwa-compare,.mukhwa-details,.mukhwa-options{padding-left:24px;padding-right:24px;}
+  .mukhwa-hero h2{font-size:36px;}.mukhwa-hero h2 strong{font-size:48px;}
+  .mukhwa-reasons article{grid-template-columns:36px 1fr;}.mukhwa-reasons article img{grid-column:1/-1;width:100%;height:auto;}
+  .mukhwa-scenes__grid,.mukhwa-compare__grid{grid-template-columns:1fr;}
+  .mukhwa-scenes__grid img{height:auto;}
+  .mukhwa-details__grid{grid-template-columns:1fr;}
+  .mukhwa-details article img{height:auto;aspect-ratio:2/3;}
 }

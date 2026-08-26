@@ -8,7 +8,12 @@
   const SUPABASE_URL = 'https://aqhbuuuernicnbeycgfg.supabase.co';
   const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_PFIlObmwEs5gK3XccfJgOQ_hq6Rnl7U';
 
-  window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+    window.supabaseClient = null;
+    return;
+  }
+
+  window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
