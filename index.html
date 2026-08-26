@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>연화재실 | 한국의 아름다움을 입다</title>
+<meta name="description" content="개량한복 · 액세서리 · 굿즈 쇼핑몰 연화재실 (학습용 데모)">
+
+<link rel="preconnect" href="https://fastly.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 탑배너 -->
+<div id="top-banner" class="top-banner">
+  <div class="top-banner__track">
+    <span>한국의 아름다움을 입다</span><span>·</span>
+    <span>회원가입 즉시 10% 할인쿠폰</span><span>·</span>
+    <span>다양한 나만의 굿즈 제작</span><span>·</span>
+    <span>한국의 아름다움을 입다</span><span>·</span>
+    <span>회원가입 즉시 10% 할인쿠폰</span><span>·</span>
+    <span>다양한 나만의 굿즈 제작</span><span>·</span>
+  </div>
+</div>
+
+<!-- 헤더 -->
+<header id="header" class="header">
+  <button id="hamburgerBtn" class="hamburger" aria-label="메뉴 열기">=</button>
+
+  <a href="index.html" class="logo-wrap" aria-label="연화재실 홈">
+    <img src="img/logo.png" alt="연화재실 로고" class="logo-img">
+  </a>
+
+  <div id="megaMenu" class="mega-menu">
+    <div class="mega-menu__col">
+      <h4>한복</h4>
+      <ul id="megaHanbok"></ul>
+    </div>
+    <div class="mega-menu__col">
+      <h4>악세사리</h4>
+      <div id="megaAccessory" class="mega-menu__accordion"></div>
+    </div>
+    <div class="mega-menu__col">
+      <h4>굿즈</h4>
+      <div id="megaGoods" class="mega-menu__accordion"></div>
+    </div>
+  </div>
+
+  <div class="header__right">
+    <label class="roam-toggle" title="화면 위 랜덤 아이콘 ON/OFF">
+      <input type="checkbox" id="roamToggle" checked>
+      <span class="roam-toggle__slider"></span>
+    </label>
+
+    <button id="searchBtn" class="icon-btn" aria-label="검색">🔍</button>
+
+    <button id="signupBtn" class="btn btn--signup">회원가입</button>
+
+    <button id="loginBtn" class="btn btn--login">
+      <span class="btn--login__face btn--login__face--front">로그인</span>
+      <span class="btn--login__face btn--login__face--back">sign in</span>
+    </button>
+    <span id="welcomeText" class="welcome-text" hidden></span>
+
+    <a id="adminLinkBtn" href="admin.html" class="btn btn--admin" hidden>관리자페이지</a>
+
+    <button id="cartBtn" class="icon-btn" aria-label="장바구니">
+      🛍<span id="cartCount" class="badge">0</span>
+    </button>
+    <button id="trackBtn" class="icon-btn" aria-label="배송조회">🚚</button>
+  </div>
+</header>
+
+<!-- 검색 모달 -->
+<div id="searchModal" class="modal-overlay" hidden>
+  <div class="modal search-modal">
+    <button class="modal-close" data-close="searchModal">닫기 ✕</button>
+    <input type="text" id="searchInput" class="search-input" placeholder="상품, 컬렉션을 검색해보세요">
+    <div id="searchNav" class="search-nav"></div>
+    <div id="searchResult" class="search-result"></div>
+  </div>
+</div>
+
+<!-- 회원가입 모달 -->
+<div id="signupModal" class="modal-overlay" hidden>
+  <div class="modal auth-modal">
+    <button class="modal-close" data-close="signupModal">닫기 ✕</button>
+    <h3>회원가입</h3>
+    <p class="auth-notice">
+      ⚠ 이 화면은 Supabase Auth 연동 UI입니다. 현재 세션에서는 supabase MCP OAuth 인증이
+      아직 완료되지 않아 실제 회원가입 처리는 다음 배포에서 활성화됩니다.
+    </p>
+    <div class="auth-step">
+      <label><input type="checkbox" id="agreeAll"> 전체동의</label>
+      <label><input type="checkbox" class="agree-item"> 서비스 통합이용약관 동의 <b>(필수)</b></label>
+      <label><input type="checkbox" class="agree-item"> 위치정보 수집 및 이용 동의</label>
+    </div>
+    <form id="signupForm" class="auth-form">
+      <input type="email" placeholder="아이디(이메일)" required>
+      <input type="password" placeholder="비밀번호" required>
+      <input type="password" placeholder="비밀번호 확인" required>
+      <input type="text" placeholder="기본주소">
+      <button type="submit" id="signupSubmit" class="btn btn--wide" disabled>동의하고 가입하기</button>
+    </form>
+  </div>
+</div>
+
+<!-- 로그인 모달 -->
+<div id="loginModal" class="modal-overlay" hidden>
+  <div class="modal auth-modal">
+    <button class="modal-close" data-close="loginModal">닫기 ✕</button>
+    <h3>sign in</h3>
+    <p class="auth-notice">
+      ⚠ Supabase Auth 연동 예정 화면입니다. (heechic@naver.com 계정은 관리자 권한으로 연결됩니다)
+    </p>
+    <form id="loginForm" class="auth-form">
+      <input type="email" id="loginEmail" placeholder="아이디" required>
+      <input type="password" placeholder="비밀번호" required>
+      <button type="submit" class="btn btn--wide">로그인하기</button>
+    </form>
+    <div class="auth-links">
+      <button type="button" data-open="signupModal">회원가입</button>
+      <button type="button">아이디/비밀번호 찾기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 장바구니 모달 -->
+<div id="cartModal" class="modal-overlay" hidden>
+  <div class="modal cart-modal">
+    <div class="cart-modal__head">
+      <div>
+        <h3>장바구니</h3>
+        <p>특별한 하루를 위한 의상을 확인해보세요.</p>
+      </div>
+      <button class="modal-close" data-close="cartModal">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-summary">
+      <div class="row"><span>선택상품</span><span id="cartQty">0개</span></div>
+      <div class="row"><span>상품금액</span><span id="cartProductTotal">0원</span></div>
+      <div class="row"><span>액세서리</span><span id="cartAddonTotal">0원</span></div>
+      <div class="row row--total"><span>총 결제 예정금액</span><span id="cartGrandTotal">0원</span></div>
+      <button id="cartCheckoutBtn" class="btn btn--purchase">선택 상품 구매하기</button>
+      <button class="btn-link" data-close="cartModal">쇼핑 계속하기 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- 배송조회 모달 -->
+<div id="trackModal" class="modal-overlay" hidden>
+  <div class="modal track-modal">
+    <div class="track-modal__head">
+      <h3>배송조회</h3>
+      <button class="modal-close" data-close="trackModal">✕</button>
+    </div>
+    <p class="auth-notice">⚠ 주문/배송 데이터는 Supabase 연동 후 표시됩니다. 아래는 화면 구조 예시입니다.</p>
+    <div class="track-steps">
+      <div class="track-step is-done">결제완료</div>
+      <div class="track-step is-current">상품준비중</div>
+      <div class="track-step">배송중</div>
+      <div class="track-step">배송완료</div>
+      <div class="track-step">구매확정</div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <!-- 메인페이지 배너 -->
+  <section id="main-banner" class="main-banner">
+    <div class="banner-slides">
+      <div class="banner-slide is-active" data-idx="0">
+        <video autoplay muted loop playsinline>
+          <source src="img/베너/0825.mp4" type="video/mp4">
+        </video>
+        <div class="banner-copy">
+          <h2>은은하게 완성되는 우아함</h2>
+          <p>부드러운 색감과 세련된 배색이 어우러져 어디서든 단아하고 품격 있는 분위기를 만들어 줍니다.</p>
+        </div>
+      </div>
+      <div class="banner-slide" data-idx="1">
+        <video muted loop playsinline>
+          <source src="img/베너/0826.mp4" type="video/mp4">
+        </video>
+        <div class="banner-copy">
+          <h2>다양한 나만의 굿즈 상품</h2>
+          <p>다양한 나만의 굿즈 맞춤으로 특별한 추억을 간직하세요.</p>
+        </div>
+      </div>
+    </div>
+    <button class="banner-arrow banner-arrow--prev" aria-label="이전 배너">‹</button>
+    <button class="banner-arrow banner-arrow--next" aria-label="다음 배너">›</button>
+    <div id="bannerProgress" class="banner-progress"></div>
+  </section>
+
+  <!-- 브랜드 스토리 -->
+  <section id="brand-story" class="brand-story">
+    <div class="brand-story__images">
+      <img src="img/컨셉사진/story1.png" alt="연화재실 브랜드 컨셉 사진 1">
+      <img src="img/컨셉사진/story2.png" alt="연화재실 브랜드 컨셉 사진 2">
+      <img src="img/컨셉사진/story3.png" alt="연화재실 브랜드 컨셉 사진 3">
+    </div>
+    <div class="brand-story__content">
+      <img src="img/logo.png" alt="연화재실 로고" class="brand-story__logo">
+      <h2>한국의 아름다움을 현대적이고 조화롭게 담아냅니다.</h2>
+      <p class="brand-story__desc">
+        전통을 그대로 재현하기보다, 본질적인 원리를 살펴 지금의 몸짓과 공간에 자연스럽게 어울리도록 다시 짓습니다.<br>
+        옷고름 하나, 색동 하나에도 이야기를 담아 오늘의 하루를 특별하게 기록합니다.
+      </p>
+
+      <h3 class="brand-story__label">DESIGNER STORY</h3>
+      <p class="brand-story__quote">
+        "좋아하는 옷을 이유없이 입고 싶어서, 그리고 그 순간이 사진 한 장으로 오래 남길 바라는 마음으로 연화재실을 시작했습니다."
+      </p>
+      <div class="brand-story__interview">
+        <video src="img/인터뷰.mp4" controls width="300"></video>
+        <p>
+          전통 한복의 구조를 연구하며 현대적인 실루엣으로 다시 그려온 지난 시간과,
+          여행·졸업·가족사진 등 다양한 순간을 위한 한복을 만들어온 경험을 담았습니다.
+        </p>
+      </div>
+
+      <h3 class="brand-story__label">브랜드 색</h3>
+      <div class="brand-colors">
+        <div class="brand-color" style="background:#171717;color:#FFFDF8;">
+          <b>#171717</b><span>묵직하지만 딱딱하지 않은 깊이를 표현한 색.</span>
+        </div>
+        <div class="brand-color" style="background:#FFFDF8;color:#171717;">
+          <b>#FFFDF8</b><span>은은하고 따뜻한 여백의 색.</span>
+        </div>
+        <div class="brand-color" style="background:#7C4DFF;color:#FFFDF8;">
+          <b>#7C4DFF</b><span>포인트를 더하는 우아한 보라.</span>
+        </div>
+        <div class="brand-color" style="background:#FAF2FF;color:#171717;">
+          <b>#FAF2FF</b><span>굿즈를 감싸는 부드러운 연보라.</span>
+        </div>
+        <div class="brand-color" style="background:#E8E8E8;color:#171717;">
+          <b>#E8E8E8</b><span>차분하게 마무리하는 그레이.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 컨텐츠1 : 한복 마퀴 -->
+  <section id="content1" class="content1">
+    <h2 class="section-title">HANBOK COLLECTION</h2>
+    <div class="marquee">
+      <div id="marqueeTrack" class="marquee__track"></div>
+    </div>
+    <div class="marquee-progress"><div class="marquee-progress__bar"></div></div>
+  </section>
+
+  <!-- 컨텐츠2 : 굿즈/악세사리 -->
+  <section id="content2" class="content2">
+    <h2 class="section-title section-title--purple">한국의 아름다움을 나만의 굿즈로 맞춤제작</h2>
+
+    <div class="coverflow">
+      <button class="coverflow-arrow coverflow-arrow--prev">‹</button>
+      <div id="coverflowTrack" class="coverflow__track">
+        <img src="img/베너/배너1.png" alt="굿즈 프로모션 배너 1">
+        <img src="img/베너/배너2.png" alt="굿즈 프로모션 배너 2">
+        <img src="img/베너/배너3.png" alt="굿즈 프로모션 배너 3">
+        <img src="img/베너/배너4.png" alt="굿즈 프로모션 배너 4">
+      </div>
+      <button class="coverflow-arrow coverflow-arrow--next">›</button>
+    </div>
+    <div id="coverflowProgress" class="coverflow-progress"></div>
+
+    <div id="goodsButtons" class="collection-buttons"></div>
+    <div id="goodsCards" class="sub-cards"></div>
+
+    <h2 class="section-title section-title--purple">한복과 어울리는 악세사리도 보고가세요.</h2>
+    <div id="accessoryButtons" class="collection-buttons"></div>
+    <div id="accessoryCards" class="sub-cards"></div>
+  </section>
+
+  <!-- 후기 -->
+  <section id="reviews" class="reviews">
+    <h2 class="section-title reviews__title">한복의 상품 후기를 남기오</h2>
+    <p class="reviews__note">
+      ※ 실제 착용 인증 후기 사진은 프로젝트 img 폴더에 리뷰 이미지가 아직 존재하지 않아
+      임의로 생성하지 않고 텍스트 후기만 표시합니다. (Supabase reviews / review_images 연동 후 사진이 채워집니다)
+    </p>
+    <div id="reviewGrid" class="review-grid"></div>
+  </section>
+</main>
+
+<!-- 푸터 -->
+<footer id="footer" class="footer">
+  <p class="footer__brand">연화재실 / 한국의 아름다움을 입다.</p>
+  <div class="footer__cols">
+    <div>
+      <h4>SHOP</h4>
+      <ul id="footerShop"></ul>
+    </div>
+    <div>
+      <h4>GUIDE</h4>
+      <ul><li>이용안내</li><li>사이즈 가이드</li><li>배송,교환,환불</li></ul>
+    </div>
+    <div>
+      <h4>CUSTOMER</h4>
+      <ul><li>공지사항</li><li>FAQ</li><li>1:1문의</li><li>단체구매 문의</li></ul>
+    </div>
+  </div>
+  <div class="footer__company">
+    <h4>COMPANY</h4>
+    <p>상호명 : 연화재실</p>
+    <p>대표자 : 장철희</p>
+    <p>사업자등록번호 : 000-00-00000</p>
+    <p>주소 : 서울시 영등포구 영등포동</p>
+    <p class="footer__phone">02-000-0000</p>
+    <p>E-mail : welcome@ibubom.com</p>
+  </div>
+</footer>
+
+<!-- 챗봇 -->
+<button id="chatbotIcon" class="float-icon float-icon--chatbot" aria-label="챗봇 열기">
+  <img src="img/chatbot.png" alt="챗봇 아이콘">
+</button>
+<div id="chatbotPanel" class="side-panel" hidden>
+  <div class="side-panel__head">
+    <span>연화재실 챗봇 <em>(mock 모드)</em></span>
+    <button class="modal-close" data-close="chatbotPanel">닫기 ✕</button>
+  </div>
+  <div id="chatbotKeywords" class="chat-keywords"></div>
+  <div id="chatbotMessages" class="chat-messages"></div>
+  <form id="chatbotForm" class="chat-input-row">
+    <textarea id="chatbotInput" placeholder="궁금한 점을 입력해주세요 (Enter 전송 / Shift+Enter 줄바꿈)" rows="1"></textarea>
+    <button type="submit">전송</button>
+  </form>
+</div>
+
+<!-- 상담하기 -->
+<button id="consultIcon" class="float-icon float-icon--consult" aria-label="상담하기 열기">
+  <img src="img/상담하기.png" alt="상담하기 아이콘">
+</button>
+<div id="consultPanel" class="side-panel" hidden>
+  <div class="side-panel__head">
+    <span>상담하기</span>
+    <button class="modal-close" data-close="consultPanel">닫기 ✕</button>
+  </div>
+  <div id="consultProgress" class="consult-progress"></div>
+  <div id="consultBody" class="consult-body"></div>
+</div>
+
+<!-- 탑버튼 -->
+<button id="topBtn" class="top-btn" aria-label="맨 위로">↑</button>
+
+<!-- 랜덤 배회 아이콘 -->
+<img id="roamIcon" class="roam-icon" src="img/우우.png" alt="인터랙션 아이콘" hidden>
+
+<!-- 영상 팝업 -->
+<div id="videoOverlay" class="video-overlay" hidden>
+  <video id="roamVideo" src="img/f.avi" autoplay muted playsinline></video>
+</div>
+
+<!-- 토스트 -->
+<div id="toast" class="toast" hidden></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
