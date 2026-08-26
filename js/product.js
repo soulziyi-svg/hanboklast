@@ -14,13 +14,25 @@
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
 
+  // 관리자페이지 "미리보기": DB에 저장하지 않고 sessionStorage에 담긴 입력값만으로 이 페이지를 그대로 렌더링합니다.
+  const isAdminPreview = params.get('preview') === 'admin';
+  let previewData = null;
+  if (isAdminPreview) {
+    try { previewData = JSON.parse(sessionStorage.getItem('adminProductPreview') || 'null'); } catch (err) { previewData = null; }
+    const banner = document.createElement('div');
+    banner.textContent = '⚠ 관리자 미리보기 모드입니다. 저장된 내용이 아니며, 실제 구매는 진행되지 않습니다. 확인 후 이 탭을 닫아주세요.';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#7C4DFF;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:700;';
+    document.body.prepend(banner);
+    document.body.style.paddingTop = '38px';
+  }
+
   if (supabaseClient) {
     wireCartUI();
     wireAuthUI();
     await applyAuthUI();
   }
 
-  if (!slug) {
+  if (!slug && !(isAdminPreview && previewData)) {
     $('#pdpLoading').hidden = true;
     $('#pdpNotFound').hidden = false;
     return;
@@ -30,7 +42,7 @@
   let product = null;
   let error = null;
 
-  if (supabaseClient) {
+  if (supabaseClient && !isAdminPreview) {
     const result = await supabaseClient.from('products').select(`
       id, name, slug, product_type, short_description, description,
       regular_price, sale_price, discount_rate,
@@ -52,6 +64,7 @@
   }
 
   if ((!product || error) && fallbackProduct) product = fallbackProduct;
+  if (isAdminPreview && previewData) { product = previewData.product; error = null; }
 
   if (error || !product) {
     $('#pdpLoading').hidden = true;
@@ -63,7 +76,7 @@
 
   // 추가구성(악세사리 addon)은 hanbok 전용 - product_addons -> 대상 상품/재고를 별도 조회 후 합칩니다.
   let addons = [];
-  if (supabaseClient && product.product_type === 'hanbok') {
+  if (supabaseClient && !isAdminPreview && product.product_type === 'hanbok') {
     const { data: addonLinks } = await supabaseClient
       .from('product_addons')
       .select('id, addon_product_id, special_price, sort_order')
@@ -94,20 +107,20 @@
     }
   }
 
-  const { data: reviews } = supabaseClient ? await supabaseClient
+  const { data: reviews } = (supabaseClient && !isAdminPreview) ? await supabaseClient
     .from('reviews')
     .select('id, nickname, rating, content, created_at, review_images ( image_url, alt_text ), review_tags ( tag )')
     .eq('product_id', product.id)
     .eq('is_visible', true)
     .order('created_at', { ascending: false }) : { data: [] };
 
-  const { data: stats } = supabaseClient ? await supabaseClient
+  const { data: stats } = (supabaseClient && !isAdminPreview) ? await supabaseClient
     .from('product_review_stats')
     .select('average_rating, review_count')
     .eq('product_id', product.id)
     .maybeSingle() : { data: null };
 
-  const { data: guides } = supabaseClient ? await supabaseClient
+  const { data: guides } = (supabaseClient && !isAdminPreview) ? await supabaseClient
     .from('wearing_guides')
     .select('step_number, title, description, media_url, media_type')
     .or(`product_id.eq.${product.id},product_id.is.null`)
@@ -175,6 +188,7 @@
     recompute();
 
     $('#pdpAddToCartBtn').addEventListener('click', async () => {
+      if (isAdminPreview) { showToast('미리보기 모드에서는 장바구니에 담을 수 없습니다.'); return; }
       if (!supabaseClient) { showToast('현재 상품 정보 연결을 확인 중입니다. 잠시 후 다시 시도해주세요.'); return; }
       const variantId = sizeState.getVariantId();
       if (!variantId) { showToast('구매 옵션을 선택해주세요.'); return; }

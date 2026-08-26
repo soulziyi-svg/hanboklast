@@ -422,6 +422,7 @@
 
         <div class="admin-modal-foot">
           <button type="button" class="admin-btn admin-btn--ghost" data-close="adminModal">취소</button>
+          <button type="button" class="admin-btn admin-btn--ghost" id="previewProductBtn">미리보기 (저장 전 상세페이지 확인)</button>
           <button type="submit" class="admin-btn admin-btn--purple">저장하고 반영</button>
         </div>
       </form>
@@ -434,13 +435,29 @@
       form.sale_price.value = Math.round(reg * (1 - disc / 100));
     });
     $('#addImageBtn').addEventListener('click', () => $('#pimImages').insertAdjacentHTML('beforeend', imgRowHtml({})));
+    $('#pimImages').addEventListener('change', async e => {
+      if (!e.target.classList.contains('f-upload')) return;
+      const file = e.target.files[0];
+      if (!file) return;
+      const row = e.target.closest('.admin-inline-row');
+      e.target.disabled = true;
+      showToast('이미지 업로드 중...');
+      const url = await uploadProductImage(file);
+      e.target.disabled = false;
+      if (!url) return;
+      row.querySelector('.f-url').value = url;
+      row.querySelector('.f-preview').src = url;
+      row.querySelector('.f-preview').style.visibility = 'visible';
+      showToast('이미지가 업로드되었습니다.');
+    });
     $('#addVariantBtn').addEventListener('click', () => $('#pimVariants').insertAdjacentHTML('beforeend', variantRowHtml({})));
     $('#addComponentBtn').addEventListener('click', () => $('#pimComponents').insertAdjacentHTML('beforeend', componentRowHtml({})));
     $('#addFeatureBtn').addEventListener('click', () => $('#pimFeatures').insertAdjacentHTML('beforeend', featureRowHtml({})));
     $('#addSizeSpecBtn').addEventListener('click', () => $('#pimSizeSpecs').insertAdjacentHTML('beforeend', sizeSpecRowHtml({})));
     wireRemoveButtons();
 
-    $('#productForm').addEventListener('submit', e => { e.preventDefault(); saveProduct(productId, product); });
+    $('#productForm').addEventListener('submit', e => { e.preventDefault(); saveProduct(productId); });
+    $('#previewProductBtn').addEventListener('click', () => previewProduct());
 
     function wireRemoveButtons() {
       $all('[data-remove]').forEach(b => b.addEventListener('click', () => b.closest('.admin-inline-row').remove()));
@@ -452,12 +469,20 @@
 
   function imgRowHtml(img) {
     return `<div class="admin-inline-row" data-id="${img.id || ''}">
-      <img src="${esc(img.image_url) || ''}" onerror="this.style.visibility='hidden'">
-      <input type="text" class="f-url" value="${esc(img.image_url)}" placeholder="이미지 URL">
+      <img class="f-preview" src="${esc(img.image_url) || ''}" onerror="this.style.visibility='hidden'">
+      <input type="text" class="f-url" value="${esc(img.image_url)}" placeholder="이미지 URL 또는 파일 업로드">
+      <input type="file" class="f-upload" accept="image/*" title="파일을 선택하면 Storage에 업로드되고 URL이 자동으로 채워집니다." style="max-width:150px;">
       <select class="f-type">${optionsHtml(IMAGE_TYPE, img.image_type || 'detail')}</select>
       <label style="white-space:nowrap;"><input type="checkbox" class="f-primary" ${img.is_primary ? 'checked' : ''}> 대표</label>
       <button type="button" class="admin-btn admin-btn--sm admin-btn--danger" data-remove>삭제</button>
     </div>`;
+  }
+  async function uploadProductImage(file) {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const path = `products/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabaseClient.storage.from('product-images').upload(path, file, { upsert: false, cacheControl: '3600' });
+    if (error) { showToast('이미지 업로드 실패: ' + error.message); return null; }
+    return supabaseClient.storage.from('product-images').getPublicUrl(path).data.publicUrl;
   }
   function variantRowHtml(v) {
     return `<div class="admin-inline-row" data-id="${v.id || ''}">
@@ -502,7 +527,8 @@
     </div>`;
   }
 
-  async function saveProduct(productId, prevProduct) {
+  /** 상품수정 모달의 현재 입력값을 전부 읽어서 저장/미리보기 공용으로 씁니다. */
+  function collectFormValues() {
     const form = $('#productForm');
     const fd = new FormData(form);
     const payload = {
@@ -515,6 +541,45 @@
       is_hot: fd.get('is_hot') === 'on', is_featured: fd.get('is_featured') === 'on',
       short_description: fd.get('short_description') || null, description: fd.get('description') || null,
     };
+    const images = $all('#pimImages .admin-inline-row').map((row, i) => ({
+      image_url: row.querySelector('.f-url').value.trim(),
+      image_type: row.querySelector('.f-type').value, is_primary: row.querySelector('.f-primary').checked, sort_order: i,
+    })).filter(r => r.image_url);
+    const variants = $all('#pimVariants .admin-inline-row').map(row => ({
+      id: row.dataset.id || null, size: row.querySelector('.f-size').value,
+      stock_quantity: Number(row.querySelector('.f-stock').value) || 0,
+      low_stock_threshold: Number(row.querySelector('.f-threshold').value) || 0,
+      active: row.querySelector('.f-active').checked,
+    }));
+    const components = $all('#pimComponents .admin-inline-row').map((row, i) => ({
+      component_name: row.querySelector('.f-name').value.trim(),
+      included: row.querySelector('.f-included').checked, image_url: row.querySelector('.f-img').value.trim() || null,
+      description: row.querySelector('.f-desc').value.trim() || null, sort_order: i,
+    })).filter(r => r.component_name);
+    const features = $all('#pimFeatures .admin-inline-row').map((row, i) => ({
+      title: row.querySelector('.f-title').value.trim(),
+      description: row.querySelector('.f-desc').value.trim() || null, sort_order: i,
+    })).filter(r => r.title);
+    const sizeSpecs = $all('#pimSizeSpecs .admin-inline-row').map(row => ({
+      size: row.querySelector('.f-size').value,
+      chest: numOrNull(row.querySelector('.f-chest').value), waist: numOrNull(row.querySelector('.f-waist').value),
+      length: numOrNull(row.querySelector('.f-length').value), sleeve: numOrNull(row.querySelector('.f-sleeve').value),
+    }));
+    const sections = $all('#pimSections .admin-inline-row').map(row => ({
+      section_type: row.dataset.type, sort_order: Number(row.querySelector('.f-sort').value) || 0, visible: row.querySelector('.f-visible').checked,
+    }));
+    const care = { material: $('#careMaterial').value.trim() || null, washing: $('#careWashing').value.trim() || null, wearing_caution: $('#careCaution').value.trim() || null, storage_method: $('#careStorage').value.trim() || null };
+    const shipping = {
+      shipping_fee: Number($('#shipFee').value) || 0, free_shipping_threshold: Number($('#shipFreeThreshold').value) || 0,
+      estimated_delivery: $('#shipEta').value.trim() || null, exchange_policy: $('#shipExchange').value.trim() || null,
+      return_policy: $('#shipReturn').value.trim() || null, refund_policy: $('#shipRefund').value.trim() || null,
+    };
+    return { payload, images, variants, components, features, sizeSpecs, sections, care, shipping };
+  }
+
+  async function saveProduct(productId) {
+    const v = collectFormValues();
+    const payload = v.payload;
 
     let pid = productId;
     if (pid) {
@@ -537,63 +602,30 @@
       }
     }
 
-    const imageRows = $all('#pimImages .admin-inline-row').map((row, i) => ({
-      product_id: pid, image_url: row.querySelector('.f-url').value.trim(),
-      image_type: row.querySelector('.f-type').value, is_primary: row.querySelector('.f-primary').checked, sort_order: i,
-    })).filter(r => r.image_url);
-    await replaceRows('product_images', imageRows);
-
-    const componentRows = $all('#pimComponents .admin-inline-row').map((row, i) => ({
-      product_id: pid, component_name: row.querySelector('.f-name').value.trim(),
-      included: row.querySelector('.f-included').checked, image_url: row.querySelector('.f-img').value.trim() || null,
-      description: row.querySelector('.f-desc').value.trim() || null, sort_order: i,
-    })).filter(r => r.component_name);
-    await replaceRows('product_components', componentRows);
-
-    const featureRows = $all('#pimFeatures .admin-inline-row').map((row, i) => ({
-      product_id: pid, title: row.querySelector('.f-title').value.trim(),
-      description: row.querySelector('.f-desc').value.trim() || null, sort_order: i,
-    })).filter(r => r.title);
-    await replaceRows('product_features', featureRows);
-
-    const sizeSpecRows = $all('#pimSizeSpecs .admin-inline-row').map(row => ({
-      product_id: pid, size: row.querySelector('.f-size').value,
-      chest: numOrNull(row.querySelector('.f-chest').value), waist: numOrNull(row.querySelector('.f-waist').value),
-      length: numOrNull(row.querySelector('.f-length').value), sleeve: numOrNull(row.querySelector('.f-sleeve').value),
-    }));
-    await replaceRows('product_size_specs', sizeSpecRows);
-
-    const sectionRows = $all('#pimSections .admin-inline-row').map(row => ({
-      product_id: pid, section_type: row.dataset.type,
-      sort_order: Number(row.querySelector('.f-sort').value) || 0, visible: row.querySelector('.f-visible').checked,
-    }));
-    await replaceRows('product_detail_sections', sectionRows);
+    await replaceRows('product_images', v.images.map(r => ({ product_id: pid, ...r })));
+    await replaceRows('product_components', v.components.map(r => ({ product_id: pid, ...r })));
+    await replaceRows('product_features', v.features.map(r => ({ product_id: pid, ...r })));
+    await replaceRows('product_size_specs', v.sizeSpecs.map(r => ({ product_id: pid, ...r })));
+    await replaceRows('product_detail_sections', v.sections.map(r => ({ product_id: pid, ...r })));
 
     // care / shipping: 단일 행 upsert
-    const careVals = { material: $('#careMaterial').value.trim() || null, washing: $('#careWashing').value.trim() || null, wearing_caution: $('#careCaution').value.trim() || null, storage_method: $('#careStorage').value.trim() || null };
-    if (Object.values(careVals).some(Boolean)) {
+    if (Object.values(v.care).some(Boolean)) {
       const { data: existingCare } = await supabaseClient.from('product_care').select('id').eq('product_id', pid).maybeSingle();
       const { error: careErr } = existingCare
-        ? await supabaseClient.from('product_care').update(careVals).eq('id', existingCare.id)
-        : await supabaseClient.from('product_care').insert({ product_id: pid, ...careVals });
+        ? await supabaseClient.from('product_care').update(v.care).eq('id', existingCare.id)
+        : await supabaseClient.from('product_care').insert({ product_id: pid, ...v.care });
       if (careErr) warnings.push(`관리방법: ${careErr.message}`);
     }
-    const shipVals = {
-      shipping_fee: Number($('#shipFee').value) || 0, free_shipping_threshold: Number($('#shipFreeThreshold').value) || 0,
-      estimated_delivery: $('#shipEta').value.trim() || null, exchange_policy: $('#shipExchange').value.trim() || null,
-      return_policy: $('#shipReturn').value.trim() || null, refund_policy: $('#shipRefund').value.trim() || null,
-    };
     const { data: existingShip } = await supabaseClient.from('product_shipping_policies').select('id').eq('product_id', pid).maybeSingle();
     const { error: shipErr } = existingShip
-      ? await supabaseClient.from('product_shipping_policies').update(shipVals).eq('id', existingShip.id)
-      : await supabaseClient.from('product_shipping_policies').insert({ product_id: pid, ...shipVals });
+      ? await supabaseClient.from('product_shipping_policies').update(v.shipping).eq('id', existingShip.id)
+      : await supabaseClient.from('product_shipping_policies').insert({ product_id: pid, ...v.shipping });
     if (shipErr) warnings.push(`배송정책: ${shipErr.message}`);
 
     // variants: 참조 무결성이 있으므로 개별 update/insert/delete
-    const originalIds = productId ? (await supabaseClient.from('product_variants').select('id').eq('product_id', pid)).data.map(v => v.id) : [];
-    const domRows = $all('#pimVariants .admin-inline-row');
-    const domIds = domRows.map(r => r.dataset.id).filter(Boolean);
-    const sizesUsed = domRows.map(r => r.querySelector('.f-size').value);
+    const originalIds = productId ? (await supabaseClient.from('product_variants').select('id').eq('product_id', pid)).data.map(x => x.id) : [];
+    const domIds = v.variants.map(x => x.id).filter(Boolean);
+    const sizesUsed = v.variants.map(x => x.size);
     if (new Set(sizesUsed).size !== sizesUsed.length) { showToast('상품옵션에 동일한 사이즈가 중복되어 있습니다.'); return; }
     for (const oldId of originalIds) {
       if (!domIds.includes(oldId)) {
@@ -601,15 +633,13 @@
         if (error) warnings.push('일부 옵션은 주문 이력이 있어 삭제할 수 없어 유지됩니다.');
       }
     }
-    for (const row of domRows) {
+    for (const variant of v.variants) {
       const vpayload = {
-        product_id: pid, size: row.querySelector('.f-size').value,
-        stock_quantity: Number(row.querySelector('.f-stock').value) || 0,
-        low_stock_threshold: Number(row.querySelector('.f-threshold').value) || 0,
-        active: row.querySelector('.f-active').checked,
+        product_id: pid, size: variant.size, stock_quantity: variant.stock_quantity,
+        low_stock_threshold: variant.low_stock_threshold, active: variant.active,
       };
-      const { error: vErr } = row.dataset.id
-        ? await supabaseClient.from('product_variants').update(vpayload).eq('id', row.dataset.id)
+      const { error: vErr } = variant.id
+        ? await supabaseClient.from('product_variants').update(vpayload).eq('id', variant.id)
         : await supabaseClient.from('product_variants').insert(vpayload);
       if (vErr) warnings.push(`옵션(${vpayload.size}): ${vErr.message}`);
     }
@@ -620,6 +650,35 @@
     loadProducts();
   }
   function numOrNull(v) { return v === '' || v == null ? null : Number(v); }
+
+  /** 저장하기 전에 product.html의 실제 렌더링 코드를 그대로 재사용해 미리보기를 띄웁니다. (DB에는 아무것도 쓰지 않음) */
+  function previewProduct() {
+    const v = collectFormValues();
+    if (!v.payload.name) { showToast('상품명을 입력해야 미리보기를 볼 수 있습니다.'); return; }
+    const collection = COLLECTIONS_CACHE.find(c => c.id === v.payload.collection_id);
+    const category = CATEGORIES_CACHE.find(c => c.id === v.payload.category_id);
+    const previewProductObj = {
+      id: null, name: v.payload.name, slug: 'preview',
+      product_type: v.payload.product_type, short_description: v.payload.short_description, description: v.payload.description,
+      regular_price: v.payload.regular_price, sale_price: v.payload.sale_price, discount_rate: v.payload.discount_rate,
+      collections: collection ? { name: collection.name, slug: collection.slug } : null,
+      categories: category ? { name: category.name, slug: category.slug } : null,
+      product_images: v.images,
+      product_variants: v.variants.map(x => ({ id: null, size: x.size, stock_quantity: x.stock_quantity, low_stock_threshold: x.low_stock_threshold })),
+      product_size_specs: v.sizeSpecs,
+      product_features: v.features,
+      product_components: v.components,
+      product_care: v.care,
+      product_shipping_policies: v.shipping,
+    };
+    try {
+      sessionStorage.setItem('adminProductPreview', JSON.stringify({ product: previewProductObj }));
+    } catch (err) {
+      showToast('미리보기 데이터를 준비하지 못했습니다 (용량 초과 가능).');
+      return;
+    }
+    window.open('product.html?preview=admin', '_blank');
+  }
 
   /* ================= 4. 재고현황 ================= */
   async function loadInventory() {
