@@ -138,18 +138,21 @@ a{color:inherit;text-decoration:none;}
 /* 메가메뉴 */
 .mega-menu{
   position:absolute;top:100%;left:0;width:100%;
-  background:var(--white);display:none;grid-template-columns:repeat(3,1fr);
-  gap:24px;padding:32px 48px;transform:translateY(-8px);opacity:0;
+  background:var(--white);display:none;grid-template-columns:repeat(3,220px);
+  justify-content:center;column-gap:64px;row-gap:24px;
+  padding:32px 48px;transform:translateY(-8px);opacity:0;
   transition:transform .2s ease, opacity .2s ease;
   font-family:var(--font-paperlogy);font-weight:800;
 }
 .logo-wrap:hover + .mega-menu, .mega-menu:hover{display:grid;transform:translateY(0);opacity:1;}
-.mega-menu__col h4{font-size:16px;margin:0 0 12px;}
+.mega-menu__col{text-align:center;}
+.mega-menu__col h4{font-size:16px;margin:0 0 12px;text-align:center;}
+.mega-menu__col ul{display:flex;flex-direction:column;align-items:center;}
 .mega-menu__col li{padding:4px 0;font-size:14px;cursor:pointer;transition:transform .15s;}
 .mega-menu__col li:hover{color:var(--purple);transform:scale(1.02);}
 .mega-menu__accordion details{margin-bottom:8px;}
-.mega-menu__accordion summary{cursor:pointer;font-size:14px;padding:4px 0;}
-.mega-menu__accordion li{font-size:13px;color:var(--gray-mid);padding:2px 0 2px 12px;cursor:pointer;}
+.mega-menu__accordion summary{cursor:pointer;font-size:14px;padding:4px 0;text-align:center;}
+.mega-menu__accordion li{font-size:13px;color:var(--gray-mid);padding:2px 0;cursor:pointer;text-align:center;}
 .mega-menu__accordion li:hover{color:red;}
 
 /* ---------- 모달 공통 ---------- */
