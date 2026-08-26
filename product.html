@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">상품 상세 | 연화재실</title>
+<meta name="description" content="연화재실 상품 상세페이지 (학습용 데모)">
+
+<link rel="preconnect" href="https://fastly.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/product.css">
+</head>
+<body>
+
+<!-- 헤더 -->
+<header id="header" class="header">
+  <a href="index.html" class="hamburger" aria-label="홈으로" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">←</a>
+
+  <a href="index.html" class="logo-wrap" aria-label="연화재실 홈">
+    <img src="img/logo.png" alt="연화재실 로고" class="logo-img">
+  </a>
+
+  <div class="header__right">
+    <button id="loginBtn" class="btn btn--login">
+      <span class="btn--login__face btn--login__face--front">로그인</span>
+      <span class="btn--login__face btn--login__face--back">sign in</span>
+    </button>
+    <span id="welcomeText" class="welcome-text" hidden></span>
+    <a id="adminLinkBtn" href="admin.html" class="btn btn--admin" hidden>관리자페이지</a>
+    <button id="cartBtn" class="icon-btn" aria-label="장바구니">
+      🛍<span id="cartCount" class="badge">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- 로그인 모달 -->
+<div id="loginModal" class="modal-overlay" hidden>
+  <div class="modal auth-modal">
+    <button class="modal-close" data-close="loginModal">닫기 ✕</button>
+    <h3>sign in</h3>
+    <p class="auth-notice">Supabase Auth 로그인입니다. (heechic@naver.com 계정은 관리자 권한으로 연결됩니다)</p>
+    <form id="loginForm" class="auth-form">
+      <input type="email" id="loginEmail" placeholder="아이디" required>
+      <input type="password" id="loginPassword" placeholder="비밀번호" required>
+      <button type="submit" class="btn btn--wide">로그인하기</button>
+    </form>
+  </div>
+</div>
+
+<!-- 장바구니 모달 -->
+<div id="cartModal" class="modal-overlay" hidden>
+  <div class="modal cart-modal">
+    <div class="cart-modal__head">
+      <div>
+        <h3>장바구니</h3>
+        <p>특별한 하루를 위한 의상을 확인해보세요.</p>
+      </div>
+      <button class="modal-close" data-close="cartModal">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-order-form">
+      <input type="text" id="orderName" placeholder="주문자명">
+      <input type="text" id="orderPhone" placeholder="연락처 (예: 010-0000-0000)">
+      <input type="text" id="orderAddress" placeholder="배송주소">
+    </div>
+    <div class="cart-summary">
+      <div class="row"><span>선택상품</span><span id="cartQty">0개</span></div>
+      <div class="row"><span>상품금액</span><span id="cartProductTotal">0원</span></div>
+      <div class="row"><span>액세서리</span><span id="cartAddonTotal">0원</span></div>
+      <div class="row row--total"><span>총 결제 예정금액</span><span id="cartGrandTotal">0원</span></div>
+      <button id="cartCheckoutBtn" class="btn btn--purchase">선택 상품 구매하기</button>
+      <button class="btn-link" data-close="cartModal">쇼핑 계속하기 →</button>
+    </div>
+  </div>
+</div>
+
+<main class="pdp">
+  <!-- #header : 경로(breadcrumb) -->
+  <nav id="pdpBreadcrumb" class="pdp-breadcrumb">불러오는 중...</nav>
+
+  <div id="pdpLoading" class="pdp-loading">상품 정보를 불러오는 중입니다...</div>
+  <div id="pdpNotFound" class="pdp-loading" hidden>상품을 찾을 수 없습니다. <a href="index.html">홈으로 돌아가기</a></div>
+
+  <!-- 메인페이지 : 갤러리 + 구매 정보 -->
+  <section id="pdpMain" class="pdp-main" hidden>
+    <div class="pdp-gallery">
+      <div class="pdp-gallery__main">
+        <img id="pdpMainImage" src="" alt="">
+        <span id="pdpGalleryProgress" class="pdp-gallery__progress"></span>
+      </div>
+      <div id="pdpThumbs" class="pdp-thumbs"></div>
+    </div>
+
+    <div class="pdp-info">
+      <p id="pdpPath" class="pdp-info__path"></p>
+      <h1 id="pdpName" class="pdp-info__name"></h1>
+      <p id="pdpDesc" class="pdp-info__desc"></p>
+      <p id="pdpRating" class="pdp-info__rating"></p>
+      <p id="pdpPrice" class="pdp-info__price"></p>
+
+      <div id="pdpSizeWrap" class="pdp-size-wrap" hidden>
+        <span class="pdp-info__label">사이즈 선택</span>
+        <div id="pdpSizeButtons" class="pdp-size-buttons"></div>
+      </div>
+
+      <div id="pdpAddonWrap" class="pdp-addon-wrap" hidden>
+        <span class="pdp-info__label">추가 구매 옵션</span>
+        <div id="pdpAddons" class="pdp-addons"></div>
+      </div>
+
+      <div class="pdp-qty-row">
+        <span class="pdp-info__label">수량</span>
+        <div class="pdp-qty">
+          <button id="pdpQtyMinus" type="button">−</button>
+          <span id="pdpQtyValue">1</span>
+          <button id="pdpQtyPlus" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="pdp-total-row">
+        <span>총 구매금액</span>
+        <strong id="pdpTotalPrice">0원</strong>
+      </div>
+
+      <button id="pdpAddToCartBtn" class="btn btn--purchase pdp-add-cart-btn">장바구니 담기</button>
+    </div>
+  </section>
+
+  <!-- 구매정보 -->
+  <section id="pdpPurchaseInfo" class="pdp-purchase-info" hidden>
+    <div class="pdp-tabs">
+      <button class="pdp-tab is-active" data-tab="detail">상세정보</button>
+      <button class="pdp-tab" data-tab="care">소재관리</button>
+      <button class="pdp-tab" data-tab="shipping">배송교환</button>
+    </div>
+    <div class="pdp-tab-panel" data-panel="detail"></div>
+    <div class="pdp-tab-panel" data-panel="care" hidden></div>
+    <div class="pdp-tab-panel" data-panel="shipping" hidden></div>
+  </section>
+
+  <!-- 착용가이드 (실제 등록된 가이드가 있을 때만 표시) -->
+  <section id="pdpGuideSection" class="pdp-guide" hidden>
+    <h3>착용가이드</h3>
+    <div id="pdpGuideSteps" class="pdp-guide-steps"></div>
+  </section>
+
+  <!-- 후기 -->
+  <section id="pdpReviewsSection" class="pdp-reviews" hidden>
+    <h3 id="pdpReviewsTitle">이 상품의 후기</h3>
+    <div id="pdpReviews" class="review-grid"></div>
+  </section>
+</main>
+
+<footer id="footer" class="footer">
+  <p class="footer__brand">연화재실 / 한국의 아름다움을 입다.</p>
+  <div class="footer__cols">
+    <div>
+      <h4>SHOP</h4>
+      <ul id="footerShop"></ul>
+    </div>
+    <div>
+      <h4>GUIDE</h4>
+      <ul><li>이용안내</li><li>사이즈 가이드</li><li>배송,교환,환불</li></ul>
+    </div>
+    <div>
+      <h4>CUSTOMER</h4>
+      <ul><li>공지사항</li><li>FAQ</li><li>1:1문의</li><li>단체구매 문의</li></ul>
+    </div>
+  </div>
+  <div class="footer__company">
+    <h4>COMPANY</h4>
+    <p>상호명 : 연화재실</p>
+    <p>대표자 : 장철희</p>
+    <p>사업자등록번호 : 000-00-00000</p>
+    <p>주소 : 서울시 영등포구 영등포동</p>
+    <p class="footer__phone">02-000-0000</p>
+    <p>E-mail : welcome@ibubom.com</p>
+  </div>
+</footer>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/shop-common.js"></script>
+<script src="js/product.js"></script>
+</body>
+</html>

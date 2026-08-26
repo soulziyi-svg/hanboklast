@@ -1,11 +1,18 @@
 /* =========================================================
    연화재실 - style.css
-   폰트 안내: Pretendard(확정 CDN), Paperlogy(확정 CDN)는 실제 폰트를 사용합니다.
-   영월체 / 사물놀이체는 신뢰 가능한 무료 CDN을 확인하지 못해
-   우선 Google Fonts의 유사 스타일(Black Han Sans / Do Hyeon)로 대체해두었습니다.
-   실제 폰트 파일을 확보하면 아래 @font-face만 교체하면 됩니다.
+   폰트 안내: 영월군청의 영월체와 캘리폰트의 사물놀이체를
+   웹 사용이 허용된 WOFF2 웹폰트로 적용했습니다.
    ========================================================= */
-@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&display=swap');
+@font-face {
+  font-family: 'Yeongwol';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2507-2@1.0/YeongwolTTF-Regular.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Samulnori';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2505@1.0/CallifontSamulnori-Medium.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
 
 @font-face {
   font-family: 'Paperlogy';
@@ -32,8 +39,8 @@
   --gray-light:#F2F2F2;
   --gray-lighter:#E8E8E8;
   --content2-bg:#FAF2FF;
-  --font-yeongwol:'Black Han Sans','Paperlogy',sans-serif; /* 영월체 placeholder */
-  --font-samulnori:'Do Hyeon','Paperlogy',sans-serif; /* 사물놀이체 placeholder */
+  --font-yeongwol:'Yeongwol','Paperlogy',sans-serif;
+  --font-samulnori:'Samulnori','Paperlogy',sans-serif;
   --font-paperlogy:'Paperlogy','Pretendard',sans-serif;
   --font-pretendard:'Pretendard',-apple-system,sans-serif;
 }
@@ -81,7 +88,7 @@ a{color:inherit;text-decoration:none;}
   font-size:26px;width:40px;height:40px;font-family:var(--font-yeongwol);
 }
 .logo-wrap{position:absolute;left:50%;transform:translateX(-50%);}
-.logo-img{height:65px;width:auto;}
+.logo-img{height:78px;width:auto;}
 .header__right{display:flex;align-items:center;gap:14px;}
 .icon-btn{font-size:20px;position:relative;width:40px;height:40px;}
 .badge{
@@ -150,6 +157,7 @@ a{color:inherit;text-decoration:none;}
   position:fixed;inset:0;background:rgba(0,0,0,.5);
   display:flex;align-items:center;justify-content:center;z-index:2000;
 }
+.modal-overlay[hidden]{display:none;}
 .modal{background:#fff;padding:32px;position:relative;max-height:85vh;overflow:auto;}
 .modal-close{position:absolute;top:16px;right:16px;font-weight:800;color:red;}
 .search-modal{width:1000px;max-width:92vw;height:800px;max-height:90vh;}
@@ -176,6 +184,8 @@ a{color:inherit;text-decoration:none;}
 .cart-item__body{flex:1;}
 .cart-item__body h4{margin:0 0 4px;}
 .cart-empty{text-align:center;padding:60px 0;color:var(--gray-mid);font-family:var(--font-yeongwol);font-size:16px;}
+.cart-order-form{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid #eee;}
+.cart-order-form input{height:38px;padding:0 12px;border:1px solid #ddd;font-size:13px;}
 .cart-summary .row{display:flex;justify-content:space-between;padding:4px 0;font-size:14px;}
 .cart-summary .row--total{font-size:20px;font-weight:800;color:red;border-top:1px solid #ddd;margin-top:8px;padding-top:10px;}
 .btn--purchase{width:100%;height:50px;background:var(--purple);color:#fff;margin-top:16px;font-size:16px;font-weight:700;}
@@ -192,12 +202,12 @@ a{color:inherit;text-decoration:none;}
 .track-step.is-current::before{background:var(--purple);}
 
 /* ---------- 메인 배너 ---------- */
-.main-banner{position:relative;width:100%;height:100vh;overflow:hidden;background:var(--black);}
+.main-banner{position:relative;width:100%;height:auto;aspect-ratio:16/9;overflow:hidden;background:var(--black);}
 .banner-slides{position:relative;width:100%;height:100%;}
-.banner-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;}
+.banner-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;display:flex;align-items:center;justify-content:center;}
 .banner-slide.is-active{opacity:1;}
-.banner-slide video{width:100%;height:100%;object-fit:cover;}
-.banner-copy{position:absolute;left:64px;top:50%;transform:translateY(-50%);color:#fff;max-width:480px;}
+.banner-slide video{width:100%;height:auto;object-fit:contain;}
+.banner-copy{position:absolute;left:64px;bottom:64px;color:#fff;max-width:480px;text-shadow:0 2px 12px rgba(0,0,0,.65);}
 .banner-copy h2{font-family:var(--font-yeongwol);font-size:30px;margin:0 0 12px;}
 .banner-copy p{font-size:15px;line-height:1.6;}
 .banner-arrow{
@@ -211,19 +221,31 @@ a{color:inherit;text-decoration:none;}
 .banner-progress span.is-active{background:#fff;}
 
 /* ---------- 브랜드 스토리 ---------- */
-.brand-story{display:flex;width:100%;background:var(--white);}
-.brand-story__images{width:30%;display:flex;flex-direction:column;}
-.brand-story__images img{width:100%;height:266.6px;object-fit:cover;}
-.brand-story__content{width:70%;padding:48px;}
-.brand-story__logo{height:80px;display:block;margin:0 auto 24px;}
+.brand-story{width:100%;background:var(--white);}
+.brand-story__content{width:100%;padding:48px;}
+.brand-story__logo{width:auto;height:80px;display:block;margin:0 auto 24px;background:transparent;object-fit:contain;}
 .brand-story__content h2{font-family:var(--font-yeongwol);font-size:30px;text-align:center;}
 .brand-story__desc{font-family:var(--font-yeongwol);font-size:15px;line-height:1.8;text-align:center;color:var(--gray-dark);margin-bottom:32px;}
+.brand-story__layout{display:grid;grid-template-columns:4fr 7fr;align-items:start;gap:32px;width:100%;}
+.brand-story__images{width:100%;}
+.brand-story__images img{width:100%;height:auto;display:block;}
+.brand-story__details{min-width:0;}
 .brand-story__label{font-family:var(--font-paperlogy);font-weight:800;font-size:20px;margin:24px 0 8px;}
-.brand-story__quote{font-family:var(--font-paperlogy);font-size:15px;line-height:1.7;}
+.brand-story__details > .brand-story__label:first-child{margin-top:0;}
+.brand-story__quote{font-family:var(--font-paperlogy);font-weight:800;font-size:15px;line-height:1.7;margin:0 0 20px;}
 .brand-story__interview{display:flex;gap:16px;align-items:flex-start;margin-top:12px;}
-.brand-story__interview p{font-family:var(--font-paperlogy);font-size:15px;flex:1;}
-.brand-colors{display:flex;width:60%;}
-.brand-color{flex:1;aspect-ratio:1/2;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:11px;}
+.designer-media{width:300px;max-width:100%;flex:0 0 300px;}
+.brand-story__interview video{width:300px;max-width:100%;height:auto;}
+.brand-story__interview p{font-family:var(--font-paperlogy);font-weight:800;font-size:15px;flex:1;}
+.designer-profile{flex:1;font-family:var(--font-paperlogy);font-weight:800;}
+.designer-profile > p{margin-top:0;line-height:1.75;}
+.designer-profile__details{margin:18px 0 0;display:grid;gap:12px;}
+.designer-profile__details div{display:grid;grid-template-columns:76px 1fr;gap:12px;padding-top:12px;border-top:1px solid #ddd;}
+.designer-profile__details dt{font-weight:800;color:var(--purple);}
+.designer-profile__details dd{margin:0;font-size:15px;line-height:1.7;color:var(--gray-dark);}
+.brand-story__label--colors{margin:22px 0 8px;}
+.brand-colors{display:grid;grid-template-columns:repeat(3,1fr);width:300px;max-width:100%;height:auto;gap:0;}
+.brand-color{aspect-ratio:1/2;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:11px;}
 .brand-color b{display:block;margin-bottom:4px;}
 
 /* ---------- 컨텐츠1 ---------- */
@@ -232,22 +254,24 @@ a{color:inherit;text-decoration:none;}
   background:var(--white) url('../img/background.jpg') repeat;
 }
 .section-title{text-align:center;font-family:var(--font-paperlogy);font-weight:800;font-size:32px;margin:0 0 32px;}
+.content1__title{font-family:var(--font-yeongwol);font-size:40px;font-weight:400;color:#6E6E6E;}
 .marquee{width:100%;overflow:hidden;}
 .marquee__track{display:flex;width:max-content;animation:marqueeScroll 40s linear infinite;}
 .marquee__track:hover{animation-play-state:paused;}
 @keyframes marqueeScroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
 
 .p-card{
-  position:relative;width:300px;height:500px;flex:0 0 auto;overflow:hidden;
+  position:relative;width:300px;height:600px;flex:0 0 auto;overflow:hidden;
   background:#eee;
 }
-.p-card__imgwrap{position:relative;width:100%;height:340px;overflow:hidden;}
+.p-card__imgwrap{position:relative;width:100%;height:450px;overflow:hidden;background:#fff;}
 .p-card__imgwrap img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
   opacity:0;transition:opacity .3s ease;
 }
 .p-card__imgwrap img.is-active{opacity:1;}
 .p-card__imgwrap img.is-hover{transition:opacity .12s ease;}
+.p-card__imgwrap:hover img.is-hover{opacity:1;}
 .p-card__cart{
   position:absolute;top:8px;right:8px;z-index:5;color:red;font-size:22px;
   background:rgba(255,255,255,.85);width:36px;height:36px;
@@ -259,6 +283,7 @@ a{color:inherit;text-decoration:none;}
 .p-card__price{font-size:20px;font-weight:800;margin:6px 0;}
 .p-card__stock{display:flex;gap:6px;font-size:12px;}
 .p-card__stock span{padding:2px 6px;border:1px solid #ccc;color:var(--gray-mid);}
+.p-card__stock span.is-soldout{color:#bbb;border-color:#eee;text-decoration:line-through;}
 .p-card{cursor:pointer;}
 .marquee-progress{width:60%;height:2px;background:#eee;margin:24px auto 0;position:relative;overflow:hidden;}
 .marquee-progress__bar{position:absolute;height:100%;width:30%;background:var(--purple);animation:progressSlide 3.5s linear infinite;}
@@ -275,11 +300,11 @@ a{color:inherit;text-decoration:none;}
 .coverflow__track{display:flex;align-items:center;justify-content:center;height:100%;position:relative;width:100%;}
 .coverflow__track img{
   position:absolute;height:80%;object-fit:cover;filter:brightness(.6) blur(1px);
-  transition:all .4s ease;width:20%;
+  transition:all .4s ease;width:14.2857%;
 }
-.coverflow__track img.is-current{height:100%;filter:none;width:60%;z-index:3;}
-.coverflow__track img.is-prev{left:10%;}
-.coverflow__track img.is-next{right:10%;}
+.coverflow__track img.is-current{left:14.2857%;height:100%;filter:none;width:71.4286%;z-index:3;}
+.coverflow__track img.is-prev{left:0;}
+.coverflow__track img.is-next{right:0;}
 .coverflow__track img:hover{filter:brightness(.9);}
 .coverflow-arrow{width:40px;height:40px;border-radius:50%;background:#fff;z-index:5;}
 .coverflow-progress{display:flex;gap:6px;justify-content:center;margin:16px 0 40px;}
@@ -315,6 +340,7 @@ a{color:inherit;text-decoration:none;}
 .reviews{width:100%;padding:64px 0;background:var(--gray-light);}
 .reviews__title{font-family:var(--font-samulnori);font-size:30px;}
 .reviews__note{text-align:center;font-size:12px;color:var(--gray-mid);margin:-16px 0 32px;}
+.reviews__empty{text-align:center;font-size:14px;color:var(--gray-mid);padding:40px 0;grid-column:1/-1;}
 .review-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;padding:0 24px;}
 .review-card{background:#fff;padding:16px;font-family:var(--font-pretendard);}
 .review-card__head{display:flex;justify-content:space-between;font-size:13px;font-weight:700;}
@@ -336,7 +362,7 @@ a{color:inherit;text-decoration:none;}
 /* ---------- 플로팅 위젯 ---------- */
 .float-icon{
   position:fixed;right:24px;width:80px;height:80px;z-index:900;
-  background:#fff;box-shadow:none;
+  background:transparent;box-shadow:none;padding:0;
 }
 .float-icon img{width:100%;height:100%;object-fit:contain;}
 .float-icon--chatbot{bottom:24px;}
@@ -348,6 +374,7 @@ a{color:inherit;text-decoration:none;}
   box-shadow:-4px 0 20px rgba(0,0,0,.15);resize:horizontal;overflow:auto;
   min-width:340px;
 }
+.side-panel[hidden]{display:none;}
 .side-panel__head{
   display:flex;justify-content:space-between;align-items:center;
   padding:16px 20px;border-bottom:1px solid #eee;font-family:var(--font-pretendard);font-weight:700;
@@ -389,9 +416,10 @@ a{color:inherit;text-decoration:none;}
 .video-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2100;
   display:flex;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .2s;
+  opacity:0;pointer-events:none;transition:opacity .2s;
 }
-.video-overlay.is-visible{opacity:1;}
+.video-overlay[hidden]{display:none;}
+.video-overlay.is-visible{opacity:1;pointer-events:auto;}
 .video-overlay video{width:80%;height:auto;transform:scale(.9);animation:zoomIn .15s ease forwards;}
 @keyframes zoomIn{to{transform:scale(1);}}
 
@@ -403,13 +431,17 @@ a{color:inherit;text-decoration:none;}
 
 /* ---------- 반응형 ---------- */
 @media (max-width:900px){
-  .brand-story{flex-direction:column;}
-  .brand-story__images, .brand-story__content{width:100%;}
-  .brand-story__images{flex-direction:row;}
-  .brand-story__images img{height:140px;}
+  .brand-story__content{padding:36px 20px;}
+  .brand-story__layout{grid-template-columns:1fr;gap:24px;}
+  .brand-story__images, .brand-story__details{width:100%;}
+  .brand-story__images img{height:auto;}
   .mega-menu{grid-template-columns:1fr;}
   .review-grid{grid-template-columns:repeat(2,1fr);}
   .side-panel{width:100%;}
   .consult-grid{grid-template-columns:repeat(3,1fr);}
-  .banner-copy{left:20px;max-width:80%;}
+  .banner-copy{left:20px;bottom:36px;max-width:80%;}
+  .brand-story__interview{flex-direction:column;}
+  .designer-media{width:300px;max-width:100%;flex-basis:auto;}
+  .brand-story__interview video{width:300px;max-width:100%;}
+  .brand-colors{width:100%;}
 }

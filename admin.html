@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자페이지 | 연화재실</title>
+<link rel="preconnect" href="https://fastly.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+<div id="adminGate" style="padding:120px 24px;text-align:center;color:var(--gray-mid);">
+  관리자 권한을 확인하는 중입니다...
+</div>
+
+<div id="adminShell" class="admin-shell" hidden>
+  <nav class="admin-nav">
+    <div class="admin-nav__brand">연화재실<span>ADMIN</span></div>
+    <button data-tab="dashboard" class="is-active">대시보드</button>
+    <button data-tab="calendar">주문/출고 캘린더</button>
+    <button data-tab="products">상품관리</button>
+    <button data-tab="inventory">재고현황</button>
+    <button data-tab="orders">주문관리</button>
+    <button data-tab="claims">취소/교환/반품</button>
+    <button data-tab="reviews">후기관리</button>
+    <button data-tab="categories">카테고리/컬렉션</button>
+    <button data-tab="coupons">쿠폰관리</button>
+    <button data-tab="banners">배너관리</button>
+    <button data-tab="content">사이트 콘텐츠</button>
+    <button data-tab="inquiries">문의관리</button>
+    <button data-tab="members">회원관리</button>
+    <button data-tab="logs">관리자 로그</button>
+    <button class="admin-nav__back" id="adminBackBtn">← 사이트로 돌아가기</button>
+  </nav>
+
+  <main class="admin-main">
+    <div class="admin-head">
+      <h1 id="adminTabTitle">대시보드</h1>
+      <span class="admin-head__user" id="adminUserLabel"></span>
+    </div>
+
+    <section id="tab-dashboard" class="admin-tab is-active"></section>
+    <section id="tab-calendar" class="admin-tab"></section>
+    <section id="tab-products" class="admin-tab"></section>
+    <section id="tab-inventory" class="admin-tab"></section>
+    <section id="tab-orders" class="admin-tab"></section>
+    <section id="tab-claims" class="admin-tab"></section>
+    <section id="tab-reviews" class="admin-tab"></section>
+    <section id="tab-categories" class="admin-tab"></section>
+    <section id="tab-coupons" class="admin-tab"></section>
+    <section id="tab-banners" class="admin-tab"></section>
+    <section id="tab-content" class="admin-tab"></section>
+    <section id="tab-inquiries" class="admin-tab"></section>
+    <section id="tab-members" class="admin-tab"></section>
+    <section id="tab-logs" class="admin-tab"></section>
+  </main>
+</div>
+
+<!-- 공용 모달 (상품등록/수정 등 큰 폼에서 재사용) -->
+<div id="adminModal" class="modal-overlay" hidden>
+  <div class="admin-modal" id="adminModalBody"></div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/shop-common.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
