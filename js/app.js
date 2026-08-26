@@ -291,9 +291,6 @@
         }, 2000);
       }
       startCycle();
-      imgwrap.addEventListener('mouseenter', () => { hoverImg.style.opacity = 1; });
-      imgwrap.addEventListener('mouseleave', () => { hoverImg.style.opacity = 0; });
-
       return card;
     }
     const cards = COLLECTIONS.map(buildCard);
