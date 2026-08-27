@@ -232,6 +232,11 @@
     addonState.onChange = recompute;
     qtyState.onChange = recompute;
     couponState.onChange = recompute;
+    if (supabaseClient && supabaseClient.auth) {
+      supabaseClient.auth.onAuthStateChange(() => {
+        window.setTimeout(() => couponState.reload(), 0);
+      });
+    }
     recompute();
 
     async function handleCart(openCartAfter) {
@@ -817,6 +822,7 @@
     const message = $('#pdpCouponMessage');
     const state = {
       onChange: null,
+      reload: async () => {},
       getCode: () => select ? select.value : '',
       getDiscount: subtotal => {
         const option = select && select.selectedOptions ? select.selectedOptions[0] : null;
@@ -834,13 +840,24 @@
       sessionStorage.setItem('yeonhwajaesil_selected_coupon', select.value);
       if (state.onChange) state.onChange();
     });
-    (async () => {
+    async function loadCoupons() {
+      const saved = sessionStorage.getItem('yeonhwajaesil_selected_coupon') || '';
+      select.innerHTML = '<option value="">쿠폰을 선택하세요</option>';
+      select.disabled = true;
       const session = await getCurrentSession();
-      if (!session) { select.disabled = true; return; }
+      if (!session) {
+        message.textContent = '로그인하면 보유 쿠폰을 확인할 수 있습니다.';
+        if (state.onChange) state.onChange();
+        return;
+      }
+      message.textContent = '보유 쿠폰을 불러오는 중입니다.';
       const { data, error: couponError } = await supabaseClient.from('user_coupons')
         .select('id, coupons ( code, name, discount_type, discount_value, min_order_amount, max_discount_amount, ends_at )')
         .eq('user_id', session.user.id).eq('status', 'issued');
-      if (couponError) { message.textContent = '쿠폰 정보를 불러오지 못했습니다.'; return; }
+      if (couponError) {
+        message.textContent = '쿠폰 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+        return;
+      }
       (data || []).forEach(row => {
         const coupon = row.coupons;
         if (!coupon || (coupon.ends_at && new Date(coupon.ends_at) < new Date())) return;
@@ -854,11 +871,12 @@
         select.appendChild(option);
       });
       select.disabled = false;
-      const saved = sessionStorage.getItem('yeonhwajaesil_selected_coupon') || '';
       if ([...select.options].some(option => option.value === saved)) select.value = saved;
       message.textContent = select.options.length > 1 ? '쿠폰을 선택하면 할인금액이 바로 반영됩니다.' : '현재 사용 가능한 쿠폰이 없습니다.';
       if (state.onChange) state.onChange();
-    })();
+    }
+    state.reload = loadCoupons;
+    loadCoupons();
     return state;
   }
 
