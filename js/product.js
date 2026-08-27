@@ -7,7 +7,7 @@
   'use strict';
 
   const supabaseClient = window.supabaseClient;
-  const { $, $all, showToast, openModal, addToCart, renderCartModal, wireCartUI, wireAuthUI, applyAuthUI, formatWon } = window.ShopCommon;
+  const { $, $all, showToast, openModal, addToCart, renderCartModal, prefillOrderForm, getCurrentSession, wireCartUI, wireAuthUI, applyAuthUI, formatWon } = window.ShopCommon;
 
   const PRODUCT_TYPE_LABEL = { hanbok: '한복', accessory: '액세서리', goods: '굿즈' };
 
@@ -210,6 +210,7 @@
   }
 
   function render(product, addons, reviews, stats, guides) {
+    prepareDalbitNewLayout(product);
     $('#pdpLoading').hidden = true;
     $('#pdpMain').hidden = false;
     $('#pdpPurchaseInfo').hidden = false;
@@ -224,11 +225,13 @@
     const sizeState = renderSize(product);
     const addonState = renderAddons(addons);
     const qtyState = renderQty();
+    const couponState = renderPdpCoupon();
 
-    const recompute = () => updateTotal(product, sizeState, addonState, qtyState);
+    const recompute = () => updateTotal(product, sizeState, addonState, qtyState, couponState);
     sizeState.onChange = recompute;
     addonState.onChange = recompute;
     qtyState.onChange = recompute;
+    couponState.onChange = recompute;
     recompute();
 
     async function handleCart(openCartAfter) {
@@ -237,6 +240,7 @@
       const variantId = sizeState.getVariantId();
       if (!variantId) { showToast('구매 옵션을 선택해주세요.'); return; }
       const selectedAddons = addonState.getSelected();
+      sessionStorage.setItem('yeonhwajaesil_selected_coupon', couponState.getCode());
       const ok = await addToCart({
         productId: product.id,
         variantId,
@@ -249,6 +253,7 @@
         if (openCartAfter) {
           openModal('cartModal');
           await renderCartModal();
+          await prefillOrderForm();
         }
       }
     }
@@ -260,7 +265,144 @@
     renderReviews(reviews, stats);
   }
 
-  function renderDalbitEditorial(product, stats) {
+  function isDalbitProduct(product) {
+    return ['dalbitwhayansobok', 'dalbitwhayansobok-hanbok'].includes(product.slug);
+  }
+
+  function prepareDalbitNewLayout(product) {
+    if (!isDalbitProduct(product)) return;
+    const main = $('#pdpMain');
+    main.className = 'moon-product';
+    main.innerHTML = `
+      <div class="moon-gallery" aria-label="달빛하얀소복 상품 이미지 갤러리">
+        <div class="moon-gallery__stage">
+          <img id="pdpMainImage" src="" alt="">
+          <span id="pdpGalleryProgress" class="moon-gallery__progress"></span>
+        </div>
+        <div id="pdpThumbs" class="moon-gallery__thumbs"></div>
+      </div>
+      <aside class="moon-buy">
+        <p id="pdpPath" class="moon-buy__path"></p>
+        <h1 id="pdpName" class="moon-buy__name"></h1>
+        <p id="pdpDesc" class="moon-buy__desc"></p>
+        <p id="pdpRating" class="moon-buy__rating"></p>
+        <div id="pdpPrice" class="moon-buy__price"></div>
+        <p id="pdpStockNotice" class="moon-buy__stock"></p>
+        <div id="pdpSizeWrap" class="moon-option" hidden>
+          <div class="moon-option__head"><span>사이즈</span><a href="#moonSizeInfo">사이즈 안내</a></div>
+          <div id="pdpSizeButtons" class="moon-size-buttons"></div>
+        </div>
+        <div id="pdpAddonWrap" class="moon-option" hidden>
+          <span class="moon-option__title">추가 구성품</span>
+          <div id="pdpAddons" class="moon-addons"></div>
+        </div>
+        <div class="moon-qty-row"><span>수량</span><div class="moon-qty"><button id="pdpQtyMinus" type="button" aria-label="수량 줄이기">−</button><span id="pdpQtyValue">1</span><button id="pdpQtyPlus" type="button" aria-label="수량 늘리기">+</button></div></div>
+        <div class="moon-total"><span>총 구매금액</span><strong id="pdpTotalPrice">0원</strong></div>
+        <div class="moon-coupon">
+          <label for="pdpCoupon">쿠폰 적용</label>
+          <select id="pdpCoupon"><option value="">쿠폰을 선택하세요</option></select>
+          <p id="pdpCouponMessage">로그인하면 보유 쿠폰을 확인할 수 있습니다.</p>
+          <div class="moon-coupon__discount"><span>쿠폰 할인</span><strong id="pdpCouponDiscount">-0원</strong></div>
+        </div>
+        <div class="moon-actions"><button id="pdpAddToCartBtn" type="button">장바구니 담기</button><button id="pdpBuyNowBtn" type="button">바로 구매하기</button></div>
+        <div class="moon-buy__links"><a href="#moonCare">소재·관리</a><a href="#pdpPurchaseInfo">배송·교환·반품</a><a href="#pdpReviewsSection">상품 후기</a></div>
+      </aside>`;
+    $('#dalbitEditorial').className = 'moon-detail';
+    $('#pdpPurchaseInfo').className = 'moon-service';
+    $('#pdpReviewsSection').className = 'moon-reviews';
+  }
+
+  function renderDalbitEditorial(product) {
+    if (!isDalbitProduct(product)) return;
+    const section = $('#dalbitEditorial');
+    const base = 'img/상품/달빛하얀소복';
+    const sizeSpecs = (product.product_size_specs || []).slice().sort((a, b) => ['S', 'M', 'L'].indexOf(a.size) - ['S', 'M', 'L'].indexOf(b.size));
+    const sizeRows = (sizeSpecs.length ? sizeSpecs : ['S', 'M', 'L'].map(size => ({ size }))).map(spec => `
+      <tr><th>${spec.size}</th><td>${spec.chest || '확인 중'}</td><td>${spec.waist || '확인 중'}</td><td>${spec.length || '확인 중'}</td><td>${spec.sleeve || '확인 중'}</td></tr>`).join('');
+    section.hidden = false;
+    section.innerHTML = `
+      <nav class="moon-nav" aria-label="상품 상세 메뉴">
+        <a class="is-active" href="#moonStory">상품 설명</a><a href="#moonDetails">디자인·소재</a><a href="#moonWith">구성품</a><a href="#pdpPurchaseInfo">배송 안내</a><a href="#pdpReviewsSection">구매 후기</a>
+      </nav>
+      <section id="moonStory" class="moon-story">
+        <p class="moon-kicker">YEONHWAJAESIL · DALBIT COLLECTION</p>
+        <h2>달빛 아래,<br>가장 순수한 순간</h2>
+        <p>설백색 위로 먹빛 산수가 은은하게 번지는 한 벌.<br>전통의 고요한 선을 오늘의 움직임에 맞게 담았습니다.</p>
+        <img src="${base}/하얀달빛소복01.png" alt="벚꽃 아래 달빛하얀소복을 착용한 모습">
+      </section>
+
+      <section class="moon-benefits">
+        <div class="moon-section-title"><span>WHY DALBIT</span><h3>달빛하얀소복을 선택하는<br>세 가지 이유</h3></div>
+        <div class="moon-benefits__grid">
+          <article><b>01</b><h4>그림처럼 이어지는 산수화</h4><p>치맛단 전체에 번지는 먹빛의 농담이 어느 각도에서도 깊은 인상을 남깁니다.</p></article>
+          <article><b>02</b><h4>빛을 머금은 겹과 결</h4><p>투명하고 가벼운 겹이 움직임에 따라 부드러운 윤곽과 은은한 광택을 만듭니다.</p></article>
+          <article><b>03</b><h4>전통과 일상을 잇는 균형</h4><p>단정한 깃과 편안한 실루엣으로 촬영과 행사 내내 자연스럽게 입을 수 있습니다.</p></article>
+        </div>
+      </section>
+
+      <section class="moon-editorial">
+        <figure><img src="${base}/하얀달빛소복02.png" alt="달빛하얀소복 정면 착용 이미지"><figcaption><span>THE SILHOUETTE</span><strong>가만히 서 있어도<br>선명한 존재감</strong></figcaption></figure>
+        <figure class="is-reverse"><img src="${base}/하얀달빛소복03.png" alt="달빛하얀소복 측면 착용 이미지"><figcaption><span>THE MOVEMENT</span><strong>걸음마다 피어나는<br>고요한 먹빛</strong></figcaption></figure>
+      </section>
+
+      <section id="moonDetails" class="moon-design">
+        <div class="moon-section-title"><span>DESIGN & FABRIC</span><h3>한복의 선을 지키고<br>입는 순간은 더 편안하게</h3><p>단아하게 여민 깃, 자연스럽게 모이는 허리선, 풍성하게 떨어지는 치마의 비율을 세심하게 조율했습니다. 설백색의 투명한 겉감과 먹빛 산수 표현이 겹치며 깊이를 만듭니다.</p></div>
+        <div class="moon-design__views">
+          <figure><img src="${base}/정면.png" alt="달빛하얀소복 정면 상품 이미지"><figcaption>FRONT · 정면</figcaption></figure>
+          <figure><img src="${base}/측면.png" alt="달빛하얀소복 측면 상품 이미지"><figcaption>SIDE · 측면</figcaption></figure>
+        </div>
+        <div class="moon-detail-notes"><article><b>단정한 여밈</b><p>목선을 부드럽게 감싸는 깃과 안정적인 허리 매듭</p></article><article><b>먹빛 산수 표현</b><p>치맛단을 따라 이어지는 섬세한 농담과 꽃 디테일</p></article><article><b>풍성한 실루엣</b><p>몸의 움직임을 따라 자연스럽게 퍼지는 여유로운 치마폭</p></article></div>
+        <div class="moon-closeup">
+          <div class="moon-section-title"><span>SMALL DETAILS</span><h3>작은 디테일까지<br>세심하게</h3></div>
+          <div class="moon-closeup__grid">
+            <figure><img src="${base}/하얀달빛소복02.png" alt="달빛하얀소복 깃과 허리선 디테일"><figcaption><b>단정한 깃과 허리선</b><span>겹쳐지는 선과 매듭의 균형을 확인해 주세요.</span></figcaption></figure>
+            <figure><img src="${base}/정면.png" alt="달빛하얀소복 치맛단 산수화 디테일"><figcaption><b>먹빛 산수화 치맛단</b><span>설백색 위로 번지는 먹빛의 농담을 담았습니다.</span></figcaption></figure>
+            <figure><img src="${base}/측면.png" alt="달빛하얀소복 소매와 측면 실루엣"><figcaption><b>가볍게 흐르는 소매</b><span>움직임에 따라 부드럽게 이어지는 실루엣입니다.</span></figcaption></figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="moonWith" class="moon-with">
+        <div class="moon-section-title"><span>WITH ITEMS</span><h3>달빛의 차림을<br>완성하는 구성</h3><p>아래 이미지는 함께 선택할 수 있는 추가 상품입니다. 실제 선택 가능 여부와 가격은 상단 구매 영역에서 확인해 주세요.</p></div>
+        <div class="moon-with__accessories">
+          <figure><img src="${base}/하얀달빛소복 악세사리 비녀.png" alt="달빛하얀소복 비녀"><figcaption>비녀</figcaption></figure>
+          <figure><img src="${base}/하얀달빛소복 악세사리 노리개.png" alt="달빛하얀소복 노리개"><figcaption>노리개</figcaption></figure>
+          <figure><img src="${base}/하얀달빛소복 악세사리 꽃신.png" alt="달빛하얀소복 꽃신"><figcaption>꽃신 · S 220 / M 230 / L 240</figcaption></figure>
+        </div>
+      </section>
+
+      <section class="moon-choice">
+        <div class="moon-section-title"><span>COLOR · OPTION · SIZE</span><h3>컬러, 옵션 &amp; 사이즈</h3></div>
+        <div class="moon-choice__color"><div class="moon-choice__swatches"><i class="is-white"></i><i class="is-ink"></i></div><div><b>COLOR</b><p>설백색 · 먹색</p><small>모니터 환경에 따라 실제 색상이 다르게 보일 수 있습니다.</small></div></div>
+        <div class="moon-choice__options">
+          <figure><img src="${base}/하얀달빛소복 악세사리 비녀.png" alt="추가 옵션 비녀"><figcaption>비녀</figcaption></figure>
+          <figure><img src="${base}/하얀달빛소복 악세사리 노리개.png" alt="추가 옵션 노리개"><figcaption>노리개</figcaption></figure>
+          <figure><img src="${base}/하얀달빛소복 악세사리 꽃신.png" alt="추가 옵션 꽃신"><figcaption>꽃신</figcaption></figure>
+        </div>
+        <div class="moon-choice__sizes"><b>SIZE</b><div><span>S</span><span>M</span><span>L</span></div><a href="#pdpMain">상단에서 사이즈 선택하기 ↑</a></div>
+      </section>
+
+      <section id="moonSizeInfo" class="moon-spec">
+        <div class="moon-section-title"><span>PRODUCT INFORMATION</span><h3>구매 전<br>꼭 확인하세요</h3></div>
+        <div class="moon-spec__layout">
+          <figure><img src="${base}/정면.png" alt="달빛하얀소복 정면 제품 정보 이미지"><figcaption>실제 정보는 판매 옵션에서 확인해 주세요.</figcaption></figure>
+          <dl><div><dt>브랜드명</dt><dd>연화재실</dd></div><div><dt>제품명</dt><dd>달빛하얀소복</dd></div><div><dt>색상</dt><dd>설백색 · 먹색</dd></div><div><dt>소재</dt><dd>${product.product_care && product.product_care.material ? product.product_care.material : '폴리에스터 혼방'}</dd></div><div><dt>구성</dt><dd>저고리 · 치마 · 노리개</dd></div><div><dt>사이즈</dt><dd>S · M · L</dd></div></dl>
+        </div>
+        <div class="moon-size-chart">
+          <div class="moon-size-chart__visual"><img src="${base}/측면.png" alt="달빛하얀소복 실측 참고 이미지"><span>실측 위치 참고</span></div>
+          <div class="moon-size-chart__table"><h4>정확한 사이즈</h4><p>단위: cm</p><table><thead><tr><th>사이즈</th><th>가슴</th><th>허리</th><th>총장</th><th>소매</th></tr></thead><tbody>${sizeRows}</tbody></table></div>
+        </div>
+        <p class="moon-spec__notice">제품 정보에 제공되지 않은 소재 및 실측 수치는 임의로 표기하지 않았습니다.</p>
+        <small class="moon-spec__footnote">측정 위치와 방법에 따라 약간의 오차가 있을 수 있습니다.</small>
+      </section>
+
+      <section id="moonCare" class="moon-care">
+        <div class="moon-section-title"><span>CARE GUIDE</span><h3>오래도록 아름답게</h3></div>
+        <ol><li><b>01</b><span>전문 드라이클리닝을 권장합니다.</span></li><li><b>02</b><span>자수와 얇은 원단이 거친 표면에 닿지 않도록 주의해 주세요.</span></li><li><b>03</b><span>착용 후 통풍이 잘되는 그늘에서 충분히 말린 뒤 걸어 보관해 주세요.</span></li></ol>
+      </section>`;
+  }
+
+  function renderDalbitEditorialLegacy(product, stats) {
     if (!['dalbitwhayansobok', 'dalbitwhayansobok-hanbok'].includes(product.slug)) return;
 
     const section = $('#dalbitEditorial');
@@ -492,11 +634,45 @@
   }
 
   function renderGallery(product) {
-    const images = (product.product_images || []).slice().sort((a, b) => a.sort_order - b.sort_order);
+    const dalbitFiles = [
+      '하얀달빛소복01.png', '하얀달빛소복02.png', '하얀달빛소복03.png', '정면.png', '측면.png',
+      '하얀달빛소복 악세사리 비녀.png', '하얀달빛소복 악세사리 노리개.png', '하얀달빛소복 악세사리 꽃신.png'
+    ];
+    const images = isDalbitProduct(product)
+      ? dalbitFiles.map((file, index) => ({ image_url: `img/상품/달빛하얀소복/${file}`, sort_order: index + 1, alt_text: `${product.name} 상품 이미지 ${index + 1}` }))
+      : (product.product_images || []).slice().sort((a, b) => a.sort_order - b.sort_order);
     const mainImg = $('#pdpMainImage');
     const thumbs = $('#pdpThumbs');
     const progress = $('#pdpGalleryProgress');
     thumbs.innerHTML = '';
+
+    function syncGalleryHeight() {
+      if (!isDalbitProduct(product)) return;
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        thumbs.style.height = 'auto';
+        const mobileStage = mainImg.closest('.moon-gallery__stage');
+        if (mobileStage) mobileStage.style.height = 'auto';
+        return;
+      }
+      const stage = mainImg.closest('.moon-gallery__stage');
+      const buy = document.querySelector('.moon-buy');
+      const actions = document.querySelector('.moon-actions');
+      if (!stage || !buy || !actions) return;
+      const targetHeight = Math.ceil(actions.getBoundingClientRect().bottom - buy.getBoundingClientRect().top);
+      if (targetHeight > 0) {
+        stage.style.height = `${targetHeight}px`;
+        thumbs.style.height = `${targetHeight}px`;
+      }
+    }
+    mainImg.addEventListener('load', () => requestAnimationFrame(syncGalleryHeight));
+    window.addEventListener('resize', syncGalleryHeight);
+    if ('ResizeObserver' in window) {
+      const purchaseResizeObserver = new ResizeObserver(() => requestAnimationFrame(syncGalleryHeight));
+      requestAnimationFrame(() => {
+        const buy = document.querySelector('.moon-buy');
+        if (buy) purchaseResizeObserver.observe(buy);
+      });
+    }
 
     if (!images.length) { mainImg.alt = product.name; return; }
 
@@ -505,6 +681,7 @@
       mainImg.alt = images[idx].alt_text || product.name;
       progress.textContent = `[${idx + 1}/${images.length}]`;
       $all('img', thumbs).forEach((t, i) => t.classList.toggle('is-active', i === idx));
+      if (mainImg.complete) requestAnimationFrame(syncGalleryHeight);
     }
 
     images.forEach((img, i) => {
@@ -520,7 +697,24 @@
   function renderInfo(product, stats) {
     $('#pdpName').textContent = product.name;
     $('#pdpDesc').textContent = product.description || product.short_description || '';
-    $('#pdpPrice').textContent = formatWon(product.sale_price);
+    const price = $('#pdpPrice');
+    const regular = Number(product.regular_price || product.sale_price || 0);
+    const sale = Number(product.sale_price || regular);
+    const discount = regular > sale ? Math.round((1 - sale / regular) * 100) : Number(product.discount_rate || 0);
+    if (isDalbitProduct(product)) {
+      price.innerHTML = discount > 0
+        ? `<span class="moon-buy__sale-label">SALE</span><span class="moon-buy__discount">${discount}%</span><strong>${formatWon(sale)}</strong><del aria-label="원가">${formatWon(regular)}</del>`
+        : `<span class="moon-buy__sale-label">정상가</span><span class="moon-buy__discount">0%</span><strong>${formatWon(sale)}</strong><span class="moon-buy__regular">원가 ${formatWon(regular)}</span>`;
+      const variants = product.product_variants || [];
+      const totalStock = variants.reduce((sum, variant) => sum + Number(variant.stock_quantity || 0), 0);
+      const stock = $('#pdpStockNotice');
+      if (stock) {
+        stock.textContent = totalStock > 0 ? `재고 있음 · 지금 주문 가능` : '품절 · 재입고 알림을 신청해 주세요';
+        stock.classList.toggle('is-soldout', totalStock <= 0);
+      }
+    } else {
+      price.textContent = formatWon(sale);
+    }
     if (stats && stats.review_count > 0) {
       $('#pdpRating').textContent = `★ ${stats.average_rating} (${stats.review_count})`;
     } else {
@@ -618,10 +812,62 @@
     return state;
   }
 
-  function updateTotal(product, sizeState, addonState, qtyState) {
+  function renderPdpCoupon() {
+    const select = $('#pdpCoupon');
+    const message = $('#pdpCouponMessage');
+    const state = {
+      onChange: null,
+      getCode: () => select ? select.value : '',
+      getDiscount: subtotal => {
+        const option = select && select.selectedOptions ? select.selectedOptions[0] : null;
+        if (!option || !option.value) return 0;
+        if (subtotal < Number(option.dataset.minOrder || 0)) return 0;
+        const value = Number(option.dataset.discountValue || 0);
+        let discount = option.dataset.discountType === 'percent' ? Math.floor(subtotal * value / 100) : value;
+        const maximum = Number(option.dataset.maxDiscount || 0);
+        if (maximum > 0) discount = Math.min(discount, maximum);
+        return Math.min(discount, subtotal);
+      },
+    };
+    if (!select || !supabaseClient) return state;
+    select.addEventListener('change', () => {
+      sessionStorage.setItem('yeonhwajaesil_selected_coupon', select.value);
+      if (state.onChange) state.onChange();
+    });
+    (async () => {
+      const session = await getCurrentSession();
+      if (!session) { select.disabled = true; return; }
+      const { data, error: couponError } = await supabaseClient.from('user_coupons')
+        .select('id, coupons ( code, name, discount_type, discount_value, min_order_amount, max_discount_amount, ends_at )')
+        .eq('user_id', session.user.id).eq('status', 'issued');
+      if (couponError) { message.textContent = '쿠폰 정보를 불러오지 못했습니다.'; return; }
+      (data || []).forEach(row => {
+        const coupon = row.coupons;
+        if (!coupon || (coupon.ends_at && new Date(coupon.ends_at) < new Date())) return;
+        const option = document.createElement('option');
+        option.value = coupon.code;
+        option.textContent = `${coupon.name} · ${coupon.discount_type === 'percent' ? coupon.discount_value + '%' : formatWon(coupon.discount_value)} 할인`;
+        option.dataset.discountType = coupon.discount_type;
+        option.dataset.discountValue = coupon.discount_value;
+        option.dataset.minOrder = coupon.min_order_amount || 0;
+        option.dataset.maxDiscount = coupon.max_discount_amount || 0;
+        select.appendChild(option);
+      });
+      select.disabled = false;
+      const saved = sessionStorage.getItem('yeonhwajaesil_selected_coupon') || '';
+      if ([...select.options].some(option => option.value === saved)) select.value = saved;
+      message.textContent = select.options.length > 1 ? '쿠폰을 선택하면 할인금액이 바로 반영됩니다.' : '현재 사용 가능한 쿠폰이 없습니다.';
+      if (state.onChange) state.onChange();
+    })();
+    return state;
+  }
+
+  function updateTotal(product, sizeState, addonState, qtyState, couponState) {
     const addonUnitSum = addonState.getSelected().reduce((s, a) => s + a.price, 0);
-    const total = (product.sale_price + addonUnitSum) * qtyState.getQty();
-    $('#pdpTotalPrice').textContent = formatWon(total);
+    const subtotal = (product.sale_price + addonUnitSum) * qtyState.getQty();
+    const discount = couponState ? couponState.getDiscount(subtotal) : 0;
+    if ($('#pdpCouponDiscount')) $('#pdpCouponDiscount').textContent = '-' + formatWon(discount);
+    $('#pdpTotalPrice').textContent = formatWon(Math.max(subtotal - discount, 0));
   }
 
   function renderTabs(product) {

@@ -287,7 +287,9 @@ window.ShopCommon = (function () {
         option.dataset.maxDiscount = row.coupons.max_discount_amount || 0;
         couponSelect.appendChild(option);
       });
-      if ([...couponSelect.options].some(option => option.value === previousCoupon)) couponSelect.value = previousCoupon;
+      const savedCoupon = sessionStorage.getItem('yeonhwajaesil_selected_coupon') || '';
+      const requestedCoupon = previousCoupon || savedCoupon;
+      if ([...couponSelect.options].some(option => option.value === requestedCoupon)) couponSelect.value = requestedCoupon;
       updateCartTotals(cartTotals.product, cartTotals.addon, cartTotals.qty);
     }
   }
@@ -308,7 +310,10 @@ window.ShopCommon = (function () {
       selectedCartIds = new Set(e.target.checked ? $all('.cart-item', $('#cartItems')).map(row => row.dataset.itemId).filter(Boolean) : []);
       refreshSelectedCartTotals();
     });
-    if ($('#orderCoupon')) $('#orderCoupon').addEventListener('change', () => updateCartTotals(cartTotals.product, cartTotals.addon, cartTotals.qty));
+    if ($('#orderCoupon')) $('#orderCoupon').addEventListener('change', event => {
+      sessionStorage.setItem('yeonhwajaesil_selected_coupon', event.target.value);
+      updateCartTotals(cartTotals.product, cartTotals.addon, cartTotals.qty);
+    });
     if ($('#cartDeleteSelected')) $('#cartDeleteSelected').addEventListener('click', async () => {
       const ids = $all('.cart-item', $('#cartItems')).filter(row => row.querySelector('.cart-item__check')?.checked).map(row => row.dataset.itemId);
       if (!ids.length) { showToast('삭제할 상품을 선택해주세요.'); return; }

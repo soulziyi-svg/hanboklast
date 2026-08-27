@@ -38,24 +38,34 @@
   async function loadClaims(){const {data}=await db.from('order_claims').select('id,claim_type,reason,status,requested_at,orders(order_number)').eq('user_id',session.user.id).order('requested_at',{ascending:false});$('#claimList').innerHTML=(data||[]).map(x=>`<div class="my-card"><b>${x.orders?.order_number||''} · ${x.claim_type}</b><p>${x.reason||''}</p><span class="status">${x.status}</span></div>`).join('')||'<p class="empty">접수된 요청이 없습니다.</p>';}
   async function loadCoupons(){const {data}=await db.from('user_coupons').select('status,issued_at,used_at,coupons(code,name,discount_type,discount_value,min_order_amount,ends_at)').eq('user_id',session.user.id);$('#couponList').innerHTML=(data||[]).map(x=>`<div class="coupon-card"><b>${x.coupons?.name||''}</b><p>${x.coupons?.code||''} · ${x.coupons?.discount_type==='percent'?x.coupons.discount_value+'%':Number(x.coupons?.discount_value||0).toLocaleString()+'원'} 할인</p><small>최소 주문금액 ${Number(x.coupons?.min_order_amount||0).toLocaleString()}원 · ${x.status}</small></div>`).join('')||'<p class="empty">보유 쿠폰이 없습니다.</p>';}
   function loadViewed(){const list=JSON.parse(localStorage.getItem('yeonhwajaesil_viewed')||'[]');$('#viewedList').innerHTML=list.map(x=>`<a class="viewed-card" href="product.html?slug=${encodeURIComponent(x.slug)}"><img src="${x.image}" alt=""><b>${x.name}</b></a>`).join('')||'<p class="empty">최근 본 상품이 없습니다.</p>';}
-  let reviewFiles=[];
+  let reviewFiles=[],reviewPreviewUrls=[];
   function renderReviewPreview(){
+    reviewPreviewUrls.forEach(url=>URL.revokeObjectURL(url));reviewPreviewUrls=[];
     const preview=$('#reviewPreview');preview.innerHTML='';
     if(!reviewFiles.length){preview.innerHTML='<p>첨부한 파일이 여기에 표시됩니다.</p>';return;}
     reviewFiles.forEach((file,index)=>{
       const item=document.createElement('div');item.className='review-preview__item';
-      const url=URL.createObjectURL(file);
+      const url=URL.createObjectURL(file);reviewPreviewUrls.push(url);
       item.innerHTML=file.type.startsWith('video/')?`<video src="${url}" controls muted></video>`:`<img src="${url}" alt="후기 첨부 미리보기">`;
       const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.setAttribute('aria-label','첨부 파일 삭제');
-      remove.onclick=()=>{URL.revokeObjectURL(url);reviewFiles.splice(index,1);renderReviewPreview();};
+      remove.onclick=()=>{reviewFiles.splice(index,1);renderReviewPreview();};
       item.appendChild(remove);preview.appendChild(item);
     });
   }
-  $('#reviewFiles').onchange=e=>{
-    const files=[...e.target.files];
-    if(files.some(file=>file.size>20*1024*1024)){showToast('파일당 최대 용량은 20MB입니다.');e.target.value='';return;}
-    reviewFiles=[...reviewFiles,...files].slice(0,5);e.target.value='';renderReviewPreview();
-  };
+  function addReviewFiles(fileList){
+    const files=[...fileList].filter(file=>file.type.startsWith('image/')||file.type.startsWith('video/'));
+    if(!files.length){showToast('이미지 또는 영상 파일만 첨부할 수 있습니다.');return;}
+    if(files.some(file=>file.size>20*1024*1024)){showToast('파일당 최대 용량은 20MB입니다.');return;}
+    const existing=new Set(reviewFiles.map(file=>`${file.name}-${file.size}-${file.lastModified}`));
+    reviewFiles=[...reviewFiles,...files.filter(file=>!existing.has(`${file.name}-${file.size}-${file.lastModified}`))].slice(0,5);
+    renderReviewPreview();
+  }
+  $('#reviewFiles').addEventListener('change',e=>{addReviewFiles(e.target.files);e.target.value='';});
+  const reviewDropzone=$('#reviewDropzone');
+  reviewDropzone.addEventListener('click',()=>$('#reviewFiles').click());
+  ['dragenter','dragover'].forEach(type=>reviewDropzone.addEventListener(type,e=>{e.preventDefault();reviewDropzone.classList.add('is-dragging');}));
+  ['dragleave','drop'].forEach(type=>reviewDropzone.addEventListener(type,e=>{e.preventDefault();reviewDropzone.classList.remove('is-dragging');}));
+  reviewDropzone.addEventListener('drop',e=>addReviewFiles(e.dataTransfer.files));
   $('#reviewForm').onsubmit=async e=>{
     e.preventDefault();
     const submit=$('#reviewSubmitBtn');submit.disabled=true;submit.textContent='등록 중...';
@@ -63,17 +73,19 @@
     if(!productId||!orderItemId){showToast('구매 상품 정보를 찾지 못했습니다. 주문 내역에서 다시 시도해주세요.');submit.disabled=false;submit.textContent='후기 등록';return;}
     const {data:review,error}=await db.from('reviews').insert({user_id:session.user.id,product_id:productId,order_item_id:orderItemId,nickname:profile?.name||'구매자',rating:Number($('#reviewRating').value),content:$('#reviewContent').value.trim()}).select('id').single();
     if(error){showToast(error.message);submit.disabled=false;submit.textContent='후기 등록';return;}
-    const mediaRows=[];
+    const mediaRows=[],uploadedPaths=[],uploadErrors=[];
     for(const [index,file] of reviewFiles.entries()){
       const extension=(file.name.split('.').pop()||'bin').replace(/[^a-zA-Z0-9]/g,'');
       const path=`${session.user.id}/${review.id}/${crypto.randomUUID()}.${extension}`;
       const {error:uploadError}=await db.storage.from('review-images').upload(path,file,{contentType:file.type,upsert:false});
-      if(uploadError)continue;
+      if(uploadError){uploadErrors.push(uploadError.message);continue;}
+      uploadedPaths.push(path);
       const {data:publicData}=db.storage.from('review-images').getPublicUrl(path);
       mediaRows.push({review_id:review.id,image_url:publicData.publicUrl,alt_text:file.type.startsWith('video/')?'후기 영상':`후기 이미지 ${index+1}`,sort_order:index});
     }
-    if(mediaRows.length)await db.from('review_images').insert(mediaRows);
-    closeModal('reviewModal');showToast(reviewFiles.length&&mediaRows.length<reviewFiles.length?'후기는 등록됐지만 일부 파일 업로드에 실패했습니다.':'후기가 등록되었습니다.');
+    if(reviewFiles.length&&!mediaRows.length){await db.from('reviews').delete().eq('id',review.id);showToast(`첨부 파일 저장에 실패했습니다. ${uploadErrors[0]||'저장소 권한을 확인해주세요.'}`,5000);submit.disabled=false;submit.textContent='후기 등록';return;}
+    if(mediaRows.length){const {error:mediaError}=await db.from('review_images').insert(mediaRows);if(mediaError){if(uploadedPaths.length)await db.storage.from('review-images').remove(uploadedPaths);await db.from('reviews').delete().eq('id',review.id);showToast('첨부 파일 연결에 실패했습니다. 다시 시도해주세요.',5000);submit.disabled=false;submit.textContent='후기 등록';return;}}
+    closeModal('reviewModal');showToast(uploadErrors.length?'후기가 등록됐지만 일부 파일은 첨부되지 않았습니다.':'후기가 등록되었습니다.');
     reviewFiles=[];renderReviewPreview();e.target.reset();submit.disabled=false;submit.textContent='후기 등록';
   };
   $('#inquiryForm').onsubmit=async e=>{e.preventDefault();const submit=e.submitter;submit.disabled=true;submit.textContent='등록 중...';const {error}=await db.from('inquiries').insert({user_id:session.user.id,name:profile?.name||profile?.email||'회원',phone:profile?.phone||null,email:profile?.email||session.user.email,inquiry_type:$('#inquiryType').value,title:$('#inquiryTitle').value.trim(),content:$('#inquiryContent').value.trim()});submit.disabled=false;submit.textContent='문의 등록';if(error)showToast(error.message);else{showToast('문의가 등록되었습니다. 관리자가 확인 후 답변드립니다.');e.target.reset();}};
