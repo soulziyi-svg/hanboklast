@@ -66,8 +66,60 @@
 [캐시버스팅]
 - 다수의 HTML에서 css/js 링크의 ?v= 쿼리스트링 버전을 갱신 (예: style.css?v=20260827-header-white-outline, product.js?v=20260827-flower-shoe-sizes 등)
 
-[Supabase DB 마이그레이션 - 아직 미적용]
-- supabase/migrations/20260827010000_flowershoes_sizes.sql
-- supabase/migrations/20260827011000_customer_order_actions.sql
-- supabase/migrations/20260827012000_welcome_coupon_reliable.sql
-→ list_migrations로 확인한 결과 위 3건은 로컬 파일로만 존재하고 Supabase 프로젝트(ziyi)에는 아직 적용되지 않았습니다. 적용 전까지는 꽃신 사이즈/구매확정/쿠폰 자동발급 기능이 DB에서 동작하지 않습니다.
+=========================================
+연화재실 사이트 수정 내역 (2026-08-28 추가분)
+=========================================
+※ 8/27 정리 이후 세션 밖에서 커밋된 4건(368e17f, de866f5, b3f04bc, 8b1d67f) + 현재 세션에서 새로 발견한 auth.html/css 미세조정을 git log/diff로 확인해 정리했습니다.
+
+[로그인 · 회원가입을 별도 페이지로 전환]
+- 기존엔 index.html/product.html 안에 로그인·회원가입 모달이 있었는데, 이를 제거하고 전용 페이지 auth.html(+js/auth.js, css/auth.css) 신규 생성
+- 로그인/회원가입/아이디찾기 3개 탭 구성, 새 창(target=_blank)으로 열림 → 로그인 성공 시 opener 창을 자동 새로고침 후 팝업 닫힘
+- "테스트용 아이디/비밀번호(test/1234)" 안내 박스 추가 — 실제로는 test.yeonhwajaesil@gmail.com 계정으로 매핑
+- 아이디 찾기: 이름+연락처 일치 시 마스킹된 이메일 반환(find_member_email RPC)
+- 회원가입 시 profiles.name/phone이 항상 채워지도록 handle_new_user 트리거 보강(이메일 인증이 필요한 가입도 커버)
+- shop-common.js: 장바구니/헤더의 로그인 버튼이 모달 대신 auth.html 새 창을 열도록 변경(openAuthWindow)
+
+[장바구니 - 선택구매 / 전체구매 분리]
+- 장바구니 하단 버튼을 "선택상품 구매" / "전체상품 구매" 2개로 분리
+- DB에 create_selected_order RPC 신규 추가: 체크한 항목만 임시 장바구니로 옮겨 주문 처리 후 나머지는 원래 장바구니에 그대로 유지(미선택 상품이 사라지지 않음)
+- 장바구니 합계 계산이 이제 "선택된 항목"만 반영하도록 수정(기존엔 전체 합계였음)
+
+[관리자 - 쿠폰 발급 기능]
+- 쿠폰관리 탭에 "발급" 버튼 추가: 활성 회원 전체 또는 특정 회원 1명을 선택해 쿠폰 즉시 발급
+- 쿠폰 목록에 "발급 인원" 컬럼 추가
+- DB admin_issue_coupon RPC 신규 추가(관리자 권한 체크, 중복발급 방지)
+
+[달빛하얀소복 상세페이지 전면 리디자인]
+- css/dalbit-new.css 신규(약 300줄) — "moon-*" 접두사의 완전히 새로운 PDP 레이아웃(갤러리+구매영역 2단 구성)
+- 상품 설명/디자인·소재/구성품/사이즈 안내/관리방법을 섹션별 앵커 내비게이션으로 구성, 실측 사이즈 표(S/M/L, 가슴/허리/총장/소매) 포함
+- PDP 자체에 쿠폰 선택 드롭다운 추가 → 실시간으로 총 결제금액에 할인 반영(장바구니와 별개 로직), 로그인 상태 변경 시 쿠폰 목록 자동 새로고침
+- 화면 우측 하단 "TOP" 버튼 추가(스크롤 500px 이상 시 노출)
+- 갤러리 영역 높이를 구매영역(moon-buy) 높이에 자동으로 맞추는 로직 추가(ResizeObserver)
+- 이 레이아웃은 달빛하얀소복 상품(slug: dalbitwhayansobok, dalbitwhayansobok-hanbok)에만 적용되고 다른 상품은 기존 PDP 그대로 사용
+
+[리뷰 첨부파일 저장소 안정화 - DB]
+- review-images 스토리지 버킷 설정을 재확정(public read, 20MB 제한, 이미지/mp4/webm/mov 허용), RLS 정책(본인 폴더에만 업로드/삭제) 재적용
+- 마이페이지 리뷰 업로드 UI를 label→button+드래그앤드롭(dragover/drop) 지원으로 변경, 클릭 접근성 개선
+- 업로드/DB저장 중 하나라도 실패하면 리뷰 자체를 롤백(삭제)하도록 에러 처리 보강 — 기존엔 일부 실패해도 리뷰만 남는 문제가 있었음
+
+[홈페이지 메인배너 단순화]
+- 3개 슬라이드(001/002/003.mp4, 좌우화살표+프로그레스바)를 단일 풀스크린 배너(0829.mp4, main-banner--single)로 축소
+- 배너 문구 "한국의 아름다움을 입다 / 다양한 나만의 맞춤 굿즈 제작" 고정 표시(banner-copy--fixed)
+
+[기타 UI 수정]
+- 홈 후기 섹션에도 첨부 이미지/영상이 노출되도록 review_images 조인 추가(기존엔 PDP에만 노출)
+- 푸터 GUIDE/CUSTOMER 링크를 실제 페이지(마이페이지, 사이즈가이드, 배송·교환·반품, 세탁방법)로 연결(기존엔 텍스트만 있고 링크 없었음)
+- 햄버거 메뉴 구조를 아코디언(4열)에서 9열 그룹 레이아웃으로 변경, 컬렉션명 클릭 시 해당 컬렉션 상품페이지로 바로 이동하도록 개선
+- 상세페이지 뒤로가기 화살표 크기 조정
+- (현재 세션 시점 미커밋 상태였던 변경) auth.html/css/auth.css: 회원가입·로그인 창이 스크롤 없이 뷰포트에 맞게 보이도록 높이를 100vh 고정에서 스크롤 가능한 자연 높이로 조정(overflow-y:auto, clamp() 기반 여백/폰트 축소)
+
+[Supabase DB 마이그레이션 - 8/28 적용 확인]
+- 20260827013000_review_media_upload_fix
+- 20260828090000_selected_cart_checkout
+- 20260828091000_admin_coupon_issue
+- 20260828092000_find_member_email
+- 20260828093000_seed_test_member (test.yeonhwajaesil@gmail.com 화면검수용 계정 시드)
+→ list_migrations로 확인 결과 위 5건은 이미 Supabase 프로젝트(ziyi)에 적용되어 있어 이번 세션에서 별도로 적용할 필요는 없었습니다.
+
+[참고: 8/27 마이그레이션 3건은 2026-08-27 세션에서 이미 Supabase에 적용 완료]
+- flowershoes_sizes / customer_order_actions / welcome_coupon_reliable
