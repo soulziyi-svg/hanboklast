@@ -2,7 +2,7 @@
 :root { --moon-red:#b51f2e; --moon-ink:#171717; --moon-gray:#6f6c68; --moon-line:#dedbd6; --moon-paper:#f7f5f1; }
 .pdp:has(.moon-product) { max-width:none; padding:140px 0 0; background:#fff; color:var(--moon-ink); }
 body:has(.moon-product) .header { background:#fff; opacity:1; border-bottom:1px solid rgba(23,23,23,.1); box-shadow:0 4px 18px rgba(23,23,23,.04); }
-body:has(.moon-product) .header>.hamburger { display:grid; place-items:center; width:64px; height:64px; padding:0; font-size:48px; font-weight:400; line-height:1; }
+body:has(.moon-product) .header>.hamburger { display:grid; place-items:center; width:52px; height:52px; padding:0; font-size:30px; font-weight:400; line-height:1; }
 .pdp:has(.moon-product) .pdp-breadcrumb { max-width:1440px; margin:0 auto; padding:26px 40px 12px; color:#8b8883; font-size:12px; }
 .moon-product { display:grid; grid-template-columns:minmax(0,48fr) minmax(460px,52fr); gap:46px; max-width:1440px; margin:0 auto; padding:28px 40px 110px; align-items:start; }
 .moon-gallery__stage { position:relative; display:grid; place-items:center; min-height:720px; background:#fff; overflow:hidden; }
