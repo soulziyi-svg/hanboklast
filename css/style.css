@@ -422,11 +422,14 @@ a{color:inherit;text-decoration:none;}
 
 /* ---------- 연화재실 이야기 챗봇 ---------- */
 #chatbotPanel.chatbot-window{
-  top:50%;left:50%;right:auto;width:min(980px,94vw);height:min(720px,90vh);
-  min-width:0;transform:translate(-50%,-50%);resize:both;overflow:hidden;
-  border:2px solid #7c3446;border-radius:34px;background:#fbf2e8;
+  top:100px;left:auto;right:0;bottom:auto;width:600px;height:auto;max-height:calc(100vh - 120px);
+  min-width:340px;max-width:94vw;transform:none;resize:none;overflow:hidden;
+  border:2px solid #7c3446;border-right:0;border-radius:28px 0 0 28px;background:#fbf2e8;
   box-shadow:0 24px 70px rgba(62,18,31,.32);color:#3c2428;
 }
+.chatbot-resize-handle{position:absolute;z-index:20;top:0;bottom:0;left:0;width:10px;cursor:ew-resize;background:transparent;touch-action:none;}
+.chatbot-resize-handle::after{content:"";position:absolute;top:50%;left:2px;width:4px;height:72px;transform:translateY(-50%);border-radius:5px;background:#c69170;box-shadow:0 0 0 1px rgba(255,255,255,.7);}
+.chatbot-window.is-resizing{user-select:none;transition:none;}
 .chatbot-head{
   min-height:150px;display:grid;grid-template-columns:110px 1fr auto;align-items:center;gap:22px;
   padding:18px 34px;background:linear-gradient(135deg,#4d1d2b,#7d3044);color:#fff;
@@ -439,11 +442,13 @@ a{color:inherit;text-decoration:none;}
 .chatbot-head p{margin:0;font-size:17px;color:#f9ece8;}
 .chatbot-head__actions{display:flex;gap:14px;z-index:1;}
 .chatbot-head__actions button{width:46px;height:46px;color:#fff;font-size:36px;line-height:1;background:transparent;}
-.chat-keywords{order:3;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 28px;background:rgba(255,249,242,.94);}
-.chat-keywords button{min-height:48px;border:1px solid #d9b99b;border-radius:12px;padding:8px 14px;background:#fffaf5;color:#6d3040;font-size:14px;box-shadow:0 3px 8px rgba(91,44,52,.07);}
+.chatbot-head__actions .chatbot-close{width:auto;min-width:88px;padding:0 14px;border:2px solid #fff;border-radius:10px;background:#a53e57;font-size:15px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.18);}
+.chatbot-head__actions .chatbot-close:hover{background:#fff;color:#7d3044;}
+.chat-keywords{order:3;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(145px,1fr);grid-template-columns:none;gap:8px;padding:10px 28px;background:rgba(255,249,242,.94);overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;}
+.chat-keywords button{min-height:42px;white-space:nowrap;border:1px solid #d9b99b;border-radius:12px;padding:7px 12px;background:#fffaf5;color:#6d3040;font-size:13px;box-shadow:0 3px 8px rgba(91,44,52,.07);}
 .chat-keywords button:hover{background:#7b3044;color:#fff;border-color:#7b3044;}
 #chatbotPanel .chat-messages{
-  order:2;padding:24px 54px;gap:18px;background:
+  order:2;min-height:280px;padding:24px 54px;gap:18px;background:
   radial-gradient(circle at 8% 18%,rgba(224,153,160,.18),transparent 22%),
   radial-gradient(circle at 92% 72%,rgba(213,171,126,.17),transparent 24%),#fbf2e8;
 }
@@ -498,16 +503,19 @@ a{color:inherit;text-decoration:none;}
 /* ---------- 반응형 ---------- */
 @media (max-width:900px){
   .coverflow{height:clamp(320px,100vw,450px);}
-  #chatbotPanel.chatbot-window{width:96vw;height:88vh;border-radius:22px;resize:none;}
+  #chatbotPanel.chatbot-window{top:100px;width:96vw;height:auto;max-height:calc(100vh - 112px);border-radius:22px 0 0 22px;}
+  .chatbot-resize-handle{display:none;}
   .chatbot-head{min-height:112px;grid-template-columns:68px 1fr auto;gap:12px;padding:14px 16px;}
   .chatbot-head>img{width:66px;height:66px;}
   .chatbot-head h2{font-size:23px;}.chatbot-head p{font-size:13px;}
   .chatbot-head__actions{gap:4px;}.chatbot-head__actions button{width:34px;height:38px;font-size:28px;}
+  .chatbot-head__actions .chatbot-close{min-width:68px;padding:0 8px;font-size:12px;}
   #chatbotPanel .chat-messages{padding:18px 18px;}
   #chatbotPanel .chat-bubble{max-width:82%;font-size:14px;}
   #chatbotPanel .chat-bubble--bot{margin-left:46px;}
   #chatbotPanel .chat-bubble--bot::before{left:-45px;width:35px;height:35px;}
-  .chat-keywords{grid-template-columns:repeat(2,1fr);padding:10px 16px;}
+  .chat-keywords{grid-template-columns:none;grid-auto-columns:135px;padding:8px 16px;}
+  #chatbotPanel .chat-messages{min-height:300px;}
   #chatbotPanel .chat-input-row{margin:0 16px 8px;}
   .brand-story__content{padding:36px 20px;}
   .brand-story__layout{grid-template-columns:1fr;gap:24px;}

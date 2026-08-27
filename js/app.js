@@ -480,6 +480,37 @@
 
   /* ---------------- 챗봇 (chatbot_keywords DB + GPT Edge Function) ---------------- */
   (async function chatbot() {
+    const chatbotPanel = $('#chatbotPanel');
+    const resizeHandle = $('#chatbotResizeHandle');
+    const clampChatbotWidth = width => Math.max(340, Math.min(width, Math.min(900, window.innerWidth * 0.94)));
+    let resizeStartX = 0;
+    let resizeStartWidth = 600;
+
+    resizeHandle.addEventListener('pointerdown', e => {
+      if (window.innerWidth <= 900) return;
+      resizeStartX = e.clientX;
+      resizeStartWidth = chatbotPanel.getBoundingClientRect().width;
+      chatbotPanel.classList.add('is-resizing');
+      resizeHandle.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    resizeHandle.addEventListener('pointermove', e => {
+      if (!chatbotPanel.classList.contains('is-resizing')) return;
+      chatbotPanel.style.width = `${clampChatbotWidth(resizeStartWidth + resizeStartX - e.clientX)}px`;
+    });
+    const finishResize = e => {
+      chatbotPanel.classList.remove('is-resizing');
+      if (resizeHandle.hasPointerCapture(e.pointerId)) resizeHandle.releasePointerCapture(e.pointerId);
+    };
+    resizeHandle.addEventListener('pointerup', finishResize);
+    resizeHandle.addEventListener('pointercancel', finishResize);
+    resizeHandle.addEventListener('keydown', e => {
+      if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+      const direction = e.key === 'ArrowLeft' ? 20 : -20;
+      chatbotPanel.style.width = `${clampChatbotWidth(chatbotPanel.getBoundingClientRect().width + direction)}px`;
+      e.preventDefault();
+    });
+
     const FALLBACK_KEYWORDS = {
       '배송안내': '결제 완료 후 상품준비중 → 배송중 → 배송완료 순으로 진행되며, 배송조회 아이콘에서 실시간 확인이 가능합니다.',
       '교환안내': '상품 수령 후 7일 이내 미착용 상태에서 교환 신청이 가능합니다.',
