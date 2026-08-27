@@ -735,28 +735,56 @@
     btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   })();
 
-  /* ---------------- 랜덤 배회 아이콘 + 영상 팝업 ---------------- */
+  /* ---------------- 마우스를 따라오는 고양이 아이콘 + 영상 팝업 ---------------- */
   (function roamIcon() {
     const icon = $('#roamIcon');
     const toggle = $('#roamToggle');
-    let x = window.innerWidth / 2, y = window.innerHeight / 2;
-    let vx = (Math.random() - 0.5) * 1.2, vy = (Math.random() - 0.5) * 1.2;
+    const iconSize = 80;
+    const followDistance = 30;
+    const maxSpeed = 7;
+    let x = window.innerWidth / 2 - iconSize / 2;
+    let y = window.innerHeight / 2 - iconSize / 2;
+    let targetX = x + iconSize / 2;
+    let targetY = y + iconSize / 2;
     let raf, facing = 'right';
+
+    function setFacing(nextFacing) {
+      if (nextFacing === facing) return;
+      facing = nextFacing;
+      icon.src = facing === 'left'
+        ? 'img/좌좌.gif?v=20260827-mouse-follow'
+        : 'img/우우.gif?v=20260827-mouse-follow';
+    }
+
     function step() {
-      x += vx; y += vy;
-      const maxX = window.innerWidth - 80, maxY = window.innerHeight - 80;
-      if (x < 0 || x > maxX) { vx *= -1; x = Math.max(0, Math.min(x, maxX)); }
-      if (y < 100 || y > maxY) { vy *= -1; y = Math.max(100, Math.min(y, maxY)); }
-      icon.style.transform = `translate(${x}px, ${y}px)`;
-      const nextFacing = vx < 0 ? 'left' : 'right';
-      if (nextFacing !== facing) {
-        facing = nextFacing;
-        icon.src = facing === 'left'
-          ? 'img/좌좌.gif?v=20260827-roam-gif'
-          : 'img/우우.gif?v=20260827-roam-gif';
+      const centerX = x + iconSize / 2;
+      const centerY = y + iconSize / 2;
+      const dx = targetX - centerX;
+      const dy = targetY - centerY;
+      const distance = Math.hypot(dx, dy);
+
+      if (distance > followDistance) {
+        const remaining = distance - followDistance;
+        const movement = Math.min(maxSpeed, Math.max(0.7, remaining * 0.09));
+        x += (dx / distance) * movement;
+        y += (dy / distance) * movement;
+        if (Math.abs(dx) > 2) setFacing(dx < 0 ? 'left' : 'right');
       }
+
+      const maxX = Math.max(0, window.innerWidth - iconSize);
+      const maxY = Math.max(100, window.innerHeight - iconSize);
+      x = Math.max(0, Math.min(x, maxX));
+      y = Math.max(100, Math.min(y, maxY));
+      icon.style.transform = `translate(${x}px, ${y}px)`;
       raf = requestAnimationFrame(step);
     }
+
+    window.addEventListener('pointermove', e => {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      targetX = e.clientX;
+      targetY = e.clientY;
+    }, { passive: true });
+
     function start() { icon.hidden = false; if (!raf) step(); }
     function stop() { icon.hidden = true; cancelAnimationFrame(raf); raf = null; }
     toggle.addEventListener('change', () => (toggle.checked ? start() : stop()));
