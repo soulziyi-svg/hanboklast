@@ -214,19 +214,34 @@
       progress.appendChild(dot);
     });
     let idx = 0, timer;
+    function renderPositions() {
+      const prev = (idx - 1 + slides.length) % slides.length;
+      const next = (idx + 1) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === idx);
+        slide.classList.toggle('is-prev', i === prev);
+        slide.classList.toggle('is-next', i === next);
+        const video = slide.querySelector('video');
+        if (!video) return;
+        if (i === idx) video.play().catch(() => {});
+        else video.pause();
+      });
+    }
     function go(i) {
-      slides[idx].classList.remove('is-active');
       progress.children[idx].classList.remove('is-active');
-      const v = slides[idx].querySelector('video'); if (v) v.pause();
       idx = (i + slides.length) % slides.length;
-      slides[idx].classList.add('is-active');
       progress.children[idx].classList.add('is-active');
-      const nv = slides[idx].querySelector('video'); if (nv) { nv.currentTime = 0; nv.play().catch(() => {}); }
+      renderPositions();
       restart();
     }
     function restart() { clearInterval(timer); timer = setInterval(() => go(idx + 1), 8000); }
     $('.banner-arrow--prev').addEventListener('click', () => go(idx - 1));
     $('.banner-arrow--next').addEventListener('click', () => go(idx + 1));
+    slides.forEach(slide => slide.addEventListener('click', () => {
+      if (slide.classList.contains('is-prev')) go(idx - 1);
+      else if (slide.classList.contains('is-next')) go(idx + 1);
+    }));
+    renderPositions();
     restart();
   })();
 
