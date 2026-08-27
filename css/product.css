@@ -77,18 +77,24 @@ body{background:var(--pdp-bg);}
 .pdp-buy-now-btn{background:var(--black);color:#fff;}
 
 /* 달빛하얀소복 전용 에디토리얼 상세페이지 */
-.dalbit-editorial{width:min(860px,100%);margin:40px auto 0;background:#f8f2e9;color:#2f2925;overflow:hidden;}
+.dalbit-editorial{width:min(960px,100%);margin:64px auto 0;background:#fff;color:#242424;overflow:visible;}
 .dalbit-editorial img{display:block;width:100%;height:auto;}
-.dalbit-editorial section{padding:68px 62px;position:relative;}
-.dalbit-number{position:absolute;top:20px;left:20px;width:28px;height:20px;border-radius:50%;background:#fff;color:#b9a899;font:700 11px/20px Georgia,serif;text-align:center;margin:0;}
+.dalbit-editorial section{padding:92px 76px;position:relative;}
+.dalbit-number{display:none;}
+.dalbit-detail-nav{position:sticky;top:100px;z-index:20;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid #222;border-bottom:1px solid #ddd;}
+.dalbit-detail-nav a{padding:18px 8px;text-align:center;font-size:13px;color:#777;}
+.dalbit-detail-nav a.is-active{color:#111;font-weight:800;border-bottom:2px solid #111;}
 .dalbit-eyebrow{margin:0 0 10px;color:#9b7e67;font-size:11px;font-weight:800;letter-spacing:.18em;}
 .dalbit-editorial h2,.dalbit-editorial h3{font-family:var(--font-yeongwol);font-weight:400;line-height:1.28;}
-.dalbit-editorial h2{font-size:54px;margin:0 0 16px;}
-.dalbit-editorial h3{font-size:40px;margin:0 0 16px;}
+.dalbit-editorial h2{font-size:58px;margin:0 0 16px;}
+.dalbit-editorial h3{font-family:var(--font-paperlogy);font-size:38px;font-weight:700;margin:0 0 16px;}
 .dalbit-editorial section>p:not(.dalbit-number):not(.dalbit-eyebrow):not(.dalbit-stars){font-size:14px;line-height:1.85;color:#746960;margin:0 0 30px;}
-.dalbit-hero{text-align:center;padding-bottom:0!important;background:#faf5ed;}
+.dalbit-hero{text-align:center;padding-bottom:0!important;background:#fff;}
 .dalbit-hero>img{margin-top:34px;max-height:960px;object-fit:cover;object-position:center 30%;}
-.dalbit-rating{background:#fffaf3;text-align:center;}
+.dalbit-rating{background:#f7f7f5;text-align:center;}
+.dalbit-color-size__swatch{display:flex!important;align-items:center!important;justify-content:center!important;gap:12px;margin:30px 0 20px;}
+.dalbit-color-size__swatch i{width:44px;height:44px;border-radius:50%;border:1px solid #ccc;background:linear-gradient(135deg,#f4efe7 48%,#575757 52%);}
+.dalbit-color-size__swatch span{font-size:13px!important;margin:0!important;color:#444!important;}
 .dalbit-rating>div:first-of-type{display:flex;justify-content:center;align-items:flex-end;gap:8px;}
 .dalbit-rating>div:first-of-type strong{font:400 86px/1 Georgia,serif;}
 .dalbit-rating>div:first-of-type span{font-size:24px;margin-bottom:10px;color:#8f8176;}
@@ -97,26 +103,30 @@ body{background:var(--pdp-bg);}
 .dalbit-review-cards article{background:#f7efe5;border:1px solid #eadfd3;padding:18px;}
 .dalbit-review-cards b{color:#b88b68;font-size:12px;letter-spacing:.12em;}
 .dalbit-review-cards p{font-size:12px;line-height:1.65;color:#6f655e;margin:10px 0 0;}
-.dalbit-reasons{background:#f3eadf;text-align:center;}
+.dalbit-reasons{background:#fff;text-align:center;}
 .dalbit-reason-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px;text-align:left;}
 .dalbit-reason-grid article{background:#fffaf4;padding:10px 10px 18px;position:relative;}
 .dalbit-reason-grid article>span{position:absolute;top:18px;left:18px;background:#a78063;color:#fff;padding:5px 8px;font:700 12px Georgia,serif;z-index:1;}
 .dalbit-reason-grid img{aspect-ratio:1/1;object-fit:cover;object-position:center 25%;}
 .dalbit-reason-grid b,.dalbit-reason-grid p{display:block;margin:12px 5px 0;}
 .dalbit-reason-grid p{font-size:12px;line-height:1.55;color:#756a62;}
-.dalbit-point{background:#fbf6ef;text-align:center;padding-bottom:0!important;}
-.dalbit-point--soft{background:#efe7dd;}
+.dalbit-point{background:#fff;text-align:center;padding-bottom:0!important;}
+.dalbit-point--soft{background:#f5f5f3;}
 .dalbit-point>img{margin-top:28px;max-height:980px;object-fit:cover;object-position:center 28%;}
-.dalbit-icon-row{display:grid;grid-template-columns:repeat(3,1fr);background:#f8f1e8;padding:22px 0;}
-.dalbit-icon-row span{font-size:13px;border-right:1px solid #ddd0c4;}
-.dalbit-icon-row span:last-child{border-right:0;}
-.dalbit-compare{background:#f4ece2;text-align:center;}
-.dalbit-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;}
-.dalbit-compare figure{margin:0;background:#fff;padding:14px;}
-.dalbit-compare figure img{height:460px;object-fit:contain;background:#fcfaf7;}
-.dalbit-compare figcaption b,.dalbit-compare figcaption span{display:block;}
-.dalbit-compare figcaption b{font-size:15px;margin:14px 0 6px;}
-.dalbit-compare figcaption span{font-size:12px;line-height:1.55;color:#786d64;}
+.dalbit-point>.dalbit-point__detail{width:150px;height:150px;margin:-88px 34px 34px auto;border:8px solid #f3eadf;border-radius:50%;object-fit:cover;object-position:center 25%;position:relative;}
+.dalbit-compare{background:#f5f5f3;text-align:center;}
+.dalbit-product-view-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:38px;}
+.dalbit-product-view-grid figure{margin:0;background:#fff;padding:20px 20px 14px;}
+.dalbit-product-view-grid img{height:560px;object-fit:contain;}
+.dalbit-product-view-grid figcaption{margin-top:10px;font:700 11px Georgia,serif;letter-spacing:.15em;color:#777;}
+.dalbit-compare-product{width:min(390px,100%)!important;height:520px!important;margin:28px auto 34px;object-fit:contain;background:#faf7f2;}
+.dalbit-vs-head{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;margin-bottom:12px;font-size:14px;}
+.dalbit-vs-head span{font:700 22px Georgia,serif;color:#a78063;}
+.dalbit-vs-list{border-top:1px solid #d7c8bb;}
+.dalbit-vs-list>div{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;min-height:92px;border-bottom:1px solid #d7c8bb;font-size:13px;line-height:1.55;}
+.dalbit-vs-list strong{color:#59473b;}
+.dalbit-vs-list span{color:#8a7d73;}
+.dalbit-vs-list i{width:5px;height:5px;margin:auto;border-radius:50%;background:#b99b83;}
 .dalbit-details{background:#faf5ed;text-align:center;}
 .dalbit-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;text-align:left;}
 .dalbit-detail-grid article{background:#fff;padding-bottom:18px;}
@@ -124,7 +134,8 @@ body{background:var(--pdp-bg);}
 .dalbit-detail-grid span,.dalbit-detail-grid b,.dalbit-detail-grid p{display:block;margin:12px 16px 0;}
 .dalbit-detail-grid span{color:#a78063;font:700 22px Georgia,serif;}
 .dalbit-detail-grid p{font-size:12px;line-height:1.6;color:#786d64;}
-.dalbit-options{background:#fffaf3;text-align:center;}
+.dalbit-options{background:#fff;text-align:center;}
+.dalbit-options h4{font-size:18px;margin:28px 0 16px;}
 .dalbit-product-only{width:min(460px,100%)!important;margin:28px auto;object-fit:contain;}
 .dalbit-color{display:flex;align-items:center;justify-content:center;gap:16px;margin:20px 0 30px;text-align:left;}
 .dalbit-color i{display:block;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#f6f0e7 48%,#5b5a59 52%);border:1px solid #d8cec4;}
@@ -133,9 +144,30 @@ body{background:var(--pdp-bg);}
 .dalbit-option-grid figure{margin:0;}
 .dalbit-option-grid img{aspect-ratio:1/1;object-fit:contain;background:#fff;}
 .dalbit-option-grid figcaption{font-size:13px;margin-top:8px;}
-.dalbit-size-note{margin-top:34px;padding:24px;border-top:1px solid #ddd0c5;border-bottom:1px solid #ddd0c5;}
-.dalbit-size-note p{font-size:13px;color:#766b63;}
-.dalbit-size-note a{display:inline-block;margin-top:8px;padding:11px 20px;background:#302a26;color:#fff;font-size:13px;}
+.dalbit-size-pills{display:flex;justify-content:center;gap:12px;margin:30px 0 10px;}
+.dalbit-size-pills span{display:grid;place-items:center;width:48px;height:48px;border:1px solid #bca999;border-radius:50%;font:700 14px Georgia,serif;}
+.dalbit-size-caption{font-size:12px;color:#776c64;}
+.dalbit-goods{margin-top:54px;padding-top:40px;border-top:1px solid #ddd0c5;}
+.dalbit-goods>p:not(.dalbit-eyebrow){font-size:12px;color:#7b6f66;}
+.dalbit-goods-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px;}
+.dalbit-goods-grid figure{margin:0;background:#fff;padding-bottom:13px;}
+.dalbit-goods-grid img{aspect-ratio:1/1;object-fit:cover;}
+.dalbit-goods-grid figcaption{font-size:13px;margin-top:10px;}
+.dalbit-goods-grid small{display:block;margin-top:3px;color:#9b8878;font-size:10px;}
+.dalbit-product-info{background:#eee5da;text-align:center;}
+.dalbit-info-visual{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:24px;margin:32px 0;}
+.dalbit-info-visual img{height:500px;object-fit:contain;background:#f8f4ee;}
+.dalbit-info-visual>div{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;}
+.dalbit-info-visual b,.dalbit-info-visual p{width:100%;}
+.dalbit-info-visual b{font:400 28px Georgia,serif;margin-bottom:8px;}
+.dalbit-info-visual span{display:grid;place-items:center;width:44px;height:44px;border:1px solid #ad9988;border-radius:50%;font:700 13px Georgia,serif;}
+.dalbit-info-visual p{font-size:12px;line-height:1.65;color:#786b62;}
+.dalbit-info-table{margin:0;border-top:1px solid #cdbdaf;text-align:left;}
+.dalbit-info-table>div{display:grid;grid-template-columns:120px 1fr;border-bottom:1px solid #cdbdaf;padding:14px 12px;font-size:13px;}
+.dalbit-info-table dt{font-weight:700;}
+.dalbit-info-table dd{margin:0;color:#6f6259;}
+.dalbit-measure-note{font-size:11px!important;margin:20px 0!important;color:#8c7e73!important;}
+.dalbit-purchase-link{display:inline-block;padding:14px 25px;background:#302a26;color:#fff;font-size:13px;}
 
 /* 묵화연무 전용 에디토리얼 상세페이지 */
 .mukhwa-editorial{width:min(860px,100%);margin:40px auto 0;background:#f7f1e9;color:#292522;overflow:hidden;}
@@ -242,6 +274,10 @@ body{background:var(--pdp-bg);}
   .dalbit-editorial h2{font-size:42px;}.dalbit-editorial h3{font-size:34px;}
   .dalbit-review-cards,.dalbit-reason-grid{grid-template-columns:1fr;}
   .dalbit-reason-grid img{aspect-ratio:4/3;}
-  .dalbit-compare-grid,.dalbit-detail-grid{grid-template-columns:1fr;}
-  .dalbit-compare figure img,.dalbit-detail-grid img{height:auto;}
+  .dalbit-detail-grid{grid-template-columns:1fr;}
+  .dalbit-detail-grid img{height:auto;}
+  .dalbit-product-view-grid{grid-template-columns:1fr;}
+  .dalbit-product-view-grid img{height:auto;max-height:620px;}
+  .dalbit-info-visual{grid-template-columns:1fr;}
+  .dalbit-info-visual img{height:420px;}
 }

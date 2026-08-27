@@ -740,8 +740,8 @@
     const icon = $('#roamIcon');
     const toggle = $('#roamToggle');
     const iconSize = 80;
-    // 고양이가 마우스와 버튼을 가리지 않도록 아이콘 반지름보다 넉넉한 거리를 유지합니다.
-    const followDistance = 100;
+    // 고양이가 링크나 버튼 클릭을 방해하지 않도록 커서 중심에서 충분히 떨어져 멈춥니다.
+    const followDistance = 160;
     const maxSpeed = 7;
     let x = window.innerWidth / 2 - iconSize / 2;
     let y = window.innerHeight / 2 - iconSize / 2;

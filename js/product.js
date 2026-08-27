@@ -150,11 +150,7 @@
         ['묵화연무04.png', 4], ['정면.png', 5], ['측면.png', 6],
       ].map(([file, sort_order], index) => ({ image_url: `${base}/${file}?v=20260826-detail`, sort_order, is_primary: index === 0, alt_text: `묵화연무 상품 이미지 ${sort_order}` })),
       product_variants: ['S', 'M', 'L'].map(size => ({ id: null, size, stock_quantity: 1, low_stock_threshold: 0 })),
-      product_size_specs: [
-        { size: 'S', chest: 84, waist: 66, length: 125, sleeve: 72 },
-        { size: 'M', chest: 88, waist: 70, length: 127, sleeve: 73 },
-        { size: 'L', chest: 92, waist: 74, length: 129, sleeve: 74 },
-      ],
+      product_size_specs: [],
       product_features: [
         { title: '비대칭 저고리', description: '전통 한복의 선을 현대적으로 재해석한 어깨선', sort_order: 1 },
         { title: '먹선 자수', description: '수묵화가 번지는 듯한 섬세한 시스루 자수', sort_order: 2 },
@@ -266,7 +262,14 @@
     const reviewCount = stats && stats.review_count > 0 ? `${stats.review_count}개의 실제 구매 후기` : '먼저 만나본 고객의 높은 만족도';
     section.hidden = false;
     section.innerHTML = `
+      <nav class="dalbit-detail-nav" aria-label="상품 상세 메뉴">
+        <a class="is-active" href="#dalbitStory">상품상세</a>
+        <a href="#pdpReviewsSection">후기</a>
+        <a href="#pdpPurchaseInfo">배송·교환</a>
+        <a href="#dalbitWithItems">함께 보기</a>
+      </nav>
       <section class="dalbit-hero">
+        <span id="dalbitStory"></span>
         <p class="dalbit-number">01</p>
         <p class="dalbit-eyebrow">연화재실</p>
         <h2>달빛하얀소복</h2>
@@ -274,23 +277,19 @@
         <img src="${base}/하얀달빛소복01.png" alt="한옥에서 착용한 달빛하얀소복">
       </section>
 
-      <section class="dalbit-rating">
+      <section class="dalbit-rating dalbit-color-size">
         <p class="dalbit-number">02</p>
-        <p class="dalbit-eyebrow">고객 만족도</p>
-        <div><strong>${rating}</strong><span>/ 5</span></div>
-        <p class="dalbit-stars">★★★★★</p>
-        <p>${reviewCount}</p>
-        <div class="dalbit-review-cards">
-          <article><b>★★★★★</b><p>사진보다 실제로 입었을 때 치마의 색감이 훨씬 고급스러워요.</p></article>
-          <article><b>★★★★★</b><p>저고리 자수가 섬세하고 움직일 때 실루엣이 정말 아름다워요.</p></article>
-          <article><b>★★★★★</b><p>전통적인 분위기와 현대적인 감각이 함께 느껴져 특별했어요.</p></article>
-        </div>
+        <p class="dalbit-eyebrow">COLOR & SIZE</p>
+        <h3>달빛을 닮은<br>아이보리와 먹빛</h3>
+        <div class="dalbit-color-size__swatch"><i></i><span>아이보리 · 먹빛</span></div>
+        <div class="dalbit-size-pills" aria-label="선택 가능한 사이즈"><span>S</span><span>M</span><span>L</span></div>
+        <p>화면 환경에 따라 실제 제품의 색상이 조금 다르게 보일 수 있습니다.<br>구매 영역에서 원하는 사이즈를 선택해 주세요.</p>
       </section>
 
       <section class="dalbit-reasons">
         <p class="dalbit-number">03</p>
-        <p class="dalbit-eyebrow">WHY DALBIT HAYAN SOBOK</p>
-        <h3>왜 쇼핑할수록<br>만족스러울까요?</h3>
+        <p class="dalbit-eyebrow">KEY POINT</p>
+        <h3>달빛하얀소복의<br>세 가지 핵심</h3>
         <div class="dalbit-reason-grid">
           <article><span>01</span><img src="${base}/하얀달빛소복01.png" alt="달빛하얀소복 전체 실루엣"><b>사진으로 남는 우아한 실루엣</b><p>풍성하게 퍼지는 치마가 어느 각도에서도 단아한 선을 만듭니다.</p></article>
           <article><span>02</span><img src="${base}/하얀달빛소복02.png" alt="달빛하얀소복 저고리 디테일"><b>가까이에서 빛나는 섬세한 자수</b><p>은은한 광택과 입체적인 꽃 자수가 얼굴빛을 화사하게 살려줍니다.</p></article>
@@ -300,32 +299,33 @@
 
       <section class="dalbit-point">
         <p class="dalbit-number">04</p><p class="dalbit-eyebrow">POINT 01</p>
-        <h3>은은한 색감,<br>우아한 아름다움</h3>
-        <p>새하얀 저고리와 먹빛이 스며든 치마가 만나<br>빛에 따라 다른 표정과 깊이를 보여줍니다.</p>
+        <h3>부드러운 색감이 만드는<br>절제된 우아함</h3>
+        <p>화려한 장식에 기대기보다 아이보리와 먹빛의 세련된 배색으로<br>차분하면서도 오래 기억되는 분위기를 완성합니다.</p>
         <img src="${base}/하얀달빛소복01.png" alt="달빛하얀소복 야외 화보">
       </section>
 
       <section class="dalbit-point dalbit-point--soft">
         <p class="dalbit-number">05</p><p class="dalbit-eyebrow">POINT 02</p>
-        <h3>한복의 선을 그대로,<br>편안함은 더 가볍게</h3>
-        <p>가볍고 부드러운 소재와 안정적인 허리선으로<br>오랜 시간 착용해도 자연스럽고 편안합니다.</p>
+        <h3>한복의 선은 그대로,<br>움직임은 편안하게</h3>
+        <p>단아한 깃과 풍성한 치마의 선을 살리면서도<br>촬영과 행사 내내 자연스럽게 움직일 수 있도록 구성했습니다.</p>
         <img src="${base}/하얀달빛소복02.png" alt="달빛하얀소복 옆모습과 치마선">
+        <img class="dalbit-point__detail" src="${base}/측면.png" alt="달빛하얀소복 측면 실루엣">
       </section>
 
       <section class="dalbit-point">
         <p class="dalbit-number">06</p><p class="dalbit-eyebrow">POINT 03</p>
-        <h3>빛나는 순간을<br>더 특별하게</h3>
-        <p>한옥 촬영, 기념일, 전통 행사와 웨딩 촬영까지<br>어떤 공간에서도 고운 존재감을 남깁니다.</p>
+        <h3>빛을 만날수록<br>선명해지는 실루엣</h3>
+        <p>자연광과 실내 조명 아래에서 색의 농담과 치마선이 살아나<br>웨딩·돌잔치·가족사진 등 특별한 순간을 돋보이게 합니다.</p>
         <img src="${base}/하얀달빛소복03.png" alt="달빛하얀소복 뒷모습 화보">
-        <div class="dalbit-icon-row"><span>사진 촬영</span><span>특별한 날</span><span>기념 행사</span></div>
       </section>
 
       <section class="dalbit-compare">
-        <p class="dalbit-eyebrow">DESIGN DIFFERENCE</p>
-        <h3>왜 달빛하얀소복일까요?</h3>
-        <div class="dalbit-compare-grid">
-          <figure><img src="${base}/정면.png" alt="달빛하얀소복 정면"><figcaption><b>달빛하얀소복</b><span>입체 자수와 먹빛 그라데이션으로 완성한 깊이 있는 디자인</span></figcaption></figure>
-          <figure><img src="${base}/측면.png" alt="달빛하얀소복 측면"><figcaption><b>섬세한 측면 실루엣</b><span>허리선부터 치맛자락까지 자연스럽게 이어지는 비율</span></figcaption></figure>
+        <p class="dalbit-eyebrow">DETAIL INFO</p>
+        <h3>앞과 옆,<br>어느 각도에서도 단정하게</h3>
+        <p>제품의 실제 형태와 먹빛의 흐름을 확인해 보세요.</p>
+        <div class="dalbit-product-view-grid">
+          <figure><img src="${base}/정면.png" alt="달빛하얀소복 정면 상품 이미지"><figcaption>FRONT</figcaption></figure>
+          <figure><img src="${base}/측면.png" alt="달빛하얀소복 측면 상품 이미지"><figcaption>SIDE</figcaption></figure>
         </div>
       </section>
 
@@ -333,22 +333,49 @@
         <p class="dalbit-eyebrow">FABRIC & DETAIL</p>
         <h3>작은 디테일까지<br>세심하게</h3>
         <div class="dalbit-detail-grid">
-          <article><img src="${base}/하얀달빛소복02.png" alt="달빛하얀소복 자수 디테일"><span>01</span><b>은은한 자수와 광택</b><p>빛을 받을 때 부드럽게 살아나는 결감과 입체 자수</p></article>
-          <article><img src="${base}/하얀달빛소복03.png" alt="달빛하얀소복 원단 디테일"><span>02</span><b>가볍고 풍성한 치마</b><p>겹쳐진 얇은 원단이 움직임마다 자연스러운 볼륨을 표현</p></article>
+          <article><img src="${base}/하얀달빛소복02.png" alt="달빛하얀소복 저고리와 허리선"><span>01</span><b>단정하게 이어지는 저고리 선</b><p>깃부터 허리까지 부드럽게 연결되는 단아한 균형</p></article>
+          <article><img src="${base}/하얀달빛소복03.png" alt="달빛하얀소복 치마와 먹빛 표현"><span>02</span><b>움직임에 살아나는 치마선</b><p>풍성한 실루엣 위로 번지는 먹빛이 만드는 깊은 여운</p></article>
         </div>
       </section>
 
-      <section class="dalbit-options">
-        <p class="dalbit-eyebrow">COLOR · OPTION · SIZE</p>
-        <h3>나에게 맞는<br>달빛하얀소복</h3>
-        <img class="dalbit-product-only" src="${base}/정면.png" alt="달빛하얀소복 정면 상품 이미지">
-        <div class="dalbit-color"><i></i><div><b>설백 · 먹빛</b><p>달빛을 닮은 따뜻한 흰색과 은은한 먹빛의 조화</p></div></div>
+      <section id="dalbitWithItems" class="dalbit-options">
+        <p class="dalbit-eyebrow">WITH ITEM</p>
+        <h3>달빛하얀소복과<br>함께 완성하는 차림</h3>
+        <p>한복과 함께 선택할 수 있는 세 가지 옵션입니다.</p>
         <div class="dalbit-option-grid">
           <figure><img src="${base}/하얀달빛소복 악세사리 비녀.png" alt="비녀"><figcaption>비녀</figcaption></figure>
           <figure><img src="${base}/하얀달빛소복 악세사리 노리개.png" alt="노리개"><figcaption>노리개</figcaption></figure>
           <figure><img src="${base}/하얀달빛소복 악세사리 꽃신.png" alt="꽃신"><figcaption>꽃신</figcaption></figure>
         </div>
-        <div class="dalbit-size-note"><b>구매 전 꼭 확인하세요</b><p>상단 구매 영역에서 S · M · L 사이즈와 추가 옵션을 선택할 수 있습니다.</p><a href="#pdpMain">사이즈 선택하고 구매하기 ↑</a></div>
+        <div class="dalbit-goods">
+          <p class="dalbit-eyebrow">DALBIT COLLECTION GOODS</p>
+          <h4>함께 보는 달빛하얀소복 컬렉션</h4>
+          <p>아래 제품은 한복 구성품이 아닌 별도 상품입니다.</p>
+          <div class="dalbit-goods-grid">
+            <figure><img src="${base}/하얀달빛소복 복주머니.png" alt="달빛하얀소복 복주머니"><figcaption>복주머니 <small>별도 상품</small></figcaption></figure>
+            <figure><img src="${base}/하얀달빛소복 아크릴 스텐드.png" alt="달빛하얀소복 아크릴 스탠드"><figcaption>아크릴 스탠드 <small>별도 상품</small></figcaption></figure>
+            <figure><img src="${base}/하얀달빛소복 키링.png" alt="달빛하얀소복 키링"><figcaption>키링 <small>별도 상품</small></figcaption></figure>
+            <figure><img src="${base}/하얀달빛소복 포토카드.png" alt="달빛하얀소복 포토카드"><figcaption>포토카드 <small>별도 상품</small></figcaption></figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="dalbit-product-info">
+        <p class="dalbit-eyebrow">PRODUCT INFORMATION</p>
+        <h3>구매 전<br>꼭 확인하세요</h3>
+        <div class="dalbit-info-visual">
+          <img src="${base}/측면.png" alt="달빛하얀소복 측면 상품 이미지">
+          <div><b>SIZE</b><span>S</span><span>M</span><span>L</span><p>신체 치수와 선호하는 착용감에 맞춰 선택해 주세요.</p></div>
+        </div>
+        <dl class="dalbit-info-table">
+          <div><dt>브랜드</dt><dd>연화재실</dd></div>
+          <div><dt>제품명</dt><dd>달빛하얀소복</dd></div>
+          <div><dt>색상</dt><dd>아이보리 · 먹빛</dd></div>
+          <div><dt>옵션</dt><dd>비녀 · 꽃신 · 노리개</dd></div>
+          <div><dt>사이즈</dt><dd>S · M · L</dd></div>
+        </dl>
+        <p class="dalbit-measure-note">측정 위치와 방법에 따라 약간의 오차가 있을 수 있습니다.</p>
+        <a class="dalbit-purchase-link" href="#pdpMain">사이즈 선택하고 구매하기 ↑</a>
       </section>`;
   }
 
