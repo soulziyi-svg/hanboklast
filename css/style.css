@@ -326,7 +326,7 @@ a{color:inherit;text-decoration:none;}
 /* ---------- 컨텐츠2 ---------- */
 .content2{width:100%;padding:64px 0;background:var(--content2-bg);}
 .section-title--purple{color:var(--gray-dark);font-family:var(--font-yeongwol);font-size:60px;font-weight:400;}
-.coverflow{position:relative;display:flex;align-items:center;justify-content:center;height:500px;gap:0;}
+.coverflow{position:relative;display:flex;align-items:center;justify-content:center;height:400px;gap:0;}
 .coverflow__track{display:flex;align-items:center;justify-content:center;height:100%;position:relative;width:100%;}
 .coverflow__track img{
   position:absolute;height:80%;object-fit:cover;object-position:center;filter:brightness(.6) blur(1px);
@@ -497,7 +497,7 @@ a{color:inherit;text-decoration:none;}
 
 /* ---------- 반응형 ---------- */
 @media (max-width:900px){
-  .coverflow{height:clamp(380px,105vw,520px);}
+  .coverflow{height:clamp(320px,93vw,400px);}
   #chatbotPanel.chatbot-window{width:96vw;height:88vh;border-radius:22px;resize:none;}
   .chatbot-head{min-height:112px;grid-template-columns:68px 1fr auto;gap:12px;padding:14px 16px;}
   .chatbot-head>img{width:66px;height:66px;}
