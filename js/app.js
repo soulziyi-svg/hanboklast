@@ -13,6 +13,9 @@
 
   // data.js가 Supabase에서 상품 데이터를 모두 불러올 때까지 대기
   await window.COLLECTIONS_READY;
+  const entryAction = new URLSearchParams(location.search);
+  if (entryAction.get('signup') === '1') openModal('signupModal');
+  if (entryAction.get('login') === '1') openModal('loginModal');
 
   /* ---------------- 사이트 콘텐츠 (관리자페이지에서 수정한 문구/컬러가 실제 반영됨) ---------------- */
   async function applySiteContent() {
@@ -27,7 +30,7 @@
     const topBanner = byKey.top_banner;
     if (topBanner && topBanner.description) {
       const track = $('#top-banner .top-banner__track');
-      if (track) track.innerHTML = Array(2).fill(`<span>${topBanner.description}</span>`).join('<span>·</span>');
+      if (track) track.innerHTML = Array(12).fill(`<span>${topBanner.description}</span><span>·</span>`).join('');
     }
     const main = byKey.main;
     if (main) {
@@ -79,6 +82,15 @@
 
   /* ---------------- 전체 상품 평탄화 (검색/상담용) ---------------- */
   const ALL_PRODUCTS = [];
+  function priceMarkup(item, className = 'p-card__price') {
+    const regular = Number(item.regularPrice || item.price || 0);
+    const sale = Number(item.price || 0);
+    const rate = Number(item.discountRate || (regular > sale ? Math.round((1 - sale / regular) * 100) : 0));
+    if (rate > 0 && regular > sale) {
+      return `<div class="${className} price-box"><span class="sale-label">세일중</span><span class="price-original">원가 ${formatWon(regular)}</span><span class="price-rate">${rate}% 할인중</span><strong>${formatWon(sale)}</strong></div>`;
+    }
+    return `<div class="${className}"><strong>${formatWon(sale)}</strong></div>`;
+  }
   COLLECTIONS.forEach(c => {
     const defaultVariant = pickDefaultVariant(c.variants);
     ALL_PRODUCTS.push({
@@ -138,18 +150,19 @@
 
   /* ---------------- 햄버거 메뉴 패널 ---------------- */
   const hamburgerPanel = document.createElement('div');
-  hamburgerPanel.className = 'side-panel';
+  hamburgerPanel.className = 'hamburger-panel';
   hamburgerPanel.id = 'hamburgerPanel';
   hamburgerPanel.hidden = true;
-  hamburgerPanel.style.width = '400px';
   hamburgerPanel.innerHTML = `
-    <div class="side-panel__head"><span style="font-family:var(--font-yeongwol);font-size:18px;">MENU</span>
+    <div class="side-panel__head"><span style="font-family:var(--font-gmarket);font-size:24px;font-weight:700;">MENU</span>
       <button class="modal-close" data-close="hamburgerPanel">닫기 ✕</button></div>
-    <div id="hamburgerAccordion" style="padding:16px 20px;font-family:var(--font-yeongwol);flex:1;overflow:auto;"></div>
-    <ul style="padding:16px 20px;border-top:1px solid #eee;font-family:var(--font-yeongwol);">
-      <li style="padding:8px 0;cursor:pointer;" data-scroll="brand-story">브랜드 스토리</li>
-      <li style="padding:8px 0;cursor:pointer;" data-scroll="reviews">후기</li>
-      <li style="padding:8px 0;cursor:pointer;" id="hamburgerConsult">상담하기</li>
+    <div id="hamburgerAccordion" class="hamburger-panel__content"></div>
+    <ul class="hamburger-panel__links">
+      <li id="hamburgerAccount">로그인 / 회원가입</li>
+      <li id="hamburgerMypage">마이페이지</li>
+      <li id="hamburgerCart">장바구니</li>
+      <li id="hamburgerTrack">배송조회</li>
+      <li id="hamburgerInquiry">1:1 문의하기</li>
     </ul>`;
   document.body.appendChild(hamburgerPanel);
   $all('[data-close]', hamburgerPanel).forEach(b => b.addEventListener('click', () => closeModal('hamburgerPanel')));
@@ -157,17 +170,24 @@
     closeModal('hamburgerPanel');
     document.getElementById(li.dataset.scroll).scrollIntoView({ behavior: 'smooth' });
   }));
-  $('#hamburgerConsult').addEventListener('click', () => { closeModal('hamburgerPanel'); openModal('consultPanel'); });
+  $('#hamburgerInquiry').addEventListener('click', () => { location.href = 'mypage.html#inquiry'; });
+  $('#hamburgerAccount').addEventListener('click', async () => {
+    closeModal('hamburgerPanel');
+    const session = await getCurrentSession();
+    if (session) $('#loginBtn').click(); else openModal('loginModal');
+  });
+  $('#hamburgerMypage').addEventListener('click', () => { location.href = 'mypage.html'; });
+  $('#hamburgerCart').addEventListener('click', () => { closeModal('hamburgerPanel'); $('#cartBtn').click(); });
+  $('#hamburgerTrack').addEventListener('click', () => { closeModal('hamburgerPanel'); $('#trackBtn').click(); });
 
   const hAcc = $('#hamburgerAccordion');
   COLLECTIONS.forEach(c => {
     const details = document.createElement('details');
-    details.innerHTML = `<summary style="cursor:pointer;padding:8px 0;font-size:15px;">${c.name}</summary>`;
+    details.innerHTML = `<summary>${c.name}</summary>`;
     const ul = document.createElement('ul');
     const items = [{ name: c.name + ' 한복', slug: c.slug }, ...c.accessories, ...c.goods];
     items.forEach(p => {
       const li = document.createElement('li');
-      li.style.cssText = 'font-size:13px;color:#777;padding:4px 0 4px 12px;cursor:pointer;';
       li.textContent = p.name;
       li.addEventListener('click', () => goToProduct(p));
       ul.appendChild(li);
@@ -175,15 +195,47 @@
     details.appendChild(ul);
     hAcc.appendChild(details);
   });
-  $('#hamburgerBtn').addEventListener('click', () => openModal('hamburgerPanel'));
+  let hamburgerCloseTimer;
+  function openHamburger() {
+    clearTimeout(hamburgerCloseTimer);
+    hamburgerPanel.classList.remove('is-closing');
+    openModal('hamburgerPanel');
+  }
+  function closeHamburgerAnimated() {
+    clearTimeout(hamburgerCloseTimer);
+    hamburgerPanel.classList.add('is-closing');
+    hamburgerCloseTimer = setTimeout(() => {
+      closeModal('hamburgerPanel');
+      hamburgerPanel.classList.remove('is-closing');
+    }, 200);
+  }
+  $('#hamburgerBtn').addEventListener('click', openHamburger);
+  $('#hamburgerBtn').addEventListener('pointerenter', e => {
+    if (e.pointerType !== 'touch') openHamburger();
+  });
+  $('#hamburgerBtn').addEventListener('pointerleave', e => {
+    if (e.pointerType !== 'touch') hamburgerCloseTimer = setTimeout(() => {
+      if (!hamburgerPanel.matches(':hover')) closeHamburgerAnimated();
+    }, 80);
+  });
+  hamburgerPanel.addEventListener('pointerenter', () => clearTimeout(hamburgerCloseTimer));
+  hamburgerPanel.addEventListener('pointerleave', e => {
+    if (e.pointerType !== 'touch') closeHamburgerAnimated();
+  });
 
   /* ---------------- 검색 ---------------- */
   const searchNav = $('#searchNav');
   COLLECTIONS.forEach(c => {
-    const span = document.createElement('span');
-    span.textContent = c.name;
-    span.addEventListener('click', () => renderSearchResult(c.name));
-    searchNav.appendChild(span);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'search-collection-btn';
+    button.textContent = c.name;
+    button.addEventListener('click', () => {
+      $all('.search-collection-btn', searchNav).forEach(item => item.classList.toggle('is-active', item === button));
+      $('#searchInput').value = '';
+      renderSearchResult(c.name);
+    });
+    searchNav.appendChild(button);
   });
   function renderSearchResult(keyword) {
     const q = (keyword || '').trim().toLowerCase();
@@ -195,13 +247,14 @@
     matched.forEach(p => {
       const div = document.createElement('div');
       div.className = 'result-card';
-      div.innerHTML = `<img src="${p.img}" alt="${p.name}"><span>${p.name}</span>`;
+      const typeLabel = p.type === 'hanbok' ? '한복' : (p.type === 'accessory' ? '액세서리' : '굿즈');
+      div.innerHTML = `<div class="result-card__image"><img src="${p.img}" alt="${p.name}"></div><div class="result-card__body"><small>${typeLabel}</small><b>${p.name}</b></div>`;
       div.addEventListener('click', () => goToProduct(p));
       result.appendChild(div);
     });
   }
-  $('#searchBtn').addEventListener('click', () => { openModal('searchModal'); renderSearchResult(''); });
-  $('#searchInput').addEventListener('input', e => renderSearchResult(e.target.value));
+  $('#searchBtn').addEventListener('click', () => { openModal('searchModal'); $('#searchInput').value=''; $all('.search-collection-btn',searchNav).forEach(button=>button.classList.remove('is-active')); renderSearchResult(''); });
+  $('#searchInput').addEventListener('input', e => { $all('.search-collection-btn',searchNav).forEach(button=>button.classList.remove('is-active')); renderSearchResult(e.target.value); });
 
   /* ---------------- 메인 배너 ---------------- */
   (function mainBanner() {
@@ -223,8 +276,13 @@
         slide.classList.toggle('is-next', i === next);
         const video = slide.querySelector('video');
         if (!video) return;
-        if (i === idx) video.play().catch(() => {});
+        if (i === idx) {
+          if (!slide.dataset.wasActive) video.currentTime = 0;
+          video.play().catch(() => {});
+          slide.dataset.wasActive = 'true';
+        }
         else video.pause();
+        if (i !== idx) delete slide.dataset.wasActive;
       });
     }
     function go(i) {
@@ -253,12 +311,15 @@
       card.className = 'p-card';
       const imgwrap = document.createElement('div');
       imgwrap.className = 'p-card__imgwrap';
+      const regularImgs = [];
       c.hanbokImages.forEach((f, i) => {
         const img = document.createElement('img');
         img.src = imgPath(c.dir, f);
         img.alt = `${c.name} 착용 이미지 ${i + 1}`;
+        img.decoding = 'async';
         if (i === 0) img.classList.add('is-active');
         imgwrap.appendChild(img);
+        regularImgs.push(img);
       });
       const hoverImg = document.createElement('img');
       // 달빛하얀소복은 DB 이미지 순서와 관계없이 실제 상품 단독컷을 사용합니다.
@@ -267,16 +328,19 @@
       hoverImg.src = imgPath(c.dir, hoverFile);
       hoverImg.alt = `${c.name} 상품 단독 이미지`;
       hoverImg.className = 'is-hover';
+      hoverImg.decoding = 'async';
       imgwrap.appendChild(hoverImg);
 
       const cartBtn = document.createElement('button');
       cartBtn.className = 'p-card__cart';
-      cartBtn.textContent = '🛒';
+      cartBtn.setAttribute('aria-label', `${c.name} 장바구니 담기`);
+      cartBtn.innerHTML = '<svg viewBox="0 0 36 32" aria-hidden="true"><path d="M2 3h4l3.2 17h18.5l3.1-12H8"/><circle cx="12" cy="27" r="2.5"/><circle cx="26" cy="27" r="2.5"/></svg>';
       cartBtn.addEventListener('click', e => {
         e.stopPropagation();
         const defaultVariant = pickDefaultVariant(c.variants);
         addToCart({ name: c.name + ' 한복', productId: c.productId, variantId: defaultVariant ? defaultVariant.id : null });
       });
+      imgwrap.appendChild(cartBtn);
 
       const stockLabel = ['S', 'M', 'L'].map(size => {
         const v = c.variants[size];
@@ -291,23 +355,43 @@
         <div class="p-card__name">${c.name}</div>
         <div class="p-card__desc">개량한복 · 사진 촬영에 어울리는 우아한 실루엣</div>
         <div class="p-card__rating">★★★★☆ 4.8</div>
-        <div class="p-card__price">${formatWon(c.price)}</div>
-        <div class="p-card__stock">${stockLabel}</div>`;
+        ${priceMarkup(c)}
+        <div class="p-card__footer"><div class="p-card__stock">${stockLabel}</div></div>`;
 
       card.appendChild(imgwrap);
-      card.appendChild(cartBtn);
       card.appendChild(body);
       card.addEventListener('click', () => goToProduct({ name: c.name, slug: c.slug }));
 
-      let cycle = 0, cycleTimer;
-      function startCycle() {
-        cycleTimer = setInterval(() => {
-          const imgs = imgwrap.querySelectorAll('img:not(.is-hover)');
-          imgs[cycle].classList.remove('is-active');
-          cycle = (cycle + 1) % imgs.length;
-          imgs[cycle].classList.add('is-active');
-        }, 2000);
+      let cycle = 0, cycleTimer, isHovering = false, isTransitioning = false;
+      const ready = img => img.complete && img.naturalWidth
+        ? Promise.resolve()
+        : (img.decode ? img.decode().catch(() => {}) : new Promise(resolve => {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        }));
+      const allReady = Promise.all([...regularImgs, hoverImg].map(ready));
+      function showNext() {
+        if (isHovering || isTransitioning || regularImgs.length < 2) return;
+        const current = regularImgs[cycle];
+        const nextIndex = (cycle + 1) % regularImgs.length;
+        const next = regularImgs[nextIndex];
+        if (!next.complete || !next.naturalWidth) return;
+        isTransitioning = true;
+        next.classList.add('is-next');
+        window.setTimeout(() => {
+          current.classList.remove('is-active');
+          next.classList.remove('is-next');
+          next.classList.add('is-active');
+          cycle = nextIndex;
+          isTransitioning = false;
+        }, 320);
       }
+      function startCycle() {
+        clearInterval(cycleTimer);
+        allReady.then(() => { if (!isHovering) cycleTimer = setInterval(showNext, 2000); });
+      }
+      imgwrap.addEventListener('pointerenter', () => { isHovering = true; clearInterval(cycleTimer); });
+      imgwrap.addEventListener('pointerleave', () => { isHovering = false; startCycle(); });
       startCycle();
       return card;
     }
@@ -366,23 +450,27 @@
         const card = document.createElement('div');
         card.className = 'sub-card' + (isAccessory ? ' sub-card--accessory' : '');
         const isSoldOut = item.stock <= 0;
+        const flowerSizes = item.categorySlug === 'flowershoes'
+          ? ['220', '230', '240']
+          : [];
+        const flowerSizeLabels = { '220': 'S [220]', '230': 'M [230]', '240': 'L [240]' };
         card.innerHTML = `
-          <div style="position:relative;">
-            <img class="sub-card__img" src="${imgPath(c.dir, item.file)}" alt="${item.name}">
-            <button class="sub-card__cart">🛒</button>
-          </div>
+          <div class="sub-card__imagewrap"><img class="sub-card__img" src="${imgPath(c.dir, item.file)}" alt="${item.name}"><span class="sub-card__more">자세히보기 →</span></div>
           <div class="sub-card__body">
             <div><b>${item.name}</b></div>
             <p style="font-size:13px;color:#777;line-height:1.5;">${c.name} 컬렉션과 어울리는 구성품입니다.<br>선물 및 소장용으로 인기가 많습니다.</p>
             <div class="p-card__rating">★★★★☆ 4.7</div>
-            <div class="sub-card__price">${formatWon(item.price)}</div>
-            <div class="sub-card__stock">${isSoldOut ? '품절' : `[ ${item.stock} ]개 남았어요`}</div>
+            ${priceMarkup(item, 'sub-card__price')}
+            ${flowerSizes.length ? `<label class="size-select-label">사이즈<select class="size-select">${flowerSizes.map(size => { const variant = item.variants[size]; return `<option value="${size}" ${!variant || variant.stock <= 0 ? 'disabled' : ''}>${flowerSizeLabels[size]}${!variant || variant.stock <= 0 ? ' (품절)' : ''}</option>`; }).join('')}</select></label>` : ''}
+            <div class="sub-card__footer"><div class="sub-card__stock">${isSoldOut ? '품절' : `[ ${item.stock} ]개 남았어요`}</div><button class="sub-card__cart" aria-label="${item.name} 장바구니 담기"><svg viewBox="0 0 36 32" aria-hidden="true"><path d="M2 3h4l3.2 17h18.5l3.1-12H8"/><circle cx="12" cy="27" r="2.5"/><circle cx="26" cy="27" r="2.5"/></svg></button></div>
           </div>`;
         card.addEventListener('click', () => goToProduct(item));
         card.querySelector('.sub-card__cart').addEventListener('click', e => {
           e.stopPropagation();
           if (isSoldOut) { showToast('품절된 상품입니다.'); return; }
-          addToCart({ name: item.name, productId: item.productId, variantId: item.variantId });
+          const sizeSelect = card.querySelector('.size-select');
+          const selectedVariant = sizeSelect ? item.variants[sizeSelect.value] : null;
+          addToCart({ name: item.name, productId: item.productId, variantId: selectedVariant ? selectedVariant.id : item.variantId });
         });
         cardWrap.appendChild(card);
       });
@@ -777,7 +865,6 @@
   /* ---------------- 마우스를 따라오는 고양이 아이콘 + 영상 팝업 ---------------- */
   (function roamIcon() {
     const icon = $('#roamIcon');
-    const toggle = $('#roamToggle');
     const iconSize = 80;
     // 고양이가 링크나 버튼 클릭을 방해하지 않도록 커서 중심에서 충분히 떨어져 멈춥니다.
     const followDistance = 160;
@@ -826,10 +913,8 @@
     }, { passive: true });
 
     function start() { icon.hidden = false; if (!raf) step(); }
-    function stop() { icon.hidden = true; cancelAnimationFrame(raf); raf = null; }
-    toggle.addEventListener('change', () => (toggle.checked ? start() : stop()));
     icon.style.position = 'fixed'; icon.style.left = '0'; icon.style.top = '0';
-    if (toggle.checked) start();
+    start();
 
   })();
 

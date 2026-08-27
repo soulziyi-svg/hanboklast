@@ -36,8 +36,9 @@ async function fetchProductsFromSupabase() {
   const { data, error } = await window.supabaseClient
     .from('products')
     .select(`
-      id, name, slug, product_type, sale_price, sort_order, collection_id,
+      id, name, slug, product_type, regular_price, discount_rate, sale_price, sort_order, collection_id,
       collections ( id, name, slug, sort_order ),
+      categories ( slug ),
       product_images ( image_url, image_type, sort_order, is_primary ),
       product_variants ( id, size, stock_quantity, low_stock_threshold )
     `)
@@ -64,6 +65,8 @@ function buildCollectionsFromProducts(products) {
         sortOrder: col.sort_order,
         dir: '',
         price: 0,
+        regularPrice: 0,
+        discountRate: 0,
         productId: null,
         slug: '',
         variants: {},
@@ -82,6 +85,8 @@ function buildCollectionsFromProducts(products) {
 
     if (p.product_type === 'hanbok') {
       entry.price = p.sale_price;
+      entry.regularPrice = p.regular_price;
+      entry.discountRate = Number(p.discount_rate || 0);
       entry.productId = p.id;
       entry.slug = p.slug;
       entry.hanbokImages = images.filter(i => i.image_type === 'main').map(i => extractDirAndFile(i.image_url).file);
@@ -99,10 +104,17 @@ function buildCollectionsFromProducts(products) {
         name: p.name,
         file,
         price: p.sale_price,
+        regularPrice: p.regular_price,
+        discountRate: Number(p.discount_rate || 0),
         productId: p.id,
         slug: p.slug,
         variantId: variant ? variant.id : null,
         stock: variant ? variant.stock_quantity : 0,
+        variants: (p.product_variants || []).reduce((acc, v) => {
+          acc[v.size] = { id: v.id, stock: v.stock_quantity, lowStockThreshold: v.low_stock_threshold };
+          return acc;
+        }, {}),
+        categorySlug: p.categories && p.categories.slug,
       };
       if (p.product_type === 'accessory') entry.accessories.push(item);
       else entry.goods.push(item);

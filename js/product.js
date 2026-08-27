@@ -67,6 +67,13 @@
 
   if ((!product || error) && fallbackProduct) product = fallbackProduct;
   if (isAdminPreview && previewData) { product = previewData.product; error = null; }
+  if (product && !isAdminPreview) {
+    const images = product.product_images || [];
+    const primary = images.find(image => image.is_primary) || images[0];
+    const viewed = JSON.parse(localStorage.getItem('yeonhwajaesil_viewed') || '[]').filter(item => item.slug !== product.slug);
+    viewed.unshift({ slug: product.slug, name: product.name, image: primary ? primary.image_url : '' });
+    localStorage.setItem('yeonhwajaesil_viewed', JSON.stringify(viewed.slice(0, 12)));
+  }
 
   if (error || !product) {
     $('#pdpLoading').hidden = true;
@@ -528,7 +535,8 @@
     let selectedVariantId = null;
     const state = { onChange: null, getVariantId: () => selectedVariantId };
 
-    if (product.product_type !== 'hanbok') {
+    const isFlowerShoes = product.categories && product.categories.slug === 'flowershoes';
+    if (product.product_type !== 'hanbok' && !isFlowerShoes) {
       // FREE 사이즈 단일 옵션 - 버튼 없이 자동 선택
       selectedVariantId = variants[0] ? variants[0].id : null;
       return state;
@@ -536,13 +544,16 @@
 
     wrap.hidden = false;
     btnWrap.innerHTML = '';
-    const sizeOrder = ['S', 'M', 'L'];
+    const sizeOrder = isFlowerShoes ? ['220', '230', '240'] : ['S', 'M', 'L'];
+    const sizeLabels = isFlowerShoes
+      ? { '220': 'S [220]', '230': 'M [230]', '240': 'L [240]' }
+      : { S: 'S', M: 'M', L: 'L' };
     const bySize = new Map(variants.map(v => [v.size, v]));
     sizeOrder.forEach(size => {
       const v = bySize.get(size);
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = size;
+      btn.textContent = sizeLabels[size];
       if (!v || v.stock_quantity <= 0) {
         btn.disabled = true;
       } else {
@@ -693,11 +704,15 @@
       const stars = '★'.repeat(full) + (half ? '⯪' : '') + '☆'.repeat(Math.max(0, 5 - full - (half ? 1 : 0)));
       const tags = (r.review_tags || []).map(t => '#' + t.tag).join(' ');
       const date = new Date(r.created_at).toLocaleDateString('ko-KR');
+      const media = (r.review_images || []).map(file => /\.(mp4|webm|mov)(\?|$)/i.test(file.image_url)
+        ? `<video class="review-card__media" src="${file.image_url}" controls muted playsinline></video>`
+        : `<img class="review-card__media" src="${file.image_url}" alt="${file.alt_text || '구매 후기 이미지'}">`).join('');
       const div = document.createElement('div');
       div.className = 'review-card';
       div.innerHTML = `
         <div class="review-card__head"><span>${r.nickname}</span><span>${date}</span></div>
         <div class="review-card__rating">${stars} ${r.rating}</div>
+        ${media ? `<div class="review-card__media-grid">${media}</div>` : ''}
         <p class="review-card__text">"${r.content}"</p>
         <div class="review-card__tags">${tags}</div>`;
       grid.appendChild(div);

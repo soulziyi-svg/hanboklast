@@ -8,8 +8,8 @@
 
 <link rel="preconnect" href="https://fastly.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/product.css?v=20260827-dalbit-leesle-ui">
+<link rel="stylesheet" href="css/style.css?v=20260827-header-white-outline">
+<link rel="stylesheet" href="css/product.css?v=20260827-review-media">
 </head>
 <body>
 
@@ -18,18 +18,20 @@
   <a href="index.html" class="hamburger" aria-label="홈으로" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">←</a>
 
   <a href="index.html" class="logo-wrap" aria-label="연화재실 홈">
-    <img src="img/logo.png" alt="연화재실 로고" class="logo-img">
+    <img src="img/logo-red.png?v=20260827" alt="연화재실 로고" class="logo-img">
   </a>
 
   <div class="header__right">
+    <a id="signupBtn" class="btn btn--signup" href="index.html?signup=1">회원가입</a>
     <button id="loginBtn" class="btn btn--login">
       <span class="btn--login__face btn--login__face--front">로그인</span>
       <span class="btn--login__face btn--login__face--back">sign in</span>
     </button>
     <span id="welcomeText" class="welcome-text" hidden></span>
+    <a id="mypageBtn" href="mypage.html" class="btn btn--mypage" hidden>마이페이지</a>
     <a id="adminLinkBtn" href="admin.html" class="btn btn--admin" hidden>관리자페이지</a>
     <button id="cartBtn" class="icon-btn" aria-label="장바구니">
-      🛍<span id="cartCount" class="badge">0</span>
+      <svg viewBox="0 0 36 32" aria-hidden="true"><path d="M2 3h4l3.2 17h18.5l3.1-12H8"/><circle cx="12" cy="27" r="2.5"/><circle cx="26" cy="27" r="2.5"/></svg><span id="cartCount" class="badge">0</span>
     </button>
   </div>
 </header>
@@ -58,20 +60,31 @@
       </div>
       <button class="modal-close" data-close="cartModal">✕</button>
     </div>
+    <div class="cart-toolbar"><label><input type="checkbox" id="cartSelectAll" checked> 전체 선택</label><button id="cartDeleteSelected" type="button">선택 삭제</button></div>
     <div id="cartItems" class="cart-items"></div>
+    <div class="cart-summary">
+      <div class="row"><span>상품 수량</span><span id="cartQty">0개</span></div>
+      <div class="row"><span>상품금액</span><span id="cartProductTotal">0원</span></div>
+      <div class="row"><span>액세서리</span><span id="cartAddonTotal">0원</span></div>
+      <label class="cart-coupon"><span>쿠폰 선택</span><select id="orderCoupon"><option value="">쿠폰을 선택하세요</option></select></label>
+      <div class="row row--discount"><span>쿠폰 할인</span><span id="cartCouponDiscount">-0원</span></div>
+      <div class="row row--total"><span>총 결제 예정금액</span><span id="cartGrandTotal">0원</span></div>
+      <button id="cartCheckoutBtn" class="btn btn--purchase">결제창으로 이동</button>
+      <button class="btn-link" data-close="cartModal">쇼핑 계속하기 →</button>
+    </div>
+  </div>
+</div>
+
+<div id="paymentModal" class="modal-overlay" hidden>
+  <div class="modal payment-modal">
+    <button class="modal-close" data-close="paymentModal">닫기 ✕</button>
+    <h3>주문·배송 정보</h3>
     <div class="cart-order-form">
       <input type="text" id="orderName" placeholder="주문자명">
       <input type="text" id="orderPhone" placeholder="연락처 (예: 010-0000-0000)">
       <input type="text" id="orderAddress" placeholder="배송주소">
     </div>
-    <div class="cart-summary">
-      <div class="row"><span>선택상품</span><span id="cartQty">0개</span></div>
-      <div class="row"><span>상품금액</span><span id="cartProductTotal">0원</span></div>
-      <div class="row"><span>액세서리</span><span id="cartAddonTotal">0원</span></div>
-      <div class="row row--total"><span>총 결제 예정금액</span><span id="cartGrandTotal">0원</span></div>
-      <button id="cartCheckoutBtn" class="btn btn--purchase">선택 상품 구매하기</button>
-      <button class="btn-link" data-close="cartModal">쇼핑 계속하기 →</button>
-    </div>
+    <button id="paymentSubmitBtn" class="btn btn--purchase">결제하기</button>
   </div>
 </div>
 
@@ -192,7 +205,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/supabase-client.js?v=20260826-mukhwa-detail"></script>
-<script src="js/shop-common.js?v=20260826-mukhwa-detail"></script>
-<script src="js/product.js?v=20260827-dalbit-leesle-ui"></script>
+<script src="js/shop-common.js?v=20260827-welcome-coupon"></script>
+<script src="js/product.js?v=20260827-flower-shoe-sizes"></script>
 </body>
 </html>

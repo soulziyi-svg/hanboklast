@@ -8,7 +8,7 @@
 
 <link rel="preconnect" href="https://fastly.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-<link rel="stylesheet" href="css/style.css?v=20260827-chatbot-full-height">
+<link rel="stylesheet" href="css/style.css?v=20260827-header-white-outline">
 </head>
 <body>
 
@@ -21,15 +21,21 @@
     <span>한국의 아름다움을 입다</span><span>·</span>
     <span>회원가입 즉시 10% 할인쿠폰</span><span>·</span>
     <span>다양한 나만의 굿즈 제작</span><span>·</span>
+    <span>한국의 아름다움을 입다</span><span>·</span>
+    <span>회원가입 즉시 10% 할인쿠폰</span><span>·</span>
+    <span>다양한 나만의 굿즈 제작</span><span>·</span>
+    <span>한국의 아름다움을 입다</span><span>·</span>
+    <span>회원가입 즉시 10% 할인쿠폰</span><span>·</span>
+    <span>다양한 나만의 굿즈 제작</span><span>·</span>
   </div>
 </div>
 
 <!-- 헤더 -->
 <header id="header" class="header">
-  <button id="hamburgerBtn" class="hamburger" aria-label="메뉴 열기">=</button>
+  <button id="hamburgerBtn" class="hamburger" aria-label="메뉴 열기"><svg viewBox="0 0 32 24" aria-hidden="true"><path d="M2 3h28M2 12h28M2 21h28"/></svg></button>
 
   <a href="index.html" class="logo-wrap" aria-label="연화재실 홈">
-    <img src="img/logo.png" alt="연화재실 로고" class="logo-img">
+    <img src="img/logo-red.png?v=20260827" alt="연화재실 로고" class="logo-img">
   </a>
 
   <div id="megaMenu" class="mega-menu">
@@ -48,12 +54,7 @@
   </div>
 
   <div class="header__right">
-    <label class="roam-toggle" title="화면 위 랜덤 아이콘 ON/OFF">
-      <input type="checkbox" id="roamToggle" checked>
-      <span class="roam-toggle__slider"></span>
-    </label>
-
-    <button id="searchBtn" class="icon-btn" aria-label="검색">🔍</button>
+    <button id="searchBtn" class="icon-btn" aria-label="검색"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="9"/><path d="m21 21 8 8"/></svg></button>
 
     <button id="signupBtn" class="btn btn--signup" data-open="signupModal">회원가입</button>
 
@@ -62,13 +63,14 @@
       <span class="btn--login__face btn--login__face--back">sign in</span>
     </button>
     <span id="welcomeText" class="welcome-text" hidden></span>
+    <a id="mypageBtn" href="mypage.html" class="btn btn--mypage" hidden>마이페이지</a>
 
     <a id="adminLinkBtn" href="admin.html" class="btn btn--admin" hidden>관리자페이지</a>
 
     <button id="cartBtn" class="icon-btn" aria-label="장바구니">
-      🛍<span id="cartCount" class="badge">0</span>
+      <svg viewBox="0 0 36 32" aria-hidden="true"><path d="M2 3h4l3.2 17h18.5l3.1-12H8"/><circle cx="12" cy="27" r="2.5"/><circle cx="26" cy="27" r="2.5"/></svg><span id="cartCount" class="badge">0</span>
     </button>
-    <button id="trackBtn" class="icon-btn" aria-label="배송조회">🚚</button>
+    <button id="trackBtn" class="icon-btn" aria-label="배송조회"><svg viewBox="0 0 36 28" aria-hidden="true"><path d="M2 4h20v17H2zM22 10h7l5 6v5H22z"/><circle cx="9" cy="23" r="3"/><circle cx="28" cy="23" r="3"/></svg></button>
   </div>
 </header>
 
@@ -135,20 +137,31 @@
       </div>
       <button class="modal-close" data-close="cartModal">✕</button>
     </div>
+    <div class="cart-toolbar"><label><input type="checkbox" id="cartSelectAll" checked> 전체 선택</label><button id="cartDeleteSelected" type="button">선택 삭제</button></div>
     <div id="cartItems" class="cart-items"></div>
+    <div class="cart-summary">
+      <div class="row"><span>상품 수량</span><span id="cartQty">0개</span></div>
+      <div class="row"><span>상품금액</span><span id="cartProductTotal">0원</span></div>
+      <div class="row"><span>액세서리</span><span id="cartAddonTotal">0원</span></div>
+      <label class="cart-coupon"><span>쿠폰 선택</span><select id="orderCoupon"><option value="">쿠폰을 선택하세요</option></select></label>
+      <div class="row row--discount"><span>쿠폰 할인</span><span id="cartCouponDiscount">-0원</span></div>
+      <div class="row row--total"><span>총 결제 예정금액</span><span id="cartGrandTotal">0원</span></div>
+      <button id="cartCheckoutBtn" class="btn btn--purchase">결제창으로 이동</button>
+      <button class="btn-link" data-close="cartModal">쇼핑 계속하기 →</button>
+    </div>
+  </div>
+</div>
+
+<div id="paymentModal" class="modal-overlay" hidden>
+  <div class="modal payment-modal">
+    <button class="modal-close" data-close="paymentModal">닫기 ✕</button>
+    <h3>주문·배송 정보</h3>
     <div class="cart-order-form">
       <input type="text" id="orderName" placeholder="주문자명">
       <input type="text" id="orderPhone" placeholder="연락처 (예: 010-0000-0000)">
       <input type="text" id="orderAddress" placeholder="배송주소">
     </div>
-    <div class="cart-summary">
-      <div class="row"><span>선택상품</span><span id="cartQty">0개</span></div>
-      <div class="row"><span>상품금액</span><span id="cartProductTotal">0원</span></div>
-      <div class="row"><span>액세서리</span><span id="cartAddonTotal">0원</span></div>
-      <div class="row row--total"><span>총 결제 예정금액</span><span id="cartGrandTotal">0원</span></div>
-      <button id="cartCheckoutBtn" class="btn btn--purchase">선택 상품 구매하기</button>
-      <button class="btn-link" data-close="cartModal">쇼핑 계속하기 →</button>
-    </div>
+    <button id="paymentSubmitBtn" class="btn btn--purchase">결제하기</button>
   </div>
 </div>
 
@@ -210,55 +223,37 @@
   <!-- 브랜드 스토리 -->
   <section id="brand-story" class="brand-story">
     <div class="brand-story__content">
-      <img src="img/logo.png" alt="연화재실 로고" class="brand-story__logo">
       <h2>한국의 아름다움을 현대적이고 조화롭게 담아냅니다.</h2>
-      <p class="brand-story__desc">
-        전통을 그대로 재현하기보다, 본질적인 원리를 살펴 지금의 몸짓과 공간에 자연스럽게 어울리도록 다시 짓습니다.<br>
-        옷고름 하나, 색동 하나에도 이야기를 담아 오늘의 하루를 특별하게 기록합니다.
-      </p>
 
-      <div class="brand-story__layout">
-        <div class="brand-story__images">
+      <div class="brand-concept">
+        <div class="brand-concept__visual">
+          <div class="brand-story__images">
           <img src="img/컨셉사진/story.png" alt="연화재실 브랜드 컨셉 사진">
+          </div>
+          <div class="brand-colors" aria-label="브랜드 컬러">
+            <div class="brand-color" style="background:#FFFDF8;color:#171717;"><b>설백색 <small>#FFFDF8</small></b></div>
+            <div class="brand-color" style="background:#171717;color:#FFFDF8;"><b>먹색 <small>#171717</small></b></div>
+            <div class="brand-color" style="background:#7146A3;color:#FFFDF8;"><b>연화보라 <small>#7146A3</small></b></div>
+          </div>
         </div>
-
-        <div class="brand-story__details">
-          <h3 class="brand-story__label">DESIGNNER STORY</h3>
-          <p class="brand-story__quote">
-            “유행을 좇기보다 내가 진심으로 좋아하는 옷을 이유 없이 꺼내 입을 수 있기를 바랍니다.
-            전통의 아름다움이 특별한 날에만 머무르지 않고 오늘의 일상에 자연스럽게 스며들어,
-            옷을 입은 순간의 표정과 기억까지 오래 남는 디자인을 만들고 싶습니다.”
-          </p>
-          <div class="brand-story__interview">
-            <div class="designer-media">
-              <video src="img/인터뷰.mp4" controls width="300"></video>
-              <h3 class="brand-story__label brand-story__label--colors">브랜드 색</h3>
-              <div class="brand-colors">
-                <div class="brand-color" style="background:#171717;color:#FFFDF8;">
-                  <b>먹색<br>#171717</b><span>묵직하지만 딱딱하지 않은 깊이를 표현한 색.</span>
-                </div>
-                <div class="brand-color" style="background:#FFFDF8;color:#171717;">
-                  <b>설백색<br>#FFFDF8</b><span>은은하고 따뜻한 여백을 담은 색.</span>
-                </div>
-                <div class="brand-color" style="background:#7C4DFF;color:#FFFDF8;">
-                  <b>연화보라<br>#7C4DFF</b><span>전통 위에 현대적인 포인트를 더하는 색.</span>
-                </div>
-              </div>
-            </div>
+        <div class="brand-concept__copy">
+          <p class="brand-story__eyebrow">BRAND CONCEPT</p>
+          <h3>전통의 한복을 오늘의 옷으로 단정한 선과 색의 조화를 지키며<br>일상에서도 편안하게 입을 수 있도록 새롭게 해석합니다.</h3>
+          <div class="designer-story">
             <div class="designer-profile">
-              <p>
-                이 옷은 전통 한복의 단정한 곡선과 여백은 지키면서도, 오래 입고 움직이기 편한 한 벌을 만들고 싶다는 생각에서 시작했습니다.
-                저고리의 선은 간결하게 정리하고 치마의 흐름은 사진 속에서도 자연스럽게 살아나도록 여러 차례 패턴과 소재를 조정했습니다.
-              </p>
-              <dl class="designer-profile__details">
-                <div><dt>학력</dt><dd>서울디자인고등학교 패션디자인과 졸업<br>홍익대학교 섬유미술·패션디자인과 학사<br>이화여자대학교 디자인대학원 패션디자인 석사</dd></div>
-                <div><dt>경력</dt><dd>국가무형유산 전통복식 전수 교육 수료<br>한복문화주간 신진 디자이너 전시 참여<br>공연·화보·브랜드 협업 의상 디자인 및 제작</dd></div>
-                <div><dt>수상</dt><dd>대한민국 한복디자인 공모전 창작 부문 우수상<br>서울 공예·디자인 공모전 패션 부문 장려상<br>한국 전통문화 콘텐츠 디자인 어워드 특별상</dd></div>
-              </dl>
+              <p class="brand-story__eyebrow">DESIGNER STORY</p>
+              <h3>좋아하는 옷을 이유 없이 입을 수 있도록 전통의 아름다움이 일상에 자연스럽게 스며들기를 바랍니다.<br>입는 순간의 추억과 기억까지 오래 남는 옷이 되기를 바라며<br>최선을 다하겠습니다.</h3>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="designer-history">
+        <details><summary>학력 <span>+</span></summary><p>서울디자인고등학교 패션디자인과 졸업<br>홍익대학교 섬유미술·패션디자인과 학사<br>이화여자대학교 디자인대학원 패션디자인 석사</p></details>
+        <details><summary>경력 <span>+</span></summary><p>국가무형유산 전통복식 전수 교육 수료<br>한복문화주간 신진 디자이너 전시 참여<br>공연·화보·브랜드 협업 의상 디자인 및 제작</p></details>
+        <details><summary>수상 내역 <span>+</span></summary><p>대한민국 한복디자인 공모전 창작 부문 우수상<br>서울 공예·디자인 공모전 패션 부문 장려상<br>한국 전통문화 콘텐츠 디자인 어워드 특별상</p></details>
+      </div>
+
     </div>
   </section>
 
@@ -382,8 +377,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/supabase-client.js"></script>
-<script src="js/shop-common.js"></script>
-<script src="js/data.js?v=20260826-card-fit"></script>
-<script src="js/app.js?v=20260827-chatbot-right-resize"></script>
+<script src="js/shop-common.js?v=20260827-welcome-coupon"></script>
+<script src="js/data.js?v=20260827-shop-improvements"></script>
+<script src="js/app.js?v=20260827-search-collections"></script>
 </body>
 </html>

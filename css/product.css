@@ -258,11 +258,14 @@ body{background:var(--pdp-bg);}
 .pdp-reviews h3{font-family:var(--font-samulnori);font-size:26px;margin-bottom:20px;}
 .pdp-reviews .review-grid{padding:0;}
 .pdp-reviews-empty{color:var(--gray-mid);font-size:14px;padding:20px 0;}
+.review-card__media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:14px 0;}
+.review-card__media{display:block;width:100%;height:220px;object-fit:cover;background:#eee;}
 
 @media (max-width: 900px){
   .pdp-main{grid-template-columns:1fr;}
   .pdp-guide-steps{grid-template-columns:repeat(2,1fr);}
   .pdp-reviews .review-grid{grid-template-columns:repeat(2,1fr);}
+  .review-card__media{height:180px;}
   .mukhwa-hero,.mukhwa-rating,.mukhwa-reasons,.mukhwa-story,.mukhwa-scenes,.mukhwa-compare,.mukhwa-details,.mukhwa-options{padding-left:24px;padding-right:24px;}
   .mukhwa-hero h2{font-size:36px;}.mukhwa-hero h2 strong{font-size:48px;}
   .mukhwa-reasons article{grid-template-columns:36px 1fr;}.mukhwa-reasons article img{grid-column:1/-1;width:100%;height:auto;}

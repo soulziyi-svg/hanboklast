@@ -60,7 +60,7 @@
     { value: 'product_only', label: '상품단독' }, { value: 'detail', label: '상세' },
     { value: 'component', label: '구성품' }, { value: 'accessory', label: '악세사리' }, { value: 'goods', label: '굿즈' },
   ];
-  const SIZE_OPTS = ['S', 'M', 'L', 'FREE'];
+  const SIZE_OPTS = ['S', 'M', 'L', 'FREE', '220', '230', '240'];
   const DETAIL_SECTION_TYPE = ['description', 'features', 'model_images', 'video', 'size', 'components', 'care', 'shipping', 'guide', 'reviews', 'related_products'];
   const ORDER_STATUS = [
     { value: 'payment_pending', label: '결제대기' }, { value: 'paid', label: '결제완료' },

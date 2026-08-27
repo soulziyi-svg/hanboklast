@@ -1,0 +1,73 @@
+연화재실 사이트 수정 내역 (2026-08-27)
+=========================================
+※ 다른 환경(세션 밖)에서 작업한 변경사항을 git diff로 확인해 정리한 목록입니다.
+
+[헤더 / 네비게이션]
+- 로고를 img/logo.png → img/logo-red.png 로 교체 (index.html, product.html)
+- 헤더 아이콘(햄버거/검색/장바구니/배송조회)을 이모지 → SVG 라인 아이콘으로 교체, 브랜드 레드(#C91F28) 색상 적용
+- 탑배너 문구 반복 횟수를 늘리고(2회→12회) 높이 20px→30px, 애니메이션 속도 조정(18s→36s)로 끊김 없는 무한루프 구현
+- 메가 메뉴(마우스오버 드롭다운)는 비활성화(display:none)하고, 햄버거 메뉴 패널을 새 디자인(4열 아코디언 그리드, hover로 열고닫힘)으로 전면 개편
+- 햄버거 메뉴에 "로그인/회원가입, 마이페이지, 장바구니, 배송조회, 1:1 문의하기" 링크 추가
+- 헤더에 "마이페이지" 버튼(#mypageBtn) 신규 추가 (로그인 시 노출)
+- product.html 헤더에 "회원가입" 버튼 추가 (index.html?signup=1 링크)
+- URL 쿼리(?signup=1, ?login=1)로 진입 시 해당 모달 자동 오픈 (js/app.js)
+- 검색 모달: 컬렉션 선택을 span → button으로 교체하고 active 상태 표시, 상품 타입 라벨(한복/액세서리/굿즈) 표시하도록 카드 UI 개선
+
+[상품 카드 / 가격 표시]
+- 정가 대비 할인율이 있는 경우 "세일중 / 원가 / N% 할인중 / 판매가"를 보여주는 price-box UI 추가 (js/app.js priceMarkup 함수, index/product 공통)
+- data.js에서 regular_price, discount_rate, categories.slug를 Supabase 쿼리에 추가 조회
+- 상품 카드 이미지 자동 전환 로직을 setInterval 단순 전환 → 이미지 preload/decode 후 크로스페이드 전환 + hover 시 정지하도록 개선
+- 장바구니 담기 버튼을 이모지(🛒) → SVG 아이콘으로 교체, hover 시에만 노출되도록 변경
+
+[꽃신 사이즈 옵션]
+- '꽃신(flowershoes)' 카테고리는 의류 사이즈(S/M/L) 대신 신발 사이즈(220/230/240, 라벨: S[220]/M[230]/L[240])를 사용하도록 변경
+  - js/admin.js: SIZE_OPTS에 220/230/240 추가
+  - js/product.js: PDP 옵션 선택 UI에서 카테고리별 사이즈 목록/라벨 분기
+  - js/app.js: 서브카드(액세서리/굿즈)에 사이즈 select 박스 추가, 선택한 사이즈의 variant로 장바구니 담기
+  - supabase/migrations/20260827010000_flowershoes_sizes.sql: DB 제약조건에 220/230/240 추가, 기존 FREE 사이즈 데이터를 220으로 이관, 230/240 variant 신규 생성
+
+[장바구니 / 결제]
+- 장바구니 아이템별 체크박스 선택 기능 추가, "전체선택 / 선택삭제" 툴바 추가
+- 장바구니 아이템 수량을 +/- 버튼 및 입력창으로 직접 조절 가능하도록 개선 (기존엔 텍스트 표시만 가능)
+- 선택한 상품 기준으로 합계(상품금액/액세서리/총액)를 실시간 재계산
+- 쿠폰 선택 드롭다운(#orderCoupon) 추가, 보유 쿠폰 목록을 불러와 최소주문금액/최대할인금액 조건에 맞춰 할인액 계산 후 결제 예정금액에 반영
+- 기존엔 장바구니 모달 안에 주문자정보 입력폼이 같이 있었는데, "결제창으로 이동" 버튼을 눌러 별도의 결제 모달(#paymentModal)로 분리
+- create_order RPC 호출 시 p_coupon_code로 선택한 쿠폰 코드 전달
+
+[마이페이지 신규 추가]
+- mypage.html / js/mypage.js / css/mypage.css 신규 생성
+- 탭 구성: 구매한 상품 / 취소·교환·반품 / 쿠폰 관리 / 내가 본 상품 / 1:1 문의하기
+- 리뷰 작성 모달: 사진/영상 첨부(최대 5개, 파일당 20MB), 별점, 후기 내용 입력 가능
+- product.js: 상품 상세 페이지 조회 시 localStorage(yeonhwajaesil_viewed)에 "최근 본 상품" 최대 12개 기록 → 마이페이지 "내가 본 상품" 탭에서 사용
+
+[회원가입 쿠폰 자동 발급 - DB]
+- supabase/migrations/20260827012000_welcome_coupon_reliable.sql
+  - WELCOME10(10% 할인) 쿠폰을 upsert로 항상 보장
+  - profiles insert 시 트리거(issue_signup_coupon)로 회원가입 즉시 쿠폰 자동 지급되도록 변경 (기존엔 프론트에서 처리하다 보니 누락 가능성 있었음)
+  - user_coupons에 (user_id, coupon_id) unique 인덱스 추가로 중복 발급 방지, 기존 중복 데이터 정리
+  - 기존 미발급 회원에게도 쿠폰 소급 지급
+- supabase/migrations/20260827011000_customer_order_actions.sql
+  - confirm_my_order(order_id) RPC 추가: 배송완료(delivered) 상태인 본인 주문만 "구매확정(confirmed)"으로 전환 가능
+
+[리뷰 미디어]
+- 리뷰에 이미지/동영상 첨부 시 review-card__media-grid로 그리드 표시 (mp4/webm/mov는 video 태그, 나머지는 img 태그) — css/product.css, js/product.js
+
+[브랜드 스토리 섹션 리디자인]
+- 기존 "좌측 이미지 / 우측 텍스트" 2단 레이아웃에서 컨셉 이미지+브랜드컬러(좌) / 브랜드 컨셉 카피+디자이너 스토리(우) 구조로 개편
+- 학력/경력/수상내역을 details/summary 아코디언(3단 그리드, +/− 토글)으로 변경
+- 브랜드 컬러 연화보라 값 변경 (#7C4DFF → #7146A3, 브랜드스토리 섹션 한정)
+- 관련 CSS 전면 재작성 (.brand-concept, .designer-history 등 신규 클래스)
+
+[기타]
+- js/app.js: 마우스 따라다니는 고양이 아이콘 On/Off 토글(roamToggle) 제거, 항상 표시로 변경
+- css/style.css: GmarketSans 폰트 추가, 버튼/아이콘 hover·active 인터랙션(스케일, 그림자) 다수 보강, 모바일(~600px) 헤더 반응형 규칙 추가
+- "한복 3차 다른거.txt": 배너 슬라이더(이전/다음 배너 10% 일부 노출), 브랜드스토리 레이아웃, 이미지 확대창(contain, 90vh, 원본비율) 등 기획 스펙 업데이트
+
+[캐시버스팅]
+- 다수의 HTML에서 css/js 링크의 ?v= 쿼리스트링 버전을 갱신 (예: style.css?v=20260827-header-white-outline, product.js?v=20260827-flower-shoe-sizes 등)
+
+[Supabase DB 마이그레이션 - 아직 미적용]
+- supabase/migrations/20260827010000_flowershoes_sizes.sql
+- supabase/migrations/20260827011000_customer_order_actions.sql
+- supabase/migrations/20260827012000_welcome_coupon_reliable.sql
+→ list_migrations로 확인한 결과 위 3건은 로컬 파일로만 존재하고 Supabase 프로젝트(ziyi)에는 아직 적용되지 않았습니다. 적용 전까지는 꽃신 사이즈/구매확정/쿠폰 자동발급 기능이 DB에서 동작하지 않습니다.
