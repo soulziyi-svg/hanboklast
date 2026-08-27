@@ -9,7 +9,7 @@
 }
 
 body{background:var(--pdp-bg);}
-.pdp-main[hidden],.pdp-purchase-info[hidden],.pdp-guide[hidden],.pdp-reviews[hidden],.mukhwa-editorial[hidden]{display:none;}
+.pdp-main[hidden],.pdp-purchase-info[hidden],.pdp-guide[hidden],.pdp-reviews[hidden],.mukhwa-editorial[hidden],.dalbit-editorial[hidden]{display:none;}
 
 .pdp{padding-top:100px;}
 
@@ -71,7 +71,71 @@ body{background:var(--pdp-bg);}
   font-size:16px;padding:16px 0;border-top:1px solid #eee;margin-bottom:16px;
 }
 .pdp-total-row strong{font-size:22px;color:var(--pdp-pink);}
-.pdp-add-cart-btn{width:100%;height:48px;background:var(--black);color:#fff;font-size:15px;}
+.pdp-action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pdp-add-cart-btn,.pdp-buy-now-btn{width:100%;height:48px;font-size:15px;}
+.pdp-add-cart-btn{background:#fff;color:var(--black);border:1px solid var(--black);}
+.pdp-buy-now-btn{background:var(--black);color:#fff;}
+
+/* 달빛하얀소복 전용 에디토리얼 상세페이지 */
+.dalbit-editorial{width:min(860px,100%);margin:40px auto 0;background:#f8f2e9;color:#2f2925;overflow:hidden;}
+.dalbit-editorial img{display:block;width:100%;height:auto;}
+.dalbit-editorial section{padding:68px 62px;position:relative;}
+.dalbit-number{position:absolute;top:20px;left:20px;width:28px;height:20px;border-radius:50%;background:#fff;color:#b9a899;font:700 11px/20px Georgia,serif;text-align:center;margin:0;}
+.dalbit-eyebrow{margin:0 0 10px;color:#9b7e67;font-size:11px;font-weight:800;letter-spacing:.18em;}
+.dalbit-editorial h2,.dalbit-editorial h3{font-family:var(--font-yeongwol);font-weight:400;line-height:1.28;}
+.dalbit-editorial h2{font-size:54px;margin:0 0 16px;}
+.dalbit-editorial h3{font-size:40px;margin:0 0 16px;}
+.dalbit-editorial section>p:not(.dalbit-number):not(.dalbit-eyebrow):not(.dalbit-stars){font-size:14px;line-height:1.85;color:#746960;margin:0 0 30px;}
+.dalbit-hero{text-align:center;padding-bottom:0!important;background:#faf5ed;}
+.dalbit-hero>img{margin-top:34px;max-height:960px;object-fit:cover;object-position:center 30%;}
+.dalbit-rating{background:#fffaf3;text-align:center;}
+.dalbit-rating>div:first-of-type{display:flex;justify-content:center;align-items:flex-end;gap:8px;}
+.dalbit-rating>div:first-of-type strong{font:400 86px/1 Georgia,serif;}
+.dalbit-rating>div:first-of-type span{font-size:24px;margin-bottom:10px;color:#8f8176;}
+.dalbit-stars{color:#b88b68;letter-spacing:.22em;font-size:20px;margin:12px 0 8px;}
+.dalbit-review-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px;text-align:left;}
+.dalbit-review-cards article{background:#f7efe5;border:1px solid #eadfd3;padding:18px;}
+.dalbit-review-cards b{color:#b88b68;font-size:12px;letter-spacing:.12em;}
+.dalbit-review-cards p{font-size:12px;line-height:1.65;color:#6f655e;margin:10px 0 0;}
+.dalbit-reasons{background:#f3eadf;text-align:center;}
+.dalbit-reason-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px;text-align:left;}
+.dalbit-reason-grid article{background:#fffaf4;padding:10px 10px 18px;position:relative;}
+.dalbit-reason-grid article>span{position:absolute;top:18px;left:18px;background:#a78063;color:#fff;padding:5px 8px;font:700 12px Georgia,serif;z-index:1;}
+.dalbit-reason-grid img{aspect-ratio:1/1;object-fit:cover;object-position:center 25%;}
+.dalbit-reason-grid b,.dalbit-reason-grid p{display:block;margin:12px 5px 0;}
+.dalbit-reason-grid p{font-size:12px;line-height:1.55;color:#756a62;}
+.dalbit-point{background:#fbf6ef;text-align:center;padding-bottom:0!important;}
+.dalbit-point--soft{background:#efe7dd;}
+.dalbit-point>img{margin-top:28px;max-height:980px;object-fit:cover;object-position:center 28%;}
+.dalbit-icon-row{display:grid;grid-template-columns:repeat(3,1fr);background:#f8f1e8;padding:22px 0;}
+.dalbit-icon-row span{font-size:13px;border-right:1px solid #ddd0c4;}
+.dalbit-icon-row span:last-child{border-right:0;}
+.dalbit-compare{background:#f4ece2;text-align:center;}
+.dalbit-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;}
+.dalbit-compare figure{margin:0;background:#fff;padding:14px;}
+.dalbit-compare figure img{height:460px;object-fit:contain;background:#fcfaf7;}
+.dalbit-compare figcaption b,.dalbit-compare figcaption span{display:block;}
+.dalbit-compare figcaption b{font-size:15px;margin:14px 0 6px;}
+.dalbit-compare figcaption span{font-size:12px;line-height:1.55;color:#786d64;}
+.dalbit-details{background:#faf5ed;text-align:center;}
+.dalbit-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;text-align:left;}
+.dalbit-detail-grid article{background:#fff;padding-bottom:18px;}
+.dalbit-detail-grid img{height:430px;object-fit:cover;object-position:center 32%;}
+.dalbit-detail-grid span,.dalbit-detail-grid b,.dalbit-detail-grid p{display:block;margin:12px 16px 0;}
+.dalbit-detail-grid span{color:#a78063;font:700 22px Georgia,serif;}
+.dalbit-detail-grid p{font-size:12px;line-height:1.6;color:#786d64;}
+.dalbit-options{background:#fffaf3;text-align:center;}
+.dalbit-product-only{width:min(460px,100%)!important;margin:28px auto;object-fit:contain;}
+.dalbit-color{display:flex;align-items:center;justify-content:center;gap:16px;margin:20px 0 30px;text-align:left;}
+.dalbit-color i{display:block;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#f6f0e7 48%,#5b5a59 52%);border:1px solid #d8cec4;}
+.dalbit-color p{font-size:12px;color:#776c64;margin:4px 0 0;}
+.dalbit-option-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.dalbit-option-grid figure{margin:0;}
+.dalbit-option-grid img{aspect-ratio:1/1;object-fit:contain;background:#fff;}
+.dalbit-option-grid figcaption{font-size:13px;margin-top:8px;}
+.dalbit-size-note{margin-top:34px;padding:24px;border-top:1px solid #ddd0c5;border-bottom:1px solid #ddd0c5;}
+.dalbit-size-note p{font-size:13px;color:#766b63;}
+.dalbit-size-note a{display:inline-block;margin-top:8px;padding:11px 20px;background:#302a26;color:#fff;font-size:13px;}
 
 /* 묵화연무 전용 에디토리얼 상세페이지 */
 .mukhwa-editorial{width:min(860px,100%);margin:40px auto 0;background:#f7f1e9;color:#292522;overflow:hidden;}
@@ -174,4 +238,10 @@ body{background:var(--pdp-bg);}
   .mukhwa-scenes__grid img{height:auto;}
   .mukhwa-details__grid{grid-template-columns:1fr;}
   .mukhwa-details article img{height:auto;aspect-ratio:2/3;}
+  .dalbit-editorial section{padding:58px 24px;}
+  .dalbit-editorial h2{font-size:42px;}.dalbit-editorial h3{font-size:34px;}
+  .dalbit-review-cards,.dalbit-reason-grid{grid-template-columns:1fr;}
+  .dalbit-reason-grid img{aspect-ratio:4/3;}
+  .dalbit-compare-grid,.dalbit-detail-grid{grid-template-columns:1fr;}
+  .dalbit-compare figure img,.dalbit-detail-grid img{height:auto;}
 }
