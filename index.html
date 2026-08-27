@@ -8,7 +8,7 @@
 
 <link rel="preconnect" href="https://fastly.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-<link rel="stylesheet" href="css/style.css?v=20260827-header-white-outline">
+<link rel="stylesheet" href="css/style.css?v=20260828-selected-checkout">
 </head>
 <body>
 
@@ -56,7 +56,7 @@
   <div class="header__right">
     <button id="searchBtn" class="icon-btn" aria-label="검색"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="9"/><path d="m21 21 8 8"/></svg></button>
 
-    <button id="signupBtn" class="btn btn--signup" data-open="signupModal">회원가입</button>
+    <a id="signupBtn" class="btn btn--signup" href="auth.html?mode=signup" target="_blank" rel="noopener">회원가입</a>
 
     <button id="loginBtn" class="btn btn--login">
       <span class="btn--login__face btn--login__face--front">로그인</span>
@@ -84,49 +84,6 @@
   </div>
 </div>
 
-<!-- 회원가입 모달 -->
-<div id="signupModal" class="modal-overlay" hidden>
-  <div class="modal auth-modal">
-    <button class="modal-close" data-close="signupModal">닫기 ✕</button>
-    <h3>회원가입</h3>
-    <p class="auth-notice">
-      Supabase Auth로 처리되는 실제 회원가입입니다. 가입 즉시 10% 할인쿠폰이 자동으로 발급됩니다.
-    </p>
-    <div class="auth-step">
-      <label><input type="checkbox" id="agreeAll"> 전체동의</label>
-      <label><input type="checkbox" class="agree-item"> 서비스 통합이용약관 동의 <b>(필수)</b></label>
-      <label><input type="checkbox" class="agree-item"> 위치정보 수집 및 이용 동의</label>
-    </div>
-    <form id="signupForm" class="auth-form">
-      <input type="email" id="signupEmail" placeholder="아이디(이메일)" required>
-      <input type="password" id="signupPassword" placeholder="비밀번호 (6자 이상)" minlength="6" required>
-      <input type="password" id="signupPasswordConfirm" placeholder="비밀번호 확인" minlength="6" required>
-      <input type="text" id="signupAddress" placeholder="기본주소">
-      <button type="submit" id="signupSubmit" class="btn btn--wide" disabled>동의하고 가입하기</button>
-    </form>
-  </div>
-</div>
-
-<!-- 로그인 모달 -->
-<div id="loginModal" class="modal-overlay" hidden>
-  <div class="modal auth-modal">
-    <button class="modal-close" data-close="loginModal">닫기 ✕</button>
-    <h3>sign in</h3>
-    <p class="auth-notice">
-      Supabase Auth 로그인입니다. (heechic@naver.com 계정은 관리자 권한으로 연결됩니다)
-    </p>
-    <form id="loginForm" class="auth-form">
-      <input type="email" id="loginEmail" placeholder="아이디" required>
-      <input type="password" id="loginPassword" placeholder="비밀번호" required>
-      <button type="submit" class="btn btn--wide">로그인하기</button>
-    </form>
-    <div class="auth-links">
-      <button type="button" data-open="signupModal">회원가입</button>
-      <button type="button">아이디/비밀번호 찾기</button>
-    </div>
-  </div>
-</div>
-
 <!-- 장바구니 모달 -->
 <div id="cartModal" class="modal-overlay" hidden>
   <div class="modal cart-modal">
@@ -146,7 +103,10 @@
       <label class="cart-coupon"><span>쿠폰 선택</span><select id="orderCoupon"><option value="">쿠폰을 선택하세요</option></select></label>
       <div class="row row--discount"><span>쿠폰 할인</span><span id="cartCouponDiscount">-0원</span></div>
       <div class="row row--total"><span>총 결제 예정금액</span><span id="cartGrandTotal">0원</span></div>
-      <button id="cartCheckoutBtn" class="btn btn--purchase">결제창으로 이동</button>
+      <div class="cart-checkout-actions">
+        <button id="cartCheckoutSelectedBtn" class="btn cart-selected-buy">선택상품 구매</button>
+        <button id="cartCheckoutBtn" class="btn btn--purchase">전체상품 구매</button>
+      </div>
       <button class="btn-link" data-close="cartModal">쇼핑 계속하기 →</button>
     </div>
   </div>
@@ -185,39 +145,18 @@
 
 <main>
   <!-- 메인페이지 배너 -->
-  <section id="main-banner" class="main-banner">
+  <section id="main-banner" class="main-banner main-banner--single">
     <div class="banner-slides">
       <div class="banner-slide is-active" data-idx="0">
         <video autoplay muted loop playsinline>
-          <source src="img/베너/001.mp4" type="video/mp4">
+          <source src="img/베너/0829.mp4" type="video/mp4">
         </video>
-        <div class="banner-copy">
-          <h2>은은하게 완성되는 우아함</h2>
-          <p>부드러운 색감과 세련된 배색이 어우러져 어디서든 단아하고 품격 있는 분위기를 만들어 줍니다.</p>
-        </div>
-      </div>
-      <div class="banner-slide" data-idx="1">
-        <video muted loop playsinline>
-          <source src="img/베너/002.mp4" type="video/mp4">
-        </video>
-        <div class="banner-copy">
-          <h2>다양한 나만의 굿즈 상품</h2>
-          <p>다양한 나만의 굿즈 맞춤으로 특별한 추억을 간직하세요.</p>
-        </div>
-      </div>
-      <div class="banner-slide" data-idx="2">
-        <video muted loop playsinline>
-          <source src="img/베너/003.mp4" type="video/mp4">
-        </video>
-        <div class="banner-copy">
+        <div class="banner-copy banner-copy--fixed">
           <h2>한국의 아름다움을 입다</h2>
-          <p>전통의 선과 오늘의 감각을 조화롭게 담아 특별한 순간을 완성합니다.</p>
+          <p>다양한 나만의 맞춤 굿즈 제작</p>
         </div>
       </div>
     </div>
-    <button class="banner-arrow banner-arrow--prev" aria-label="이전 배너">‹</button>
-    <button class="banner-arrow banner-arrow--next" aria-label="다음 배너">›</button>
-    <div id="bannerProgress" class="banner-progress"></div>
   </section>
 
   <!-- 브랜드 스토리 -->
@@ -307,21 +246,31 @@
     </div>
     <div>
       <h4>GUIDE</h4>
-      <ul><li>이용안내</li><li>사이즈 가이드</li><li>배송,교환,환불</li></ul>
+      <ul>
+        <li><a href="index.html#brand-story">브랜드·이용 안내</a></li>
+        <li><a href="product.html?slug=dalbitwhayansobok-hanbok#moonSizeInfo">사이즈 가이드</a></li>
+        <li><a href="product.html?slug=dalbitwhayansobok-hanbok#pdpPurchaseInfo">배송·교환·반품</a></li>
+        <li><a href="product.html?slug=dalbitwhayansobok-hanbok#moonCare">세탁·관리 방법</a></li>
+      </ul>
     </div>
     <div>
       <h4>CUSTOMER</h4>
-      <ul><li>공지사항</li><li>FAQ</li><li>1:1문의</li><li>단체구매 문의</li></ul>
+      <ul>
+        <li><a href="index.html#reviews">상품 후기</a></li>
+        <li><a href="mypage.html">구매 내역·마이페이지</a></li>
+        <li><a href="mypage.html#inquiry">1:1 문의하기</a></li>
+        <li><a href="mypage.html">취소·교환·반품 신청</a></li>
+      </ul>
     </div>
-  </div>
-  <div class="footer__company">
-    <h4>COMPANY</h4>
-    <p>상호명 : 연화재실</p>
-    <p>대표자 : 장철희</p>
-    <p>사업자등록번호 : 000-00-00000</p>
-    <p>주소 : 서울시 영등포구 영등포동</p>
-    <p class="footer__phone">02-000-0000</p>
-    <p>E-mail : welcome@ibubom.com</p>
+    <div class="footer__company">
+      <h4>COMPANY</h4>
+      <p>상호명 : 연화재실</p>
+      <p>대표자 : 장철희</p>
+      <p>사업자등록번호 : 000-00-00000</p>
+      <p>주소 : 서울시 영등포구 영등포동</p>
+      <p class="footer__phone">02-000-0000</p>
+      <p>E-mail : welcome@ibubom.com</p>
+    </div>
   </div>
 </footer>
 
@@ -377,8 +326,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/supabase-client.js"></script>
-<script src="js/shop-common.js?v=20260827-welcome-coupon"></script>
+<script src="js/shop-common.js?v=20260828-auth-window"></script>
 <script src="js/data.js?v=20260827-shop-improvements"></script>
-<script src="js/app.js?v=20260827-search-collections"></script>
+<script src="js/app.js?v=20260828-home-review-media"></script>
 </body>
 </html>

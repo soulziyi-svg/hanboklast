@@ -35,7 +35,7 @@
     const main = byKey.main;
     if (main) {
       const firstSlide = $('.banner-slide[data-idx="0"] .banner-copy');
-      if (firstSlide) {
+      if (firstSlide && !firstSlide.classList.contains('banner-copy--fixed')) {
         setText(firstSlide.querySelector('h2'), main.title);
         setText(firstSlide.querySelector('p'), main.description);
       }
@@ -182,8 +182,13 @@
 
   const hAcc = $('#hamburgerAccordion');
   COLLECTIONS.forEach(c => {
-    const details = document.createElement('details');
-    details.innerHTML = `<summary>${c.name}</summary>`;
+    const group = document.createElement('div');
+    group.className = 'hamburger-menu-group';
+    const title = document.createElement('button');
+    title.type = 'button';
+    title.className = 'hamburger-menu-title';
+    title.textContent = c.name;
+    title.addEventListener('click', () => goToProduct({ name: c.name, slug: c.slug }));
     const ul = document.createElement('ul');
     const items = [{ name: c.name + ' 한복', slug: c.slug }, ...c.accessories, ...c.goods];
     items.forEach(p => {
@@ -192,8 +197,9 @@
       li.addEventListener('click', () => goToProduct(p));
       ul.appendChild(li);
     });
-    details.appendChild(ul);
-    hAcc.appendChild(details);
+    group.appendChild(title);
+    group.appendChild(ul);
+    hAcc.appendChild(group);
   });
   let hamburgerCloseTimer;
   function openHamburger() {
@@ -260,6 +266,15 @@
   (function mainBanner() {
     const slides = $all('.banner-slide');
     const progress = $('#bannerProgress');
+    if (!slides.length) return;
+    if (slides.length === 1) {
+      const onlyVideo = slides[0].querySelector('video');
+      if (onlyVideo) {
+        onlyVideo.currentTime = 0;
+        onlyVideo.play().catch(() => {});
+      }
+      return;
+    }
     slides.forEach((s, i) => {
       const dot = document.createElement('span');
       if (i === 0) dot.className = 'is-active';
@@ -485,7 +500,7 @@
     const grid = $('#reviewGrid');
     const { data: reviews } = await supabaseClient
       .from('reviews')
-      .select('id, nickname, rating, content, created_at, products ( name ), review_tags ( tag )')
+      .select('id, nickname, rating, content, created_at, products ( name ), review_images ( image_url, alt_text ), review_tags ( tag )')
       .eq('is_visible', true)
       .order('created_at', { ascending: false })
       .limit(12);
@@ -500,11 +515,15 @@
       const stars = '★'.repeat(full) + (half ? '⯪' : '') + '☆'.repeat(Math.max(0, 5 - full - (half ? 1 : 0)));
       const tags = (r.review_tags || []).map(t => '#' + t.tag).join(' ');
       const date = new Date(r.created_at).toLocaleDateString('ko-KR');
+      const media = (r.review_images || []).map(file => /\.(mp4|webm|mov)(\?|$)/i.test(file.image_url)
+        ? `<video class="review-card__media" src="${file.image_url}" controls muted playsinline></video>`
+        : `<img class="review-card__media" src="${file.image_url}" alt="${file.alt_text || '구매 후기 이미지'}" loading="lazy">`).join('');
       const div = document.createElement('div');
       div.className = 'review-card';
       div.innerHTML = `
         <div class="review-card__head"><span>${r.nickname}</span><span>${date}</span></div>
         <div class="review-card__rating">${stars} ${r.rating}</div>
+        ${media ? `<div class="review-card__media-grid">${media}</div>` : ''}
         <p class="review-card__text">"${r.content}"</p>
         <div class="review-card__tags">${tags}${tags && r.products ? ' · ' : ''}${r.products ? r.products.name : ''}</div>`;
       grid.appendChild(div);

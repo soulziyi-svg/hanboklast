@@ -14,6 +14,14 @@
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
 
+  const topButton = $('#pdpTopBtn');
+  if (topButton) {
+    const updateTopButton = () => topButton.classList.toggle('is-visible', window.scrollY > 500);
+    window.addEventListener('scroll', updateTopButton, { passive: true });
+    topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    updateTopButton();
+  }
+
   // 관리자페이지 "미리보기": DB에 저장하지 않고 sessionStorage에 담긴 입력값만으로 이 페이지를 그대로 렌더링합니다.
   const isAdminPreview = params.get('preview') === 'admin';
   let previewData = null;

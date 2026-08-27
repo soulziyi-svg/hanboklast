@@ -978,22 +978,32 @@
   /* ================= 9. 쿠폰관리 ================= */
   async function loadCoupons() {
     const el = $('#tab-coupons');
-    const { data } = await supabaseClient.from('coupons').select('*').order('created_at', { ascending: false });
+    const [{ data }, { data: issuedRows }] = await Promise.all([
+      supabaseClient.from('coupons').select('*').order('created_at', { ascending: false }),
+      supabaseClient.from('user_coupons').select('coupon_id'),
+    ]);
+    const issuedCounts = (issuedRows || []).reduce((counts, row) => {
+      counts[row.coupon_id] = (counts[row.coupon_id] || 0) + 1;
+      return counts;
+    }, {});
     const rows = (data || []).map(c => `<tr>
       <td>${esc(c.code)}</td><td>${esc(c.name)}</td>
       <td>${c.discount_type === 'percent' ? c.discount_value + '%' : formatWon(c.discount_value)}</td>
       <td>${formatWon(c.min_order_amount)}</td>
+      <td>${issuedCounts[c.id] || 0}명</td>
       <td><span class="admin-badge ${c.active ? 'admin-badge--green' : 'admin-badge--gray'}">${c.active ? '활성' : '비활성'}</span></td>
-      <td><button class="admin-btn admin-btn--sm admin-btn--ghost" data-edit-coupon="${c.id}">수정</button>
+      <td><button class="admin-btn admin-btn--sm admin-btn--purple" data-issue-coupon="${c.id}" ${c.active ? '' : 'disabled'}>발급</button>
+      <button class="admin-btn admin-btn--sm admin-btn--ghost" data-edit-coupon="${c.id}">수정</button>
       <button class="admin-btn admin-btn--sm admin-btn--danger" data-del-coupon="${c.id}">삭제</button></td>
     </tr>`).join('');
     el.innerHTML = `
       <div class="admin-toolbar"><button class="admin-btn admin-btn--purple" id="addCouponBtn">+ 쿠폰등록</button></div>
       <div class="admin-table-wrap"><table class="admin-table">
-        <thead><tr><th>코드</th><th>이름</th><th>할인</th><th>최소주문</th><th>상태</th><th></th></tr></thead>
-        <tbody>${rows || '<tr><td colspan="6" class="admin-empty">등록된 쿠폰이 없습니다.</td></tr>'}</tbody>
+        <thead><tr><th>코드</th><th>이름</th><th>할인</th><th>최소주문</th><th>발급 인원</th><th>상태</th><th></th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="7" class="admin-empty">등록된 쿠폰이 없습니다.</td></tr>'}</tbody>
       </table></div>`;
     $('#addCouponBtn').addEventListener('click', () => openCouponModal(null));
+    $all('[data-issue-coupon]').forEach(b => b.addEventListener('click', () => openCouponIssueModal((data || []).find(c => c.id === b.dataset.issueCoupon))));
     $all('[data-edit-coupon]').forEach(b => b.addEventListener('click', () => openCouponModal((data || []).find(c => c.id === b.dataset.editCoupon))));
     $all('[data-del-coupon]').forEach(b => b.addEventListener('click', async () => {
       if (!confirm('쿠폰을 삭제할까요?')) return;
@@ -1003,6 +1013,55 @@
       await logAdmin('coupon_delete', 'coupon', b.dataset.delCoupon, '');
       loadCoupons();
     }));
+  }
+  async function openCouponIssueModal(coupon) {
+    const { data: members, error } = await supabaseClient
+      .from('profiles').select('id, email, name, status').eq('status', 'active').order('created_at', { ascending: false });
+    if (error) { showToast('회원 목록을 불러오지 못했습니다.'); return; }
+    const memberOptions = (members || []).map(member =>
+      `<option value="${member.id}">${esc(member.name || '이름 없음')} · ${esc(member.email || '이메일 없음')}</option>`).join('');
+    openAdminModal(`
+      <button class="modal-close" data-close="adminModal">닫기 ✕</button>
+      <h3>쿠폰 발급</h3>
+      <p class="admin-coupon-issue__name"><b>${esc(coupon.name)}</b><span>${esc(coupon.code)}</span></p>
+      <div class="admin-form-grid full">
+        <div class="admin-field admin-field--full">
+          <label>발급 대상</label>
+          <select id="couponIssueTarget">
+            <option value="all">모든 사용자에게 주기</option>
+            <option value="single">특정 사용자에게 주기</option>
+          </select>
+        </div>
+        <div class="admin-field admin-field--full" id="couponMemberField" hidden>
+          <label>사용자 선택</label>
+          <select id="couponMemberId">${memberOptions}</select>
+          <small>이름과 이메일을 확인한 뒤 발급해주세요.</small>
+        </div>
+      </div>
+      <p class="admin-coupon-issue__notice">이미 같은 쿠폰을 받은 사용자는 중복 발급되지 않습니다.</p>
+      <div class="admin-modal-foot">
+        <button type="button" class="admin-btn admin-btn--ghost" data-close="adminModal">취소</button>
+        <button type="button" class="admin-btn admin-btn--purple" id="couponIssueBtn">쿠폰 발급하기</button>
+      </div>`);
+    const target = $('#couponIssueTarget');
+    const memberField = $('#couponMemberField');
+    target.addEventListener('change', () => { memberField.hidden = target.value !== 'single'; });
+    $('#couponIssueBtn').addEventListener('click', async event => {
+      const memberId = target.value === 'single' ? $('#couponMemberId').value : null;
+      if (target.value === 'single' && !memberId) { showToast('쿠폰을 받을 사용자를 선택해주세요.'); return; }
+      const button = event.currentTarget;
+      button.disabled = true;
+      button.textContent = '발급 중...';
+      const { data: issuedCount, error: issueError } = await supabaseClient.rpc('admin_issue_coupon', {
+        p_coupon_id: coupon.id,
+        p_user_id: memberId,
+      });
+      if (issueError) { showToast(issueError.message || '쿠폰 발급에 실패했습니다.'); button.disabled = false; button.textContent = '쿠폰 발급하기'; return; }
+      await logAdmin('coupon_issue', 'coupon', coupon.id, `${target.value === 'all' ? '모든 사용자' : memberId} · ${issuedCount || 0}명 발급`);
+      closeAdminModal();
+      showToast(`${issuedCount || 0}명에게 쿠폰을 발급했습니다.`);
+      loadCoupons();
+    });
   }
   function openCouponModal(coupon) {
     const c = coupon || { code: '', name: '', discount_type: 'percent', discount_value: 10, min_order_amount: 0, max_discount_amount: '', starts_at: '', ends_at: '', active: true };

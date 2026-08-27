@@ -73,6 +73,10 @@ table.admin-table{width:100%;border-collapse:collapse;font-size:13px;min-width:6
   width:100%;padding:8px 10px;border:1px solid #ccc;font-size:13px;font-family:var(--font-pretendard);box-sizing:border-box;
 }
 .admin-field textarea{resize:vertical;min-height:60px;}
+.admin-field small{display:block;margin-top:6px;color:var(--gray-mid);font-size:12px;}
+.admin-coupon-issue__name{display:flex;justify-content:space-between;align-items:center;margin:0 0 22px;padding:16px;background:#f7f4ff;border-left:4px solid var(--purple);}
+.admin-coupon-issue__name b{font-size:18px;}.admin-coupon-issue__name span{color:var(--gray-mid);font-weight:700;}
+.admin-coupon-issue__notice{margin:16px 0 0;color:var(--gray-mid);font-size:13px;}
 .admin-fieldset{border:1px solid var(--gray-lighter);padding:14px;margin-top:14px;}
 .admin-fieldset legend{padding:0 6px;font-size:12px;font-weight:800;color:var(--purple);}
 .admin-inline-list{display:flex;flex-direction:column;gap:8px;}

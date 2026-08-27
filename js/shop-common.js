@@ -4,10 +4,10 @@
  * 한 곳에서 관리하여 여러 페이지에 중복 구현하지 않도록 합니다.
  *
  * 사용하는 페이지는 다음 DOM이 존재해야 합니다:
- * #toast, #loginModal(#loginForm,#loginEmail,#loginPassword), #loginBtn, #welcomeText, #adminLinkBtn,
+ * #toast, #loginBtn, #welcomeText, #adminLinkBtn,
  * #cartBtn, #cartModal(#cartItems,#orderName,#orderPhone,#orderAddress,#cartQty,#cartProductTotal,
  * #cartAddonTotal,#cartGrandTotal,#cartCheckoutBtn), #cartCount
- * (#signupModal/#signupForm 등은 있을 때만 자동으로 연결합니다.)
+ * 로그인과 회원가입은 auth.html 전용 화면에서 처리합니다.
  */
 window.ShopCommon = (function () {
   'use strict';
@@ -16,6 +16,7 @@ window.ShopCommon = (function () {
   const $ = (sel, root) => (root || document).querySelector(sel);
   const $all = (sel, root) => Array.from((root || document).querySelectorAll(sel));
   let selectedCartIds = null;
+  let checkoutMode = 'all';
   let cartTotals = { product: 0, addon: 0, qty: 0 };
 
   function showToast(msg, ms) {
@@ -28,6 +29,7 @@ window.ShopCommon = (function () {
   }
   function openModal(id) { const el = document.getElementById(id); if (el) el.hidden = false; }
   function closeModal(id) { const el = document.getElementById(id); if (el) el.hidden = true; }
+  function openAuthWindow(mode) { window.open(`auth.html?mode=${mode || 'login'}`, '_blank', 'noopener'); }
 
   // 모달 내용이 동적으로 생성되는 페이지(관리자페이지 등)에서도 동작하도록 이벤트 위임 방식을 사용합니다.
   document.addEventListener('click', e => {
@@ -78,7 +80,7 @@ window.ShopCommon = (function () {
    */
   async function addToCart(product) {
     const session = await getCurrentSession();
-    if (!session) { showToast('로그인이 필요합니다.'); openModal('loginModal'); return false; }
+    if (!session) { showToast('로그인이 필요합니다.'); openAuthWindow('login'); return false; }
     if (!product.productId || !product.variantId) { showToast('상품 옵션 정보를 불러올 수 없습니다.'); return false; }
     const quantity = product.quantity || 1;
     const addons = product.addons || [];
@@ -247,6 +249,7 @@ window.ShopCommon = (function () {
     const rows = $all('.cart-item', $('#cartItems'));
     let productTotal = 0, addonTotal = 0, qty = 0;
     rows.forEach(row => {
+      if (!row.querySelector('.cart-item__check')?.checked) return;
       productTotal += Number(row.dataset.productTotal || 0);
       addonTotal += Number(row.dataset.addonTotal || 0);
       qty += Number(row.dataset.quantity || 0);
@@ -326,7 +329,29 @@ window.ShopCommon = (function () {
     if ($('#cartCheckoutBtn')) {
       $('#cartCheckoutBtn').addEventListener('click', async () => {
         const session = await getCurrentSession();
-        if (!session) { showToast('로그인이 필요합니다.'); openModal('loginModal'); return; }
+        if (!session) { showToast('로그인이 필요합니다.'); openAuthWindow('login'); return; }
+        const rows = $all('.cart-item', $('#cartItems'));
+        if (!rows.length) { showToast('장바구니가 비어있습니다.'); return; }
+        rows.forEach(row => { row.querySelector('.cart-item__check').checked = true; });
+        selectedCartIds = new Set(rows.map(row => row.dataset.itemId).filter(Boolean));
+        refreshSelectedCartTotals();
+        checkoutMode = 'all';
+        await prefillOrderForm();
+        closeModal('cartModal');
+        openModal('paymentModal');
+      });
+    }
+    if ($('#cartCheckoutSelectedBtn')) {
+      $('#cartCheckoutSelectedBtn').addEventListener('click', async () => {
+        const session = await getCurrentSession();
+        if (!session) { showToast('로그인이 필요합니다.'); openAuthWindow('login'); return; }
+        const ids = $all('.cart-item', $('#cartItems'))
+          .filter(row => row.querySelector('.cart-item__check')?.checked)
+          .map(row => row.dataset.itemId)
+          .filter(Boolean);
+        if (!ids.length) { showToast('구매할 상품을 선택해주세요.'); return; }
+        selectedCartIds = new Set(ids);
+        checkoutMode = 'selected';
         await prefillOrderForm();
         closeModal('cartModal');
         openModal('paymentModal');
@@ -335,22 +360,26 @@ window.ShopCommon = (function () {
     if ($('#paymentSubmitBtn')) {
       $('#paymentSubmitBtn').addEventListener('click', async () => {
         const session = await getCurrentSession();
-        if (!session) { showToast('로그인이 필요합니다.'); return; }
+        if (!session) { showToast('로그인이 필요합니다.'); openAuthWindow('login'); return; }
         const name = $('#orderName').value.trim();
         const phone = $('#orderPhone').value.trim();
         const address = $('#orderAddress').value.trim();
         if (!name || !phone || !address) { showToast('주문자명 / 연락처 / 배송주소를 입력해주세요.'); return; }
         try {
-          const { data: order, error } = await supabaseClient.rpc('create_order', {
+          const rpcName = checkoutMode === 'selected' ? 'create_selected_order' : 'create_order';
+          const rpcParams = {
             p_customer_name: name, p_customer_phone: phone, p_postcode: null,
             p_address: address, p_address_detail: null, p_delivery_memo: null,
             p_coupon_code: $('#orderCoupon') ? ($('#orderCoupon').value || null) : null,
-          });
+          };
+          if (checkoutMode === 'selected') rpcParams.p_cart_item_ids = [...selectedCartIds];
+          const { data: order, error } = await supabaseClient.rpc(rpcName, rpcParams);
           if (error) throw error;
           await supabaseClient.from('profiles').update({ name, phone, address }).eq('id', session.user.id);
           showToast(`주문이 완료되었습니다. 주문번호 ${order.order_number}`);
           closeModal('paymentModal');
           selectedCartIds = null;
+          checkoutMode = 'all';
           await renderCartBadge();
         } catch (err) {
           showToast(err.message || '주문 처리 중 오류가 발생했습니다.');
@@ -441,7 +470,7 @@ window.ShopCommon = (function () {
           await applyAuthUI();
           showToast('로그아웃 되었습니다.');
         } else {
-          openModal('loginModal');
+          openAuthWindow('login');
         }
       });
     }

@@ -254,6 +254,10 @@ a{color:inherit;text-decoration:none;}
 .cart-summary .row--total{font-size:20px;font-weight:800;color:red;border-top:1px solid #ddd;margin-top:8px;padding-top:10px;}
 .cart-coupon{display:grid;grid-template-columns:100px 1fr;align-items:center;gap:12px;margin-top:14px;font-size:14px;font-weight:700;}
 .cart-coupon select{height:42px;padding:0 12px;border:1px solid #ccc;background:#fff;}
+.cart-checkout-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+.cart-checkout-actions .btn{width:100%;min-height:48px;font-weight:800;}
+.cart-selected-buy{border:1px solid var(--brand-red);background:#fff;color:var(--brand-red);}
+.cart-selected-buy:hover{color:var(--brand-red);background:#fff;transform:scale(1.02);}
 .payment-modal{width:520px;max-width:92vw;}
 .btn--purchase{width:100%;height:50px;background:var(--purple);color:#fff;margin-top:16px;font-size:16px;font-weight:700;}
 .btn--mypage{display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:var(--brand-red);}
@@ -289,9 +293,16 @@ a{color:inherit;text-decoration:none;}
 .banner-slide.is-prev video,.banner-slide.is-next video{filter:brightness(.58) blur(1px);opacity:.88;}
 .banner-slide.is-prev:hover video,.banner-slide.is-next:hover video{filter:brightness(.9) blur(0);opacity:1;}
 .banner-copy{position:absolute;left:8%;bottom:12%;color:#fff;max-width:620px;padding:20px 24px;background:rgba(0,0,0,.18);text-shadow:0 2px 12px rgba(0,0,0,.75);}
+.main-banner--single .banner-copy--fixed{padding:0;background:transparent;box-shadow:none;text-shadow:0 3px 10px rgba(0,0,0,.72),0 1px 3px rgba(0,0,0,.9);}
 .banner-slide.is-prev .banner-copy,.banner-slide.is-next .banner-copy{opacity:0;pointer-events:none;}
 .banner-copy h2{font-family:var(--font-yeongwol);font-size:48px;margin:0 0 12px;line-height:1.2;}
 .banner-copy p{font-size:18px;line-height:1.65;margin:0;}
+.main-banner--single{margin-top:30px;height:calc(100dvh - 30px);background:#000;}
+.main-banner--single .banner-slides{width:100%;height:100%;min-height:0;}
+.main-banner--single .banner-slide{inset:0;width:100%;height:100%;transform:none;opacity:1;}
+.main-banner--single .banner-slide video{width:100%;height:100%;max-height:none;object-fit:cover;object-position:center;}
+.main-banner--single .banner-copy--fixed p{width:max-content;margin-left:clamp(150px,17vw,300px);}
+.main-banner--single .banner-copy--fixed p{font-family:var(--font-yeongwol);font-size:48px;line-height:1.2;}
 .banner-arrow{
   position:absolute;top:50%;transform:translateY(-50%);
   width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.8);
@@ -311,6 +322,7 @@ a{color:inherit;text-decoration:none;}
 .brand-concept__visual{height:460px;padding:20px;background:#fff;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:0;}
 .brand-story__images{width:100%;line-height:0;overflow:hidden;}
 .brand-story__images img{width:100%;height:100%;display:block;object-fit:contain;}
+.brand-concept__visual .brand-story__images,.brand-concept__visual .brand-colors{width:100%;min-width:0;align-self:stretch;}
 .brand-concept__copy{height:460px;padding:20px 64px;display:flex;flex-direction:column;}
 .brand-story__eyebrow{margin:0 0 16px;color:var(--brand-red);font:800 12px var(--font-paperlogy);letter-spacing:.16em;}
 .brand-concept h3,.designer-story h3,.brand-palette h3{margin:0;font-family:var(--font-yeongwol);font-size:30px;font-weight:400;line-height:1.55;color:var(--gray-dark);}
@@ -329,7 +341,7 @@ a{color:inherit;text-decoration:none;}
 .designer-history details p{margin:0 0 22px;font-size:13px;line-height:1.75;color:var(--gray-dark);}
 .brand-palette{padding-top:72px;text-align:center;}
 .brand-colors{display:grid;grid-template-columns:repeat(3,1fr);width:100%;margin:0;gap:0;box-sizing:border-box;}
-.brand-color{min-height:72px;display:flex;flex-direction:column;justify-content:flex-end;padding:12px;text-align:left;font-size:12px;border:1px solid rgba(0,0,0,.08);}
+.brand-color{min-height:72px;display:flex;flex-direction:column;justify-content:flex-end;padding:12px;text-align:left;font-size:12px;border:1px solid rgba(0,0,0,.08);box-sizing:border-box;}
 .brand-color b{display:flex;justify-content:space-between;margin:0;font-size:13px;}
 .brand-color small{font-size:11px;font-weight:400;opacity:.72;}
 
@@ -396,14 +408,19 @@ a{color:inherit;text-decoration:none;}
 .hamburger-panel{position:fixed;left:0;top:120px;width:100%;max-height:calc(100dvh - 120px);z-index:950;background:#fff;display:grid;grid-template-columns:1fr;box-shadow:0 14px 28px rgba(0,0,0,.14);animation:hamburgerSlideDown .2s ease both;overflow:auto;}
 .hamburger-panel[hidden]{display:none;}
 .hamburger-panel.is-closing{animation:hamburgerSlideUp .2s ease both;pointer-events:none;}
-.hamburger-panel__content{padding:22px 5vw;font-family:var(--font-gmarket);display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:20px 34px;overflow:auto;}
-.hamburger-panel summary{display:inline-flex;align-items:center;gap:8px;list-style:none;cursor:pointer;padding:10px 0;font-size:20px;font-weight:700;color:#222;}
+.hamburger-panel__content{padding:22px 3vw;font-family:var(--font-gmarket);display:grid;grid-template-columns:repeat(9,minmax(82px,1fr));gap:12px;overflow:auto;}
+.hamburger-panel summary{display:inline-flex;align-items:center;gap:5px;list-style:none;cursor:pointer;padding:8px 0;font-size:15px;font-weight:700;color:#222;white-space:nowrap;}
 .hamburger-panel summary::-webkit-details-marker{display:none;}
 .hamburger-panel summary::after{content:'+';font-size:19px;font-weight:400;line-height:1;}
 .hamburger-panel details[open] summary::after{content:'−';}
 .hamburger-panel summary{transition:color .18s ease,transform .18s ease;transform-origin:left center;}
 .hamburger-panel summary:hover{color:var(--brand-red);transform:scale(1.02);}
-.hamburger-panel li{font-size:15px;color:#999;padding:7px 0 7px 14px;cursor:pointer;font-weight:500;transition:color .18s ease,transform .18s ease;transform-origin:left center;}
+.hamburger-panel li{font-size:12px;color:#999;padding:6px 0 6px 8px;cursor:pointer;font-weight:500;transition:color .18s ease,transform .18s ease;transform-origin:left center;}
+.hamburger-menu-group{min-width:0;}
+.hamburger-menu-title{display:block;width:100%;padding:8px 0;border:0;background:transparent;color:#222;font-family:var(--font-yeongwol);font-size:25px;font-weight:400;line-height:1.25;text-align:left;white-space:nowrap;cursor:pointer;transition:color .18s ease,transform .18s ease;transform-origin:left center;}
+.hamburger-menu-title:hover{color:var(--brand-red);transform:scale(1.02);}
+.brand-concept__copy > h3,.designer-profile > h3{font-size:24px;line-height:1.6;}
+.hamburger-menu-group ul{display:block;}
 .hamburger-panel li:hover{color:var(--brand-red);transform:scale(1.02);}
 .hamburger-panel__links{display:flex;gap:30px;padding:16px 5vw;border-top:1px solid #eee;font-family:var(--font-gmarket);}
 .hamburger-panel__links li{padding:8px 0;color:#333;font-size:17px;font-weight:700;}
@@ -473,26 +490,34 @@ a{color:inherit;text-decoration:none;}
 
 /* ---------- 후기 ---------- */
 .reviews{width:100%;padding:64px 0;background:var(--gray-light);}
-.reviews__title{font-family:var(--font-samulnori);font-size:35px;}
+.reviews__title{font-family:var(--font-samulnori);font-size:40px;}
 .reviews__note{text-align:center;font-size:12px;color:var(--gray-mid);margin:-16px 0 32px;}
 .reviews__empty{text-align:center;font-size:14px;color:var(--gray-mid);padding:40px 0;grid-column:1/-1;}
 .review-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;padding:0 24px;}
-.review-card{background:#fff;padding:16px;font-family:var(--font-pretendard);}
-.review-card__head{display:flex;justify-content:space-between;font-size:13px;font-weight:700;}
-.review-card__rating{color:var(--purple);font-size:13px;margin:4px 0;}
-.review-card__text{font-size:13px;line-height:1.5;color:var(--black);margin:6px 0;}
-.review-card__tags{font-size:12px;color:var(--purple);}
+.review-card{background:#fff;padding:18px;font-family:var(--font-pretendard);}
+.review-card__head{display:flex;justify-content:space-between;font-size:15px;font-weight:700;}
+.review-card__rating{color:var(--purple);font-size:15px;margin:6px 0;}
+.review-card__text{font-size:15px;line-height:1.6;color:var(--black);margin:8px 0;}
+.review-card__tags{font-size:14px;color:var(--purple);}
+.review-card__media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:12px 0;}
+.review-card__media{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:#eee;}
 
 /* ---------- 푸터 ---------- */
 .footer{width:100%;background:var(--gray-lighter);padding:48px 24px;}
-.footer__brand{font-family:var(--font-paperlogy);font-weight:800;font-size:15px;margin-bottom:24px;}
-.footer__cols{display:flex;gap:64px;border-top:1px solid #ccc;border-bottom:1px solid #ccc;padding:24px 0;flex-wrap:wrap;}
-.footer__cols h4{font-family:var(--font-pretendard);font-weight:700;font-size:15px;margin:0 0 10px;}
-.footer__cols li{font-size:15px;padding:2px 0;}
-.footer__company{margin-top:24px;}
-.footer__company h4{font-weight:400;font-size:20px;}
-.footer__company p{font-size:10px;margin:4px 0;}
-.footer__phone{font-size:30px !important;font-weight:800;color:var(--black);margin:10px 0 !important;}
+.footer__brand{font-family:var(--font-paperlogy);font-weight:800;font-size:18px;margin-bottom:24px;}
+.footer__cols{display:flex;align-items:flex-start;gap:64px;border-top:1px solid #ccc;border-bottom:1px solid #ccc;padding:28px 0;flex-wrap:wrap;}
+.footer__cols h4{font-family:var(--font-pretendard);font-weight:700;font-size:18px;margin:0 0 12px;}
+.footer__cols li{font-size:17px;line-height:1.6;padding:2px 0;}
+.footer__cols a{transition:color .18s ease;}
+.footer__cols a:hover{color:var(--brand-red);}
+.footer__company{margin:0 clamp(110px,9vw,160px) 0 auto;text-align:right;}
+.footer__company h4{font-weight:700;font-size:18px;}
+.footer__company p{font-size:14px;line-height:1.5;margin:4px 0;}
+.footer__phone{font-size:32px !important;font-weight:900;color:var(--brand-red);letter-spacing:.02em;margin:10px 0 !important;}
+@media (max-width:760px){
+  .footer__company{width:100%;margin:12px 96px 0 0;text-align:left;}
+  .reviews__title{font-size:37px;}
+}
 
 /* ---------- 플로팅 위젯 ---------- */
 .float-icon{
@@ -630,7 +655,7 @@ a{color:inherit;text-decoration:none;}
   .brand-concept__copy{height:auto;padding:34px 24px;}
   .designer-story{margin-top:36px;}
   .designer-profile{padding:0;}
-  .brand-concept h3,.designer-story h3,.brand-palette h3{font-size:25px;}
+  .brand-concept h3,.designer-story h3,.brand-palette h3{font-size:22px;}
   .designer-story{margin-top:40px;}
   .designer-history{grid-template-columns:1fr;}
   .designer-history details{border-right:0;border-bottom:1px solid #d8d8d8;}
@@ -643,6 +668,7 @@ a{color:inherit;text-decoration:none;}
   .banner-copy{left:16px;bottom:38px;max-width:calc(100% - 32px);padding:14px 16px;}
   .banner-copy h2{font-size:clamp(30px,8vw,42px);}
   .banner-copy p{font-size:15px;}
+  .main-banner--single .banner-copy--fixed p{font-size:clamp(30px,8vw,42px);margin-left:0;}
   .brand-colors{grid-template-columns:1fr;width:100%;}
   .brand-concept .brand-colors{grid-template-columns:repeat(3,1fr);}
 }

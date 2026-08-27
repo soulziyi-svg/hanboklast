@@ -8,9 +8,9 @@
 
 <link rel="preconnect" href="https://fastly.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-<link rel="stylesheet" href="css/style.css?v=20260827-header-white-outline">
+<link rel="stylesheet" href="css/style.css?v=20260828-selected-checkout">
 <link rel="stylesheet" href="css/product.css?v=20260827-review-media">
-<link rel="stylesheet" href="css/dalbit-new.css?v=20260828-back-arrow-30">
+<link rel="stylesheet" href="css/dalbit-new.css?v=20260828-top-coupon-type">
 </head>
 <body>
 
@@ -46,20 +46,6 @@
   </div>
 </header>
 
-<!-- 로그인 모달 -->
-<div id="loginModal" class="modal-overlay" hidden>
-  <div class="modal auth-modal">
-    <button class="modal-close" data-close="loginModal">닫기 ✕</button>
-    <h3>sign in</h3>
-    <p class="auth-notice">Supabase Auth 로그인입니다. (heechic@naver.com 계정은 관리자 권한으로 연결됩니다)</p>
-    <form id="loginForm" class="auth-form">
-      <input type="email" id="loginEmail" placeholder="아이디" required>
-      <input type="password" id="loginPassword" placeholder="비밀번호" required>
-      <button type="submit" class="btn btn--wide">로그인하기</button>
-    </form>
-  </div>
-</div>
-
 <!-- 장바구니 모달 -->
 <div id="cartModal" class="modal-overlay" hidden>
   <div class="modal cart-modal">
@@ -79,7 +65,10 @@
       <label class="cart-coupon"><span>쿠폰 선택</span><select id="orderCoupon"><option value="">쿠폰을 선택하세요</option></select></label>
       <div class="row row--discount"><span>쿠폰 할인</span><span id="cartCouponDiscount">-0원</span></div>
       <div class="row row--total"><span>총 결제 예정금액</span><span id="cartGrandTotal">0원</span></div>
-      <button id="cartCheckoutBtn" class="btn btn--purchase">결제창으로 이동</button>
+      <div class="cart-checkout-actions">
+        <button id="cartCheckoutSelectedBtn" class="btn cart-selected-buy">선택상품 구매</button>
+        <button id="cartCheckoutBtn" class="btn btn--purchase">전체상품 구매</button>
+      </div>
       <button class="btn-link" data-close="cartModal">쇼핑 계속하기 →</button>
     </div>
   </div>
@@ -193,29 +182,40 @@
     </div>
     <div>
       <h4>GUIDE</h4>
-      <ul><li>이용안내</li><li>사이즈 가이드</li><li>배송,교환,환불</li></ul>
+      <ul>
+        <li><a href="index.html#brand-story">브랜드·이용 안내</a></li>
+        <li><a href="product.html?slug=dalbitwhayansobok-hanbok#moonSizeInfo">사이즈 가이드</a></li>
+        <li><a href="product.html?slug=dalbitwhayansobok-hanbok#pdpPurchaseInfo">배송·교환·반품</a></li>
+        <li><a href="product.html?slug=dalbitwhayansobok-hanbok#moonCare">세탁·관리 방법</a></li>
+      </ul>
     </div>
     <div>
       <h4>CUSTOMER</h4>
-      <ul><li>공지사항</li><li>FAQ</li><li>1:1문의</li><li>단체구매 문의</li></ul>
+      <ul>
+        <li><a href="index.html#reviews">상품 후기</a></li>
+        <li><a href="mypage.html">구매 내역·마이페이지</a></li>
+        <li><a href="mypage.html#inquiry">1:1 문의하기</a></li>
+        <li><a href="mypage.html">취소·교환·반품 신청</a></li>
+      </ul>
     </div>
-  </div>
-  <div class="footer__company">
-    <h4>COMPANY</h4>
-    <p>상호명 : 연화재실</p>
-    <p>대표자 : 장철희</p>
-    <p>사업자등록번호 : 000-00-00000</p>
-    <p>주소 : 서울시 영등포구 영등포동</p>
-    <p class="footer__phone">02-000-0000</p>
-    <p>E-mail : welcome@ibubom.com</p>
+    <div class="footer__company">
+      <h4>COMPANY</h4>
+      <p>상호명 : 연화재실</p>
+      <p>대표자 : 장철희</p>
+      <p>사업자등록번호 : 000-00-00000</p>
+      <p>주소 : 서울시 영등포구 영등포동</p>
+      <p class="footer__phone">02-000-0000</p>
+      <p>E-mail : welcome@ibubom.com</p>
+    </div>
   </div>
 </footer>
 
+<button id="pdpTopBtn" class="moon-top-btn" type="button" aria-label="화면 맨 위로 이동">TOP</button>
 <div id="toast" class="toast" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/supabase-client.js?v=20260826-mukhwa-detail"></script>
-<script src="js/shop-common.js?v=20260827-pdp-coupon"></script>
-<script src="js/product.js?v=20260828-coupon-auth-refresh"></script>
+<script src="js/shop-common.js?v=20260828-auth-window"></script>
+<script src="js/product.js?v=20260828-detail-top-button"></script>
 </body>
 </html>
