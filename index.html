@@ -8,7 +8,7 @@
 
 <link rel="preconnect" href="https://fastly.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-<link rel="stylesheet" href="css/style.css?v=20260827-cat-no-click">
+<link rel="stylesheet" href="css/style.css?v=20260827-chatbot-ui-banner-contain">
 </head>
 <body>
 
@@ -334,17 +334,22 @@
 <button id="chatbotIcon" class="float-icon float-icon--chatbot" aria-label="챗봇 열기">
   <img src="img/chatbot.png" alt="챗봇 아이콘">
 </button>
-<div id="chatbotPanel" class="side-panel" hidden>
-  <div class="side-panel__head">
-    <span>연화재실 챗봇</span>
-    <button class="modal-close" data-close="chatbotPanel">닫기 ✕</button>
+<div id="chatbotPanel" class="side-panel chatbot-window" hidden>
+  <div class="chatbot-head">
+    <img src="img/chatbot.png" alt="연화재실 이야기 안내 캐릭터">
+    <div><h2>연화재실 이야기 <em>Beta</em></h2><p>안녕하세요! 무엇을 도와드릴까요?</p></div>
+    <div class="chatbot-head__actions">
+      <button id="chatbotReset" type="button" aria-label="대화 새로 시작">↻</button>
+      <button class="modal-close" data-close="chatbotPanel" aria-label="챗봇 닫기">×</button>
+    </div>
   </div>
   <div id="chatbotKeywords" class="chat-keywords"></div>
   <div id="chatbotMessages" class="chat-messages"></div>
   <form id="chatbotForm" class="chat-input-row">
-    <textarea id="chatbotInput" placeholder="궁금한 점을 입력해주세요 (Enter 전송 / Shift+Enter 줄바꿈)" rows="1"></textarea>
-    <button type="submit">전송</button>
+    <textarea id="chatbotInput" placeholder="메시지를 입력해주세요..." rows="1"></textarea>
+    <button type="submit" aria-label="메시지 전송">➤</button>
   </form>
+  <p class="chatbot-ai-note">✿ 연화재실 이야기는 AI로 자동 답변을 제공합니다.</p>
 </div>
 
 <!-- 상담하기 -->
@@ -378,6 +383,6 @@
 <script src="js/supabase-client.js"></script>
 <script src="js/shop-common.js"></script>
 <script src="js/data.js?v=20260826-card-fit"></script>
-<script src="js/app.js?v=20260827-mouse-follow-half-speed-no-click"></script>
+<script src="js/app.js?v=20260827-chatbot-ui"></script>
 </body>
 </html>

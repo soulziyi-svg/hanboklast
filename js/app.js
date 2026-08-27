@@ -526,7 +526,15 @@
       $('#chatbotMessages').appendChild(div);
       $('#chatbotMessages').scrollTop = $('#chatbotMessages').scrollHeight;
     }
-    addBubble('안녕하세요 고객님! 연화재실입니다. 궁금하신 점을 키워드로 선택하거나 직접 입력해주세요.', 'bot');
+    const welcomeMessage = '안녕하세요! 연화재실 이야기에 오신 것을 환영합니다. 의상 대여, 주문, 한복 체험 등 궁금한 점을 편하게 물어보세요.';
+    addBubble(welcomeMessage, 'bot');
+    $('#chatbotReset').addEventListener('click', () => {
+      $('#chatbotMessages').innerHTML = '';
+      $('#chatbotInput').value = '';
+      chatSessionId = null;
+      addBubble(welcomeMessage, 'bot');
+      $('#chatbotInput').focus();
+    });
 
     function fallbackReply(text) {
       if (/배송|택배/.test(text)) return KEYWORDS['배송안내'] || FALLBACK_KEYWORDS['배송안내'];
