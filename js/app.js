@@ -742,7 +742,7 @@
     const iconSize = 80;
     // 고양이가 링크나 버튼 클릭을 방해하지 않도록 커서 중심에서 충분히 떨어져 멈춥니다.
     const followDistance = 160;
-    const maxSpeed = 7;
+    const maxSpeed = 3.5;
     let x = window.innerWidth / 2 - iconSize / 2;
     let y = window.innerHeight / 2 - iconSize / 2;
     let targetX = x + iconSize / 2;
@@ -792,18 +792,6 @@
     icon.style.position = 'fixed'; icon.style.left = '0'; icon.style.top = '0';
     if (toggle.checked) start();
 
-    icon.addEventListener('click', () => {
-      const overlay = $('#videoOverlay');
-      const video = $('#roamVideo');
-      overlay.hidden = false;
-      requestAnimationFrame(() => overlay.classList.add('is-visible'));
-      video.currentTime = 0;
-      video.play().catch(() => {});
-      setTimeout(() => {
-        overlay.classList.remove('is-visible');
-        setTimeout(() => { overlay.hidden = true; video.pause(); }, 300);
-      }, 5000);
-    });
   })();
 
 })();

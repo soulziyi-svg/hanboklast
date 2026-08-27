@@ -441,7 +441,7 @@ a{color:inherit;text-decoration:none;}
 }
 .top-btn.is-visible{opacity:1;pointer-events:auto;}
 
-.roam-icon{position:fixed;width:80px;height:80px;z-index:850;cursor:pointer;}
+.roam-icon{position:fixed;width:80px;height:80px;z-index:850;pointer-events:none;cursor:default;}
 
 .video-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2100;
