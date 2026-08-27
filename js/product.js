@@ -40,7 +40,7 @@
 
   const fallbackProduct = slug === 'mukhwayeonmu'
     ? createMukhwaFallbackProduct()
-    : (slug === 'dalbitwhayansobok' ? createDalbitFallbackProduct() : null);
+    : (['dalbitwhayansobok', 'dalbitwhayansobok-hanbok'].includes(slug) ? createDalbitFallbackProduct(slug) : null);
   let product = null;
   let error = null;
 
@@ -168,12 +168,12 @@
     };
   }
 
-  function createDalbitFallbackProduct() {
+  function createDalbitFallbackProduct(productSlug) {
     const base = 'img/상품/달빛하얀소복';
     return {
       id: null,
       name: '달빛하얀소복',
-      slug: 'dalbitwhayansobok',
+      slug: productSlug || 'dalbitwhayansobok-hanbok',
       product_type: 'hanbok',
       short_description: '달빛처럼 은은한 설백색과 먹빛 그라데이션을 담은 현대 한복',
       description: '부드러운 설백색 위에 먹빛이 번지는 듯한 치마와 단아한 저고리를 조화시킨 연화재실의 프리미엄 현대 한복입니다.',
@@ -258,7 +258,7 @@
   }
 
   function renderDalbitEditorial(product, stats) {
-    if (product.slug !== 'dalbitwhayansobok') return;
+    if (!['dalbitwhayansobok', 'dalbitwhayansobok-hanbok'].includes(product.slug)) return;
 
     const section = $('#dalbitEditorial');
     const base = 'img/상품/달빛하얀소복';
