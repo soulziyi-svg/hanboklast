@@ -222,11 +222,11 @@ a{color:inherit;text-decoration:none;}
 .track-step.is-current::before{background:var(--purple);}
 
 /* ---------- 메인 배너 ---------- */
-.main-banner{position:relative;width:100%;height:auto;aspect-ratio:16/9;overflow:hidden;background:var(--black);}
+.main-banner{position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:var(--black);}
 .banner-slides{position:relative;width:100%;height:100%;}
 .banner-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;display:flex;align-items:center;justify-content:center;}
 .banner-slide.is-active{opacity:1;}
-.banner-slide video{width:100%;height:auto;object-fit:contain;}
+.banner-slide video{width:100%;height:100%;object-fit:contain;object-position:center;}
 .banner-copy{position:absolute;left:64px;bottom:64px;color:#fff;max-width:480px;text-shadow:0 2px 12px rgba(0,0,0,.65);}
 .banner-copy h2{font-family:var(--font-yeongwol);font-size:30px;margin:0 0 12px;}
 .banner-copy p{font-size:15px;line-height:1.6;}
