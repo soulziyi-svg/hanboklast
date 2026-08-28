@@ -1224,15 +1224,16 @@
   /* ================= 12. 문의관리 ================= */
   async function loadInquiries() {
     const el = $('#tab-inquiries');
-    const { data } = await supabaseClient.from('inquiries').select('*').order('created_at', { ascending: false });
+    const { data } = await supabaseClient.from('inquiries').select('*, products(name, slug)').order('created_at', { ascending: false });
     const rows = (data || []).map(i => `<tr>
-      <td>${esc(i.name)}</td><td class="wrap">${esc(i.title)}</td><td>${fmtDate(i.created_at)}</td>
+      <td>${esc(i.products ? i.products.name : i.inquiry_type === 'product' ? '상품 문의' : '1:1 문의')}</td>
+      <td>${esc(i.name)}</td><td class="wrap">${i.is_secret ? '🔒 ' : ''}${esc(i.title)}</td><td>${fmtDate(i.created_at)}</td>
       <td><span class="admin-badge ${i.status === 'answered' ? 'admin-badge--green' : 'admin-badge--red'}">${i.status === 'pending' ? '대기' : i.status === 'answered' ? '답변완료' : '종료'}</span></td>
       <td><button class="admin-btn admin-btn--sm admin-btn--ghost" data-inquiry="${i.id}">답변</button></td>
     </tr>`).join('');
     el.innerHTML = `<div class="admin-table-wrap"><table class="admin-table">
-      <thead><tr><th>작성자</th><th>제목</th><th>작성일</th><th>상태</th><th></th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="5" class="admin-empty">등록된 문의가 없습니다.</td></tr>'}</tbody>
+      <thead><tr><th>상품/구분</th><th>작성자</th><th>제목</th><th>작성일</th><th>상태</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" class="admin-empty">등록된 문의가 없습니다.</td></tr>'}</tbody>
     </table></div>`;
     $all('[data-inquiry]').forEach(b => b.addEventListener('click', () => openInquiryModal((data || []).find(x => x.id === b.dataset.inquiry))));
   }

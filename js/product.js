@@ -47,11 +47,12 @@
       withLabel: 'WITH ITEMS', withTitle: '달빛의 차림을<br>완성하는 구성',
       withDesc: '아래 이미지는 함께 선택할 수 있는 추가 상품입니다. 실제 선택 가능 여부와 가격은 상단 구매 영역에서 확인해 주세요.',
       withItems: [
-        { image: '하얀달빛소복 악세사리 비녀.png', caption: '비녀' },
-        { image: '하얀달빛소복 악세사리 노리개.png', caption: '노리개' },
-        { image: '하얀달빛소복 악세사리 꽃신.png', caption: '꽃신 · S 220 / M 230 / L 240' },
+        { image: '하얀달빛소복 아크릴 스텐드.png', caption: '아크릴 스탠드' },
+        { image: '하얀달빛소복 복주머니.png', caption: '복주머니' },
+        { image: '하얀달빛소복 키링.png', caption: '키링' },
+        { image: '하얀달빛소복 포토카드.png', caption: '포토카드' },
       ],
-      colorText: '설백색 · 먹색',
+      colorText: '설백색 · 먹색', colorSwatches: ['#f8f5ed', '#2d2c2b'],
       choiceOptions: [
         { image: '하얀달빛소복 악세사리 비녀.png', caption: '비녀' },
         { image: '하얀달빛소복 악세사리 노리개.png', caption: '노리개' },
@@ -98,7 +99,7 @@
         { image: '흑청월화 키링.png', caption: '키링', slug: 'heukcheongwolhwa-keyring' },
         { image: '흑청월화 포토카드.png', caption: '포토카드', slug: 'heukcheongwolhwa-photocard' },
       ],
-      colorText: '먹빛 · 청화남빛',
+      colorText: '먹빛 · 청화남빛', colorSwatches: ['#242426', '#273b58'],
       choiceOptions: [],
       specImage: '정면.png', specColor: '먹빛 · 청화남빛', specComposition: '저고리 · 치마 · 속치마 · 허리끈',
       careSteps: ['전문 드라이클리닝을 권장합니다. 물세탁 시 변형이 있을 수 있습니다.', '장시간 물기·마찰에 노출되면 변색될 수 있으니 주의해주세요.', '습기가 적은 곳에서 옷걸이에 걸어 보관해주세요.'],
@@ -136,11 +137,12 @@
       withLabel: 'WITH ITEMS', withTitle: '설화먹비의 차림을<br>완성하는 구성',
       withDesc: '아래 이미지는 함께 선택할 수 있는 추가 상품입니다. 실제 선택 가능 여부와 가격은 상단 구매 영역에서 확인해 주세요.',
       withItems: [
-        { image: '설화먹비 악세사리 비녀.png', caption: '비녀' },
-        { image: '설화먹비 악세사리 노리개.png', caption: '노리개' },
-        { image: '설화먹비 악세사리 꽃신.png', caption: '꽃신' },
+        { image: '아크릴스텐드.png', caption: '아크릴 스탠드' },
+        { image: '복주머니 손거울.png', caption: '복주머니·손거울' },
+        { image: '키링.png', caption: '키링' },
+        { image: '포토카드.png', caption: '포토카드' },
       ],
-      colorText: '설백색 · 먹색',
+      colorText: '설백색 · 먹색', colorSwatches: ['#f8f5ed', '#2d2c2b'],
       choiceOptions: [
         { image: '설화먹비 악세사리 비녀.png', caption: '비녀' },
         { image: '설화먹비 악세사리 노리개.png', caption: '노리개' },
@@ -187,7 +189,7 @@
         { image: '봄빛연분홍 키링.png', caption: '키링', slug: 'bombitchyeonbunhong-keyring' },
         { image: '봄빛연분홍 포토카드.png', caption: '포토카드', slug: 'bombitchyeonbunhong-photocard' },
       ],
-      colorText: '설백색 · 연분홍',
+      colorText: '설백색 · 연분홍', colorSwatches: ['#f8f5ed', '#e8b7c1'],
       choiceOptions: [],
       specImage: '정면.png', specColor: '설백색 · 연분홍', specComposition: '저고리 · 치마 · 속치마 · 허리끈',
       careSteps: ['전문 드라이클리닝을 권장합니다. 물세탁 시 변형이 있을 수 있습니다.', '장시간 물기·마찰에 노출되면 변색될 수 있으니 주의해주세요.', '습기가 적은 곳에서 옷걸이에 걸어 보관해주세요.'],
@@ -230,7 +232,7 @@
         { image: '먹빛화연 키링.png', caption: '키링', slug: 'meokbitwhayeon-keyring' },
         { image: '먹빛화연 포토카드.png', caption: '포토카드', slug: 'meokbitwhayeon-photocard' },
       ],
-      colorText: '먹빛 · 금빛',
+      colorText: '먹빛 · 금빛', colorSwatches: ['#242426', '#b89a5b'],
       choiceOptions: [],
       specImage: '정면.png', specColor: '먹빛 · 금빛', specComposition: '저고리 · 치마 · 속치마 · 허리끈',
       careSteps: ['전문 드라이클리닝을 권장합니다. 물세탁 시 변형이 있을 수 있습니다.', '장시간 물기·마찰에 노출되면 변색될 수 있으니 주의해주세요.', '습기가 적은 곳에서 옷걸이에 걸어 보관해주세요.'],
@@ -273,13 +275,56 @@
         { image: '키링.png', caption: '키링', slug: 'hongyeonhwadam-keyring' },
         { image: '포토카드.png', caption: '포토카드', slug: 'hongyeonhwadam-photocard' },
       ],
-      colorText: '설백색 · 진홍색',
+      colorText: '설백색 · 진홍색', colorSwatches: ['#f8f5ed', '#8f1e2d'],
       choiceOptions: [],
       specImage: '정면.png', specColor: '설백색 · 진홍색', specComposition: '저고리 · 치마 · 속치마 · 허리끈',
       careSteps: ['전문 드라이클리닝을 권장합니다. 물세탁 시 변형이 있을 수 있습니다.', '장시간 물기·마찰에 노출되면 변색될 수 있으니 주의해주세요.', '습기가 적은 곳에서 옷걸이에 걸어 보관해주세요.'],
     },
+    'mukhwayeonmu': {
+      base: 'img/상품/묵화연무',
+      galleryFiles: ['묵화연무01.png', '묵화연무02.png', '묵화연무03.png', '묵화연무04.png', '정면.png', '측면.png'],
+      collectionLabel: 'YEONHWAJAESIL · MUKHWA YEONMU COLLECTION',
+      storyTitle: '먹빛의 여백 위로<br>피어나는 묵화연무',
+      storyDesc: '수묵화처럼 번지는 흑백의 농담과 한복의 유려한 선을 한 벌에 담았습니다.<br>고요하지만 분명한 존재감으로 특별한 날의 장면을 완성합니다.',
+      storyImage: '묵화연무02.png', storyImageAlt: '묵화연무를 착용한 정면 모습',
+      whyLabel: 'WHY MUKHWA YEONMU', whyTitle: '묵화연무를 선택하는<br>세 가지 이유',
+      reasons: [
+        { title: '수묵처럼 번지는 색의 깊이', desc: '설백색과 먹빛이 겹쳐지며 보는 각도와 빛에 따라 섬세한 농담을 만듭니다.' },
+        { title: '유려하게 흐르는 한복의 선', desc: '단정한 깃과 풍성한 치마폭이 움직임마다 자연스럽고 우아한 실루엣을 완성합니다.' },
+        { title: '섬세하게 완성한 자수 디테일', desc: '가벼운 원단 위에 놓인 먹선 자수와 허리 장식이 차분한 포인트를 더합니다.' },
+      ],
+      editorial: [
+        { image: '묵화연무01.png', alt: '묵화연무 정면 착용 이미지', label: 'THE SILHOUETTE', title: '고요하게 번지는<br>먹빛의 존재감' },
+        { image: '묵화연무04.png', alt: '묵화연무 측면 착용 이미지', label: 'THE MOVEMENT', title: '걸음마다 살아나는<br>유려한 치마의 겹', reverse: true },
+      ],
+      designTitle: '수묵의 농담과<br>한복의 선을 한 벌에',
+      designDesc: '단정하게 여민 깃과 부드럽게 모이는 허리선, 설백색과 먹빛이 겹치는 풍성한 치마폭을 균형 있게 조율했습니다.',
+      designViews: [{ image: '정면.png', caption: 'FRONT · 정면' }, { image: '측면.png', caption: 'SIDE · 측면' }],
+      detailNotes: [
+        { title: '먹선 자수', desc: '수묵이 번지는 듯 섬세하게 이어지는 자수 표현' },
+        { title: '단정한 허리선', desc: '전체 비율을 안정적으로 정돈하는 매듭과 장식' },
+        { title: '풍성한 겹치마', desc: '움직임마다 설백색과 먹빛의 깊이가 달라지는 치마폭' },
+      ],
+      closeups: [
+        { image: '묵화연무03.png', alt: '묵화연무 먹선 자수 디테일', title: '섬세한 먹선 자수', desc: '가벼운 원단 위로 수묵처럼 이어지는 자수의 결을 확인해 주세요.' },
+        { image: '측면.png', alt: '묵화연무 소매와 측면 실루엣', title: '유려한 소매 실루엣', desc: '어깨에서 소매 끝까지 부드럽게 흐르는 단정한 선을 완성했습니다.' },
+      ],
+      withLabel: 'WITH ITEMS', withTitle: '묵화연무와<br>함께 즐기는 컬렉션',
+      withDesc: '아래 이미지는 묵화연무 컬렉션의 별도 굿즈 상품입니다. 가격과 구매는 각 상품 페이지에서 확인해 주세요.',
+      withItems: [
+        { image: '묵화연무 아크릴 스텐드.png', caption: '아크릴 스탠드' },
+        { image: '묵화연무 복주머니.png', caption: '복주머니' },
+        { image: '묵화연무 키링.png', caption: '키링' },
+        { image: '묵화연무 포토카드.png', caption: '포토카드' },
+      ],
+      colorText: '설백색 · 먹색', colorSwatches: ['#f8f5ed', '#2d2c2b'],
+      choiceOptions: [],
+      specImage: '정면.png', specColor: '설백색 · 먹색', specComposition: '저고리 · 치마 · 속치마 · 허리 장식',
+      careSteps: ['전문 드라이클리닝을 권장합니다.', '얇은 원단과 자수가 거친 표면에 닿지 않도록 주의해 주세요.', '착용 후 통풍이 잘되는 그늘에서 충분히 말린 뒤 걸어 보관해 주세요.'],
+    },
   };
   MOON_PRODUCTS.dalbitwhayansobok = MOON_PRODUCTS['dalbitwhayansobok-hanbok'];
+  MOON_PRODUCTS['mukhwayeonmu-hanbok'] = MOON_PRODUCTS.mukhwayeonmu;
 
 
 
@@ -318,7 +363,7 @@
     return;
   }
 
-  const fallbackProduct = slug === 'mukhwayeonmu'
+  const fallbackProduct = ['mukhwayeonmu', 'mukhwayeonmu-hanbok'].includes(slug)
     ? createMukhwaFallbackProduct()
     : (['dalbitwhayansobok', 'dalbitwhayansobok-hanbok'].includes(slug) ? createDalbitFallbackProduct(slug) : null);
   let product = null;
@@ -417,6 +462,71 @@
     .order('step_number') : { data: [] };
 
   render(product, addons, reviews || [], stats, guides || []);
+  await setupProductInquiries(product);
+
+  async function setupProductInquiries(currentProduct) {
+    const section = $('#pdpInquirySection');
+    const list = $('#productInquiryList');
+    const openBtn = $('#productInquiryOpenBtn');
+    const form = $('#productInquiryForm');
+    if (!section || !list || !openBtn || !form) return;
+    const safe = value => String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    section.hidden = false;
+
+    async function loadProductInquiries() {
+      if (!supabaseClient || !currentProduct.id) {
+        list.innerHTML = '<p class="product-inquiry__empty">등록된 상품 문의가 없습니다.</p>';
+        return;
+      }
+      const { data, error: inquiryError } = await supabaseClient.rpc('get_product_inquiries', { p_product_id: currentProduct.id });
+      if (inquiryError || !data || !data.length) {
+        list.innerHTML = '<p class="product-inquiry__empty">등록된 상품 문의가 없습니다.</p>';
+        return;
+      }
+      list.innerHTML = `<div class="product-inquiry__columns"><span>제목</span><span>작성자</span><span>작성일</span><span>답변상태</span></div>${data.map(item => {
+        const date = new Date(item.created_at).toLocaleDateString('ko-KR');
+        const answered = item.status === 'answered';
+        return `<article class="product-inquiry__row">
+          <div class="product-inquiry__title">${item.is_secret ? '<span aria-label="비밀글">🔒</span> ' : ''}${safe(item.title)}</div>
+          <span>${safe(item.author_name)}</span><time>${date}</time>
+          <b class="${answered ? 'is-answered' : ''}">${answered ? '답변완료' : '답변대기'}</b>
+          ${item.admin_reply ? `<div class="product-inquiry__reply"><strong>연화재실 답변</strong><p>${safe(item.admin_reply)}</p></div>` : ''}
+        </article>`;
+      }).join('')}`;
+    }
+
+    openBtn.addEventListener('click', async () => {
+      const session = await getCurrentSession();
+      if (!session) {
+        showToast('상품 문의는 로그인 후 작성할 수 있습니다.');
+        setTimeout(() => { location.href = `auth.html?mode=login&return=${encodeURIComponent(location.href)}`; }, 700);
+        return;
+      }
+      const meta = session.user.user_metadata || {};
+      $('#productInquiryName').value = meta.name || session.user.email.split('@')[0];
+      openModal('productInquiryModal');
+    });
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const session = await getCurrentSession();
+      if (!session || !currentProduct.id) return showToast('로그인과 상품 정보를 확인해 주세요.');
+      const payload = {
+        user_id: session.user.id, product_id: currentProduct.id, inquiry_type: 'product',
+        name: $('#productInquiryName').value.trim(), title: $('#productInquiryTitle').value.trim(),
+        content: $('#productInquiryContent').value.trim(), is_secret: $('#productInquirySecret').checked,
+        email: session.user.email, status: 'pending'
+      };
+      const { error: insertError } = await supabaseClient.from('inquiries').insert(payload);
+      if (insertError) return showToast('문의 등록에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      form.reset();
+      document.getElementById('productInquiryModal').hidden = true;
+      showToast('상품 문의가 등록되었습니다.');
+      await loadProductInquiries();
+    });
+
+    await loadProductInquiries();
+  }
 
   function createMukhwaFallbackProduct() {
     const base = 'img/상품/묵화연무';
@@ -499,7 +609,6 @@
     renderBreadcrumb(product);
     renderGallery(product);
     renderInfo(product, stats);
-    renderMukhwaEditorial(product, stats);
     renderDalbitEditorial(product, stats);
 
     const sizeState = renderSize(product);
@@ -644,7 +753,7 @@
         <div class="moon-closeup">
           <div class="moon-section-title"><span>SMALL DETAILS</span><h3>작은 디테일까지<br>세심하게</h3></div>
           <div class="moon-closeup__grid">
-            ${cfg.closeups.map(c => `<figure><img src="${base}/${c.image}" alt="${c.alt}"><figcaption><b>${c.title}</b><span>${c.desc}</span></figcaption></figure>`).join('')}
+            ${cfg.closeups.slice(0, 2).map((c, i) => `<figure><img src="${base}/${c.image}" alt="${c.alt}" data-detail-index="${i + 1}"><figcaption><small>DETAIL 0${i + 1}</small><b>${c.title}</b><span>${c.desc}</span></figcaption></figure>`).join('')}
           </div>
         </div>
       </section>
@@ -658,7 +767,7 @@
 
       <section class="moon-choice">
         <div class="moon-section-title"><span>COLOR${cfg.choiceOptions.length ? ' · OPTION' : ''} · SIZE</span><h3>컬러${cfg.choiceOptions.length ? ', 옵션' : ''} &amp; 사이즈</h3></div>
-        <div class="moon-choice__color"><div class="moon-choice__swatches"><i class="is-white"></i><i class="is-ink"></i></div><div><b>COLOR</b><p>${cfg.colorText}</p><small>모니터 환경에 따라 실제 색상이 다르게 보일 수 있습니다.</small></div></div>
+        <div class="moon-choice__color"><div class="moon-choice__swatches">${(cfg.colorSwatches || ['#f8f5ed', '#2d2c2b']).map((color, i) => `<i style="--swatch-color:${color}" aria-label="${cfg.colorText.split(' · ')[i] || '상품 색상'}"></i>`).join('')}</div><div><b>COLOR</b><p>${cfg.colorText}</p><small>모니터 환경에 따라 실제 색상이 다르게 보일 수 있습니다.</small></div></div>
         ${cfg.choiceOptions.length ? `<div class="moon-choice__options">${cfg.choiceOptions.map(o => `<figure><img src="${base}/${o.image}" alt="추가 옵션 ${o.caption}"><figcaption>${o.caption}</figcaption></figure>`).join('')}</div>` : ''}
         <div class="moon-choice__sizes"><b>SIZE</b><div><span>S</span><span>M</span><span>L</span></div><a href="#pdpMain">상단에서 사이즈 선택하기 ↑</a></div>
       </section>
@@ -670,7 +779,7 @@
           <dl><div><dt>브랜드명</dt><dd>연화재실</dd></div><div><dt>제품명</dt><dd>${product.name}</dd></div><div><dt>색상</dt><dd>${cfg.specColor}</dd></div><div><dt>소재</dt><dd>${product.product_care && product.product_care.material ? product.product_care.material : '폴리에스터 혼방'}</dd></div><div><dt>구성</dt><dd>${cfg.specComposition}</dd></div><div><dt>사이즈</dt><dd>S · M · L</dd></div></dl>
         </div>
         <div class="moon-size-chart">
-          <div class="moon-size-chart__visual"><img src="img/컨셉사진/사이즈.png" alt="한복 실측 위치(어깨너비·가슴둘레·허리둘레·소매길이·소매너비·총기장) 안내 도식"><span>실측 위치 참고</span></div>
+          <div class="moon-size-chart__visual"><img src="img/컨셉사진/사이즈.png?v=20260828-size-revised" alt="한복 실측 위치(어깨너비·가슴둘레·허리둘레·소매길이·소매너비·총기장) 안내 도식"><span>실측 위치 참고</span></div>
           <div class="moon-size-chart__table"><h4>정확한 사이즈</h4><p>단위: cm</p><table><thead><tr><th>사이즈</th><th>가슴</th><th>허리</th><th>총장</th><th>소매</th></tr></thead><tbody>${sizeRows}</tbody></table></div>
         </div>
         <p class="moon-spec__notice">제품 정보에 제공되지 않은 소재 및 실측 수치는 임의로 표기하지 않았습니다.</p>
@@ -810,7 +919,8 @@
   }
 
   function renderMukhwaEditorial(product, stats) {
-    if (product.slug !== 'mukhwayeonmu') return;
+    // 묵화연무도 현재는 모든 한복 상품과 동일한 moon 공통 상세 구조를 사용합니다.
+    if (product.slug !== 'mukhwayeonmu' || getMoonConfig(product)) return;
 
     const section = $('#mukhwaEditorial');
     const base = 'img/상품/묵화연무';
@@ -1231,11 +1341,24 @@
       : '이 상품의 후기';
     const grid = $('#pdpReviews');
     if (!reviews.length) {
-      grid.innerHTML = '<p class="pdp-reviews-empty">아직 등록된 후기가 없습니다. 첫 구매 후기를 남겨보세요!</p>';
+      grid.innerHTML = `<div class="review-board"><div class="review-board__notice"><span>공지</span><b>상품후기 운영 안내</b></div><div class="review-board__toolbar"><strong>총 0개</strong><span>최근등록순</span></div><p class="pdp-reviews-empty">아직 등록된 후기가 없습니다. 첫 구매 후기를 남겨보세요!</p></div>`;
       return;
     }
-    grid.innerHTML = '';
-    reviews.forEach(r => {
+    const safe = value => String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const photoFiles = reviews.flatMap(r => (r.review_images || []).map(file => ({ ...file, nickname: r.nickname })));
+    const photoStrip = photoFiles.slice(0, 8).map(file => /\.(mp4|webm|mov)(\?|$)/i.test(file.image_url)
+      ? `<video src="${file.image_url}" muted playsinline preload="metadata" aria-label="${safe(file.nickname)}님의 영상 후기"></video>`
+      : `<img src="${file.image_url}" alt="${safe(file.alt_text || file.nickname + '님의 사진 후기')}">`).join('');
+    grid.innerHTML = `<div class="review-board">
+      <div class="review-board__notice"><span>공지</span><b>상품후기 운영 안내</b></div>
+      ${photoStrip ? `<div class="review-board__photos">${photoStrip}<button type="button">+ 더보기</button></div>` : ''}
+      <div class="review-board__toolbar"><strong>총 ${reviews.length}개</strong><select aria-label="후기 정렬"><option value="new">최근등록순</option><option value="rating">별점높은순</option></select></div>
+      <div class="review-board__list"></div>
+    </div>`;
+    const list = grid.querySelector('.review-board__list');
+    const renderRows = items => {
+      list.innerHTML = '';
+      items.forEach(r => {
       const full = Math.floor(r.rating);
       const half = r.rating % 1 !== 0;
       const stars = '★'.repeat(full) + (half ? '⯪' : '') + '☆'.repeat(Math.max(0, 5 - full - (half ? 1 : 0)));
@@ -1244,15 +1367,18 @@
       const media = (r.review_images || []).map(file => /\.(mp4|webm|mov)(\?|$)/i.test(file.image_url)
         ? `<video class="review-card__media" src="${file.image_url}" controls muted playsinline></video>`
         : `<img class="review-card__media" src="${file.image_url}" alt="${file.alt_text || '구매 후기 이미지'}">`).join('');
-      const div = document.createElement('div');
-      div.className = 'review-card';
-      div.innerHTML = `
-        <div class="review-card__head"><span>${r.nickname}</span><span>${date}</span></div>
-        <div class="review-card__rating">${stars} ${r.rating}</div>
-        ${media ? `<div class="review-card__media-grid">${media}</div>` : ''}
-        <p class="review-card__text">"${r.content}"</p>
-        <div class="review-card__tags">${tags}</div>`;
-      grid.appendChild(div);
-    });
+        const article = document.createElement('article');
+        article.className = 'review-board__row';
+        article.innerHTML = `<div class="review-board__author"><span class="review-board__member">구매회원</span><b>${safe(r.nickname)}</b></div>
+          <div class="review-board__body"><div class="review-card__rating">${stars} ${r.rating}</div>
+          <p class="review-card__product">${safe(product.name)}${tags ? ` · ${safe(tags)}` : ''}</p>
+          <p class="review-card__text">${safe(r.content)}</p>${media ? `<div class="review-card__media-grid">${media}</div>` : ''}
+          <time>${date}</time></div><button class="review-board__helpful" type="button">♡ 도움돼요</button>`;
+        list.appendChild(article);
+      });
+    };
+    renderRows(reviews);
+    grid.querySelector('select').addEventListener('change', event => renderRows(event.target.value === 'rating'
+      ? [...reviews].sort((a,b) => b.rating - a.rating) : reviews));
   }
 })();

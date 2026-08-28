@@ -505,8 +505,21 @@
       grid.innerHTML = '<p class="reviews__empty">아직 등록된 후기가 없습니다. 첫 구매 후기를 남겨보세요!</p>';
       return;
     }
-    grid.innerHTML = '';
-    reviews.forEach(r => {
+    const safe = value => String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const photoFiles = reviews.flatMap(r => (r.review_images || []).map(file => ({ ...file, nickname: r.nickname })));
+    const photoStrip = photoFiles.slice(0, 8).map((file, index) => /.(mp4|webm|mov)(\?|$)/i.test(file.image_url)
+      ? `<video src="${file.image_url}" muted playsinline preload="metadata" aria-label="${safe(file.nickname)}님의 영상 후기"></video>`
+      : `<img src="${file.image_url}" alt="${safe(file.alt_text || file.nickname + '님의 사진 후기')}" loading="lazy">`).join('');
+    grid.innerHTML = `<div class="review-board">
+      <div class="review-board__notice"><span>공지</span><b>상품후기 운영 안내</b></div>
+      ${photoStrip ? `<div class="review-board__photos">${photoStrip}<button type="button">+ 더보기</button></div>` : ''}
+      <div class="review-board__toolbar"><strong>총 ${reviews.length}개</strong><select aria-label="후기 정렬"><option value="new">최근등록순</option><option value="rating">별점높은순</option></select></div>
+      <div class="review-board__list"></div>
+    </div>`;
+    const list = grid.querySelector('.review-board__list');
+    const renderRows = items => {
+      list.innerHTML = '';
+      items.forEach(r => {
       const full = Math.floor(r.rating);
       const half = r.rating % 1 !== 0;
       const stars = '★'.repeat(full) + (half ? '⯪' : '') + '☆'.repeat(Math.max(0, 5 - full - (half ? 1 : 0)));
@@ -515,16 +528,19 @@
       const media = (r.review_images || []).map(file => /\.(mp4|webm|mov)(\?|$)/i.test(file.image_url)
         ? `<video class="review-card__media" src="${file.image_url}" controls muted playsinline></video>`
         : `<img class="review-card__media" src="${file.image_url}" alt="${file.alt_text || '구매 후기 이미지'}" loading="lazy">`).join('');
-      const div = document.createElement('div');
-      div.className = 'review-card';
-      div.innerHTML = `
-        <div class="review-card__head"><span>${r.nickname}</span><span>${date}</span></div>
-        <div class="review-card__rating">${stars} ${r.rating}</div>
-        ${media ? `<div class="review-card__media-grid">${media}</div>` : ''}
-        <p class="review-card__text">"${r.content}"</p>
-        <div class="review-card__tags">${tags}${tags && r.products ? ' · ' : ''}${r.products ? r.products.name : ''}</div>`;
-      grid.appendChild(div);
-    });
+        const article = document.createElement('article');
+        article.className = 'review-board__row';
+        article.innerHTML = `<div class="review-board__author"><span class="review-board__member">구매회원</span><b>${safe(r.nickname)}</b></div>
+          <div class="review-board__body"><div class="review-card__rating">${stars} ${r.rating}</div>
+          <p class="review-card__product">${safe(r.products ? r.products.name : '')}${tags ? ` · ${safe(tags)}` : ''}</p>
+          <p class="review-card__text">${safe(r.content)}</p>${media ? `<div class="review-card__media-grid">${media}</div>` : ''}
+          <time>${date}</time></div><button class="review-board__helpful" type="button">♡ 도움돼요</button>`;
+        list.appendChild(article);
+      });
+    };
+    renderRows(reviews);
+    grid.querySelector('select').addEventListener('change', event => renderRows(event.target.value === 'rating'
+      ? [...reviews].sort((a,b) => b.rating - a.rating) : reviews));
   }
   await renderHomeReviews();
 

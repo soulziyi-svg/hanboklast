@@ -40,7 +40,7 @@ body:has(.moon-product) .header>.hamburger { display:grid; place-items:center; w
 .moon-benefits__grid { display:grid; grid-template-columns:repeat(3,1fr); border-block:1px solid var(--moon-ink); }.moon-benefits article { min-height:240px; padding:34px; border-right:1px solid var(--moon-line); }.moon-benefits article:last-child { border:0; }.moon-benefits article>b { color:var(--moon-red); font-size:13px; }.moon-benefits h4 { margin:55px 0 14px; font-size:19px; }.moon-benefits article p { color:var(--moon-gray); font-size:14px; line-height:1.75; }
 .moon-editorial { max-width:1180px; margin:150px auto 0; padding:0 24px; }.moon-editorial figure { display:grid; grid-template-columns:65% 35%; align-items:end; margin:0 0 100px; }.moon-editorial figure.is-reverse { grid-template-columns:35% 65%; }.moon-editorial figure.is-reverse img { grid-column:2; }.moon-editorial figure.is-reverse figcaption { grid-column:1; grid-row:1; }.moon-editorial figcaption { padding:45px; }.moon-editorial figcaption span { display:block; margin-bottom:18px; color:var(--moon-red); font-size:11px; letter-spacing:.18em; }.moon-editorial figcaption strong { font-family:"Yeongwol",serif; font-size:38px; font-weight:400; line-height:1.45; }
 .moon-design__views { display:grid; grid-template-columns:1fr 1fr; gap:0; background:var(--moon-paper); }.moon-design__views figure { margin:0; padding:24px 24px 0; }.moon-design__views img { width:100%; }.moon-design figcaption,.moon-with figcaption { padding:16px 4px 22px; color:#555; font-size:12px; letter-spacing:.06em; }.moon-detail-notes { display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid var(--moon-ink); }.moon-detail-notes article { padding:28px; border-right:1px solid var(--moon-line); }.moon-detail-notes article:last-child { border:0; }.moon-detail-notes p { color:var(--moon-gray); font-size:13px; line-height:1.7; }
-.moon-with__accessories { display:grid; grid-template-columns:repeat(3,1fr); gap:0; background:var(--moon-paper); }.moon-with__accessories figure,.moon-with__goods figure { margin:0; padding:18px 18px 0; }.moon-with__goods { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; margin-top:1px; background:var(--moon-line); }.moon-with__goods figure { background:#fff; }.moon-with img { width:100%; }
+.moon-with__accessories { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; background:var(--moon-paper); }.moon-with__accessories figure,.moon-with__goods figure { margin:0; padding:18px 18px 0; }.moon-with__goods { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; margin-top:1px; background:var(--moon-line); }.moon-with__goods figure { background:#fff; }.moon-with img { width:100%; }
 .moon-spec dl { border-top:1px solid var(--moon-ink); }.moon-spec dl div { display:grid; grid-template-columns:180px 1fr; padding:18px 10px; border-bottom:1px solid var(--moon-line); }.moon-spec dt { font-weight:700; }.moon-spec dd { margin:0; color:var(--moon-gray); }
 .moon-care { padding-bottom:150px; }.moon-care ol { margin:0; padding:0; list-style:none; border-top:1px solid var(--moon-ink); }.moon-care li { display:grid; grid-template-columns:80px 1fr; padding:22px 10px; border-bottom:1px solid var(--moon-line); }.moon-care li b { color:var(--moon-red); }.moon-care li span { color:var(--moon-gray); }
 .moon-service { max-width:1120px; margin:0 auto; padding:90px 24px; border-top:1px solid var(--moon-ink); }.moon-service .pdp-tabs { display:flex; border-bottom:1px solid var(--moon-line); }.moon-service .pdp-tab { flex:1; padding:18px; border:0; background:transparent; cursor:pointer; }.moon-service .pdp-tab.is-active { color:var(--moon-red); box-shadow:inset 0 -2px var(--moon-red); }.moon-service .pdp-tab-panel { padding:40px 10px; color:var(--moon-gray); line-height:1.8; }
@@ -179,17 +179,18 @@ body:has(.moon-product) { font-family:Pretendard,"Noto Sans KR",sans-serif; }
 
 /* 첨부 상세페이지를 참고한 디테일·옵션·실측 정보 영역 */
 .moon-closeup { padding-top:120px; }
-.moon-closeup__grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.moon-closeup__grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
 .moon-closeup__grid figure { margin:0; background:#faf9f7; }
 .moon-closeup__grid img { width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center; }
-.moon-closeup__grid figure:nth-child(2) img { object-fit:contain; }
+.moon-closeup__grid figure:nth-child(2) img { object-fit:cover; }
 .moon-closeup__grid figcaption { display:flex; flex-direction:column; gap:8px; padding:20px 16px 26px; }
+.moon-closeup__grid figcaption small { color:#b51f2e; font-size:11px; font-weight:800; letter-spacing:.12em; }
 .moon-closeup__grid figcaption b { font-size:18px; }
 .moon-closeup__grid figcaption span { color:var(--moon-gray); font-size:14px; line-height:1.65; }
 .moon-choice { max-width:1120px; margin:0 auto; padding:150px 24px 0; }
 .moon-choice__color { display:grid; grid-template-columns:240px 1fr; align-items:center; gap:44px; padding:34px; border-block:1px solid var(--moon-line); }
 .moon-choice__swatches { display:flex; justify-content:center; align-items:center; }
-.moon-choice__swatches i { width:112px; height:112px; border-radius:50%; border:1px solid #d8d4ce; }
+.moon-choice__swatches i { width:112px; height:112px; border-radius:50%; border:1px solid #d8d4ce; background:var(--swatch-color,#f8f5ed); }
 .moon-choice__swatches .is-white { background:#f8f5ed; }
 .moon-choice__swatches .is-ink { margin-left:-22px; background:#2d2c2b; }
 .moon-choice__color b,.moon-choice__sizes>b { color:var(--moon-red); font-size:14px; letter-spacing:.16em; }
