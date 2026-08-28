@@ -118,6 +118,7 @@ a{color:inherit;text-decoration:none;}
   padding:0 8px;height:40px;min-width:82px;
 }
 .btn--signup{
+  display:inline-flex;align-items:center;justify-content:center;
   background:transparent;color:var(--brand-red);
   position:relative;border:0;transition:color .2s,transform .2s;
 }
@@ -132,6 +133,7 @@ a{color:inherit;text-decoration:none;}
 .btn--login:hover .btn--login__face--back{transform:rotateX(0deg);}
 .welcome-text{font-family:var(--font-gmarket);font-size:12px;font-weight:500;}
 .btn--admin{
+  display:inline-flex;align-items:center;justify-content:center;
   background:transparent;color:var(--brand-red);font-family:var(--font-yeongwol);
   font-size:12px;padding:5px 10px;
 }
