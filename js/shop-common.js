@@ -480,7 +480,7 @@ window.ShopCommon = (function () {
 
   return {
     $, $all, showToast, openModal, closeModal, pickDefaultVariant, formatWon,
-    getCurrentSession, getActiveCartId, getOrCreateActiveCart,
+    getCurrentSession, getActiveCartId, getOrCreateActiveCart, openAuthWindow,
     addToCart, fetchCartItems, renderCartBadge, renderCartModal, prefillOrderForm,
     wireCartUI, applyAuthUI, wireAuthUI,
   };

@@ -11,7 +11,7 @@
 body{background:var(--pdp-bg);}
 .pdp-main[hidden],.pdp-purchase-info[hidden],.pdp-guide[hidden],.pdp-reviews[hidden],.mukhwa-editorial[hidden],.dalbit-editorial[hidden]{display:none;}
 
-.pdp{padding-top:100px;}
+.pdp{padding-top:100px;word-break:keep-all;overflow-wrap:break-word;}
 
 .pdp-loading{padding:120px 24px;text-align:center;color:var(--gray-mid);font-size:14px;}
 .pdp-loading a{color:var(--purple);text-decoration:underline;}

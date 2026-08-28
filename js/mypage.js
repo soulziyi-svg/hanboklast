@@ -14,26 +14,23 @@
   async function loadOrders(){
     const {data:orders,error}=await db.from('orders').select('id,order_number,total_amount,order_status,ordered_at,order_items(id,product_id,product_name_snapshot,option_snapshot,quantity,products(slug,product_images(image_url,is_primary)))').eq('user_id',session.user.id).order('ordered_at',{ascending:false});
     if(error){$('#orderList').innerHTML='<p class="empty">주문 내역을 불러오지 못했습니다.</p>';return;}
-    $('#orderList').innerHTML=(orders||[]).map(o=>`<article class="my-card"><div class="my-card__head"><b>${new Date(o.ordered_at).toLocaleDateString('ko-KR')} · ${o.order_number}</b><span class="status">${labels[o.order_status]||o.order_status}</span></div><div class="my-card__items">${o.order_items.map(i=>{const im=i.products?.product_images||[],src=(im.find(x=>x.is_primary)||im[0])?.image_url||'';return `<div class="my-item"><img src="${src}" alt=""><div><b>${i.product_name_snapshot}</b><p>${i.option_snapshot||''} · ${i.quantity}개</p></div></div>`}).join('')}</div><div class="my-actions">${o.order_status==='delivered'&&o.order_items.length?`<button data-confirm="${o.id}" data-review-product="${o.order_items[0].product_id}" data-review-item="${o.order_items[0].id}">구매확정 후 후기 작성</button>`:''}${['paid','preparing'].includes(o.order_status)?`<button data-claim="cancel" data-order="${o.id}">취소 요청</button>`:''}${['shipping','delivered','confirmed'].includes(o.order_status)?`<button data-claim="exchange" data-order="${o.id}">교환 요청</button><button data-claim="return" data-order="${o.id}">반품 요청</button>`:''}${o.order_status==='confirmed'?o.order_items.map(i=>`<button data-review-product="${i.product_id}" data-review-item="${i.id}">${i.product_name_snapshot} 후기 작성</button>`).join(''):''}</div></article>`).join('')||'<p class="empty">아직 구매한 상품이 없습니다.</p>';
+    $('#orderList').innerHTML=(orders||[]).map(o=>`<article class="my-card"><div class="my-card__head"><b>${new Date(o.ordered_at).toLocaleDateString('ko-KR')} · ${o.order_number}</b><span class="status">${labels[o.order_status]||o.order_status}</span></div><div class="my-card__items">${o.order_items.map(i=>{const im=i.products?.product_images||[],src=(im.find(x=>x.is_primary)||im[0])?.image_url||'';return `<div class="my-item"><img src="${src}" alt=""><div><b>${i.product_name_snapshot}</b><p>${i.option_snapshot||''} · ${i.quantity}개</p></div></div>`}).join('')}</div><div class="my-actions">${o.order_status==='delivered'?`<button data-confirm="${o.id}">구매확정</button>`:''}${['paid','preparing'].includes(o.order_status)?`<button data-claim="cancel" data-order="${o.id}">취소 요청</button>`:''}${['shipping','delivered','confirmed'].includes(o.order_status)?`<button data-claim="exchange" data-order="${o.id}">교환 요청</button><button data-claim="return" data-order="${o.id}">반품 요청</button>`:''}${o.order_items.map(i=>`<button data-review-product="${i.product_id}" data-review-item="${i.id}">${i.product_name_snapshot} 후기 작성</button>`).join('')}</div></article>`).join('')||'<p class="empty">아직 구매한 상품이 없습니다.</p>';
     $$('[data-confirm]').forEach(b=>b.onclick=async()=>{
-      if(!confirm('구매를 확정하면 취소가 어렵습니다. 구매확정 후 후기를 작성할까요?'))return;
-      const orderId=b.dataset.confirm,productId=b.dataset.reviewProduct,orderItemId=b.dataset.reviewItem;
+      if(!confirm('구매를 확정하면 취소가 어렵습니다. 구매확정하시겠습니까?'))return;
+      const orderId=b.dataset.confirm;
       b.disabled=true;b.textContent='구매확정 중...';
       const {error}=await db.rpc('confirm_my_order',{p_order_id:orderId});
       if(error){
-        b.disabled=false;b.textContent='구매확정 후 후기 작성';
+        b.disabled=false;b.textContent='구매확정';
         const missingFunction=error.code==='PGRST202'||/confirm_my_order|schema cache/i.test(error.message||'');
         showToast(missingFunction?'구매확정 기능의 데이터베이스 설정이 아직 반영되지 않았습니다. 관리자에게 문의해주세요.':(error.message||'구매확정 처리에 실패했습니다.'));
         return;
       }
-      showToast('구매가 확정되었습니다. 후기를 작성해주세요.');
-      $('#reviewProductId').value=productId;
-      $('#reviewOrderItemId').value=orderItemId;
-      openModal('reviewModal');
+      showToast('구매가 확정되었습니다.');
       await loadOrders();
     });
     $$('[data-claim]').forEach(b=>b.onclick=async()=>{const reason=prompt('요청 사유를 입력해주세요.');if(!reason)return;const {error}=await db.from('order_claims').insert({order_id:b.dataset.order,user_id:session.user.id,claim_type:b.dataset.claim,reason});if(error)showToast(error.message);else{showToast('요청이 접수되었습니다.');loadClaims();}});
-    $$('[data-review-product]:not([data-confirm])').forEach(b=>b.onclick=()=>{$('#reviewProductId').value=b.dataset.reviewProduct;$('#reviewOrderItemId').value=b.dataset.reviewItem;openModal('reviewModal');});
+    $$('[data-review-product]').forEach(b=>b.onclick=()=>{$('#reviewProductId').value=b.dataset.reviewProduct;$('#reviewOrderItemId').value=b.dataset.reviewItem;openModal('reviewModal');});
   }
   async function loadClaims(){const {data}=await db.from('order_claims').select('id,claim_type,reason,status,requested_at,orders(order_number)').eq('user_id',session.user.id).order('requested_at',{ascending:false});$('#claimList').innerHTML=(data||[]).map(x=>`<div class="my-card"><b>${x.orders?.order_number||''} · ${x.claim_type}</b><p>${x.reason||''}</p><span class="status">${x.status}</span></div>`).join('')||'<p class="empty">접수된 요청이 없습니다.</p>';}
   async function loadCoupons(){const {data}=await db.from('user_coupons').select('status,issued_at,used_at,coupons(code,name,discount_type,discount_value,min_order_amount,ends_at)').eq('user_id',session.user.id);$('#couponList').innerHTML=(data||[]).map(x=>`<div class="coupon-card"><b>${x.coupons?.name||''}</b><p>${x.coupons?.code||''} · ${x.coupons?.discount_type==='percent'?x.coupons.discount_value+'%':Number(x.coupons?.discount_value||0).toLocaleString()+'원'} 할인</p><small>최소 주문금액 ${Number(x.coupons?.min_order_amount||0).toLocaleString()}원 · ${x.status}</small></div>`).join('')||'<p class="empty">보유 쿠폰이 없습니다.</p>';}

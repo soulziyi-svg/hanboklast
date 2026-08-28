@@ -256,8 +256,8 @@ a{color:inherit;text-decoration:none;}
 .cart-summary .row--total{font-size:20px;font-weight:800;color:red;border-top:1px solid #ddd;margin-top:8px;padding-top:10px;}
 .cart-coupon{display:grid;grid-template-columns:100px 1fr;align-items:center;gap:12px;margin-top:14px;font-size:14px;font-weight:700;}
 .cart-coupon select{height:42px;padding:0 12px;border:1px solid #ccc;background:#fff;}
-.cart-checkout-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
-.cart-checkout-actions .btn{width:100%;min-height:48px;font-weight:800;}
+.cart-checkout-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;align-items:stretch;}
+.cart-checkout-actions .btn{width:100%;height:48px;margin-top:0;font-weight:800;}
 .cart-selected-buy{border:1px solid var(--brand-red);background:#fff;color:var(--brand-red);}
 .cart-selected-buy:hover{color:var(--brand-red);background:#fff;transform:scale(1.02);}
 .payment-modal{width:520px;max-width:92vw;}
@@ -615,16 +615,6 @@ a{color:inherit;text-decoration:none;}
 .top-btn.is-visible{opacity:1;pointer-events:auto;}
 
 .roam-icon{position:fixed;width:80px;height:80px;z-index:850;pointer-events:none;cursor:default;}
-
-.video-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2100;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity .2s;
-}
-.video-overlay[hidden]{display:none;}
-.video-overlay.is-visible{opacity:1;pointer-events:auto;}
-.video-overlay video{width:80%;height:auto;transform:scale(.9);animation:zoomIn .15s ease forwards;}
-@keyframes zoomIn{to{transform:scale(1);}}
 
 /* ---------- 토스트 ---------- */
 .toast{

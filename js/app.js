@@ -8,14 +8,14 @@
   const supabaseClient = window.supabaseClient;
   const {
     $, $all, showToast, openModal, closeModal, pickDefaultVariant, formatWon,
-    addToCart, applyAuthUI, wireCartUI, wireAuthUI, getCurrentSession,
+    addToCart, applyAuthUI, wireCartUI, wireAuthUI, getCurrentSession, openAuthWindow,
   } = window.ShopCommon;
 
   // data.js가 Supabase에서 상품 데이터를 모두 불러올 때까지 대기
   await window.COLLECTIONS_READY;
   const entryAction = new URLSearchParams(location.search);
-  if (entryAction.get('signup') === '1') openModal('signupModal');
-  if (entryAction.get('login') === '1') openModal('loginModal');
+  if (entryAction.get('signup') === '1') openAuthWindow('signup');
+  if (entryAction.get('login') === '1') openAuthWindow('login');
 
   /* ---------------- 사이트 콘텐츠 (관리자페이지에서 수정한 문구/컬러가 실제 반영됨) ---------------- */
   async function applySiteContent() {
@@ -174,7 +174,7 @@
   $('#hamburgerAccount').addEventListener('click', async () => {
     closeModal('hamburgerPanel');
     const session = await getCurrentSession();
-    if (session) $('#loginBtn').click(); else openModal('loginModal');
+    if (session) $('#loginBtn').click(); else openAuthWindow('login');
   });
   $('#hamburgerMypage').addEventListener('click', () => { location.href = 'mypage.html'; });
   $('#hamburgerCart').addEventListener('click', () => { closeModal('hamburgerPanel'); $('#cartBtn').click(); });
