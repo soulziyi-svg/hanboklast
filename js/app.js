@@ -472,8 +472,8 @@
         const flowerStockLabel = flowerSizes.map(size => {
           const variant = item.variants[size];
           const soldOut = !variant || variant.stock <= 0;
-          return `<span class="${soldOut ? 'is-soldout' : ''}">[ ${size} · ${soldOut ? '품절' : `${variant.stock}개`} ]</span>`;
-        }).join('');
+          return `<span class="${soldOut ? 'is-soldout' : ''}">[${size}].${soldOut ? '품절' : `${variant.stock}개`}</span>`;
+        }).join(' ');
         const flowerAllSoldOut = flowerSizes.length > 0 && flowerSizes.every(size => !item.variants[size] || item.variants[size].stock <= 0);
         const wearingType = { hairpin: '비녀', norigae: '노리개', flowershoes: '꽃신' }[item.categorySlug];
         const wearingSrc = isAccessory && wearingType ? imgPath(c.dir, `착용컷-${wearingType}.png`) : '';
