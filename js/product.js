@@ -11,6 +11,103 @@
 
   const PRODUCT_TYPE_LABEL = { hanbok: '한복', accessory: '액세서리', goods: '굿즈' };
 
+  // "moon-*" 상세페이지 레이아웃(갤러리+구매영역 2단, 에디토리얼 섹션)을 쓰는 상품별 콘텐츠 설정입니다.
+  // 새 상품을 이 레이아웃으로 추가하려면 아래에 slug를 키로 하는 설정을 하나 더 추가하면 됩니다.
+  const MOON_PRODUCTS = {
+    'dalbitwhayansobok-hanbok': {
+      base: 'img/상품/달빛하얀소복',
+      galleryFiles: ['하얀달빛소복01.png', '하얀달빛소복02.png', '하얀달빛소복03.png', '정면.png', '측면.png', '하얀달빛소복 악세사리 비녀.png', '하얀달빛소복 악세사리 노리개.png', '하얀달빛소복 악세사리 꽃신.png'],
+      collectionLabel: 'YEONHWAJAESIL · DALBIT COLLECTION',
+      storyTitle: '달빛 아래,<br>가장 순수한 순간',
+      storyDesc: '설백색 위로 먹빛 산수가 은은하게 번지는 한 벌.<br>전통의 고요한 선을 오늘의 움직임에 맞게 담았습니다.',
+      storyImage: '하얀달빛소복01.png', storyImageAlt: '벚꽃 아래 달빛하얀소복을 착용한 모습',
+      whyLabel: 'WHY DALBIT', whyTitle: '달빛하얀소복을 선택하는<br>세 가지 이유',
+      reasons: [
+        { title: '그림처럼 이어지는 산수화', desc: '치맛단 전체에 번지는 먹빛의 농담이 어느 각도에서도 깊은 인상을 남깁니다.' },
+        { title: '빛을 머금은 겹과 결', desc: '투명하고 가벼운 겹이 움직임에 따라 부드러운 윤곽과 은은한 광택을 만듭니다.' },
+        { title: '전통과 일상을 잇는 균형', desc: '단정한 깃과 편안한 실루엣으로 촬영과 행사 내내 자연스럽게 입을 수 있습니다.' },
+      ],
+      editorial: [
+        { image: '하얀달빛소복02.png', alt: '달빛하얀소복 정면 착용 이미지', label: 'THE SILHOUETTE', title: '가만히 서 있어도<br>선명한 존재감' },
+        { image: '하얀달빛소복03.png', alt: '달빛하얀소복 측면 착용 이미지', label: 'THE MOVEMENT', title: '걸음마다 피어나는<br>고요한 먹빛', reverse: true },
+      ],
+      designTitle: '한복의 선을 지키고<br>입는 순간은 더 편안하게',
+      designDesc: '단아하게 여민 깃, 자연스럽게 모이는 허리선, 풍성하게 떨어지는 치마의 비율을 세심하게 조율했습니다. 설백색의 투명한 겉감과 먹빛 산수 표현이 겹치며 깊이를 만듭니다.',
+      designViews: [{ image: '정면.png', caption: 'FRONT · 정면' }, { image: '측면.png', caption: 'SIDE · 측면' }],
+      detailNotes: [
+        { title: '단정한 여밈', desc: '목선을 부드럽게 감싸는 깃과 안정적인 허리 매듭' },
+        { title: '먹빛 산수 표현', desc: '치맛단을 따라 이어지는 섬세한 농담과 꽃 디테일' },
+        { title: '풍성한 실루엣', desc: '몸의 움직임을 따라 자연스럽게 퍼지는 여유로운 치마폭' },
+      ],
+      closeups: [
+        { image: '하얀달빛소복02.png', alt: '달빛하얀소복 깃과 허리선 디테일', title: '단정한 깃과 허리선', desc: '겹쳐지는 선과 매듭의 균형을 확인해 주세요.' },
+        { image: '정면.png', alt: '달빛하얀소복 치맛단 산수화 디테일', title: '먹빛 산수화 치맛단', desc: '설백색 위로 번지는 먹빛의 농담을 담았습니다.' },
+        { image: '측면.png', alt: '달빛하얀소복 소매와 측면 실루엣', title: '가볍게 흐르는 소매', desc: '움직임에 따라 부드럽게 이어지는 실루엣입니다.' },
+      ],
+      withLabel: 'WITH ITEMS', withTitle: '달빛의 차림을<br>완성하는 구성',
+      withDesc: '아래 이미지는 함께 선택할 수 있는 추가 상품입니다. 실제 선택 가능 여부와 가격은 상단 구매 영역에서 확인해 주세요.',
+      withItems: [
+        { image: '하얀달빛소복 악세사리 비녀.png', caption: '비녀' },
+        { image: '하얀달빛소복 악세사리 노리개.png', caption: '노리개' },
+        { image: '하얀달빛소복 악세사리 꽃신.png', caption: '꽃신 · S 220 / M 230 / L 240' },
+      ],
+      colorText: '설백색 · 먹색',
+      choiceOptions: [
+        { image: '하얀달빛소복 악세사리 비녀.png', caption: '비녀' },
+        { image: '하얀달빛소복 악세사리 노리개.png', caption: '노리개' },
+        { image: '하얀달빛소복 악세사리 꽃신.png', caption: '꽃신' },
+      ],
+      specImage: '정면.png', specColor: '설백색 · 먹색', specComposition: '저고리 · 치마 · 노리개',
+      careSteps: ['전문 드라이클리닝을 권장합니다.', '자수와 얇은 원단이 거친 표면에 닿지 않도록 주의해 주세요.', '착용 후 통풍이 잘되는 그늘에서 충분히 말린 뒤 걸어 보관해 주세요.'],
+    },
+    'heukcheongwolhwa-hanbok': {
+      base: 'img/상품/흑청월화',
+      galleryFiles: ['흑청월화01.png', '흑청월화02.png', '흑청월화03.png', '흑청월화04.png', '정면.png', '측면.png'],
+      collectionLabel: 'YEONHWAJAESIL · HEUKCHEONGWOLHWA COLLECTION',
+      storyTitle: '검푸른 밤하늘 아래,<br>홀로 피어난 달빛',
+      storyDesc: '깊은 먹빛과 청화빛이 겹겹이 번지는 치마 위로<br>달빛처럼 은은한 배색이 스며든 한 벌입니다.',
+      storyImage: '흑청월화01.png', storyImageAlt: '흑청월화를 착용한 정면 모습',
+      whyLabel: 'WHY HEUKCHEONGWOLHWA', whyTitle: '흑청월화를 선택하는<br>세 가지 이유',
+      reasons: [
+        { title: '완성도 높은 올인원 세트', desc: '흑청월화 한 벌만 준비하면 촬영에 필요한 기본 구성을 바로 갖출 수 있습니다.' },
+        { title: '선명한 색감과 디테일', desc: '사진에서도 또렷하게 살아나는 배색과 자수 디테일로 완성했습니다.' },
+        { title: '편안하고 완성도 높은 연출', desc: '장시간 촬영이나 행사에도 활동하기 편안한 재단으로 제작했습니다.' },
+      ],
+      editorial: [
+        { image: '흑청월화02.png', alt: '흑청월화 정면 착용 이미지', label: 'THE SILHOUETTE', title: '가만히 서 있어도<br>선명한 존재감' },
+        { image: '흑청월화03.png', alt: '흑청월화 측면 착용 이미지', label: 'THE MOVEMENT', title: '걸음마다 피어나는<br>깊은 청화빛', reverse: true },
+      ],
+      designTitle: '한복의 선을 지키고<br>배색은 더 선명하게',
+      designDesc: '검푸른 청화빛과 깊은 먹빛이 층을 이루며 만들어내는 짙은 색의 깊이. 단정한 저고리 여밈과 허리끈의 디테일이 사진 속에서도 또렷하게 살아납니다.',
+      designViews: [{ image: '정면.png', caption: 'FRONT · 정면' }, { image: '측면.png', caption: 'SIDE · 측면' }],
+      detailNotes: [
+        { title: '단정한 저고리 여밈', desc: '깊은 색감 위로 이어지는 안정적인 목선과 매듭' },
+        { title: '흐르는 치마결', desc: '속치마와 겹쳐 움직임마다 살아나는 풍성한 실루엣' },
+        { title: '포인트 허리끈', desc: '허리선을 잡아주며 전체 비율을 정돈하는 디테일' },
+      ],
+      closeups: [
+        { image: '흑청월화02.png', alt: '흑청월화 저고리 깃 디테일', title: '단정한 저고리 깃', desc: '깊은 색감 위로 이어지는 안정적인 목선을 확인해 주세요.' },
+        { image: '정면.png', alt: '흑청월화 치맛단 배색 디테일', title: '검푸른 배색 치맛단', desc: '먹빛과 청화빛이 층을 이루는 배색을 담았습니다.' },
+        { image: '측면.png', alt: '흑청월화 허리끈과 측면 실루엣', title: '허리끈과 실루엣', desc: '허리선을 잡아주는 포인트 허리끈을 확인해 주세요.' },
+      ],
+      withLabel: 'WITH ITEMS', withTitle: '흑청월화와<br>함께 즐기는 컬렉션',
+      withDesc: '아래 이미지는 흑청월화 컬렉션의 별도 굿즈 상품입니다. 가격과 구매는 각 상품 페이지에서 확인해 주세요.',
+      withItems: [
+        { image: '흑청월화 아크릴스텐드.png', caption: '아크릴 스탠드', slug: 'heukcheongwolhwa-stand' },
+        { image: '흑청월화 손가방.png', caption: '손가방', slug: 'heukcheongwolhwa-handbag' },
+        { image: '흑청월화 키링.png', caption: '키링', slug: 'heukcheongwolhwa-keyring' },
+        { image: '흑청월화 포토카드.png', caption: '포토카드', slug: 'heukcheongwolhwa-photocard' },
+      ],
+      colorText: '먹빛 · 청화남빛',
+      choiceOptions: [],
+      specImage: '정면.png', specColor: '먹빛 · 청화남빛', specComposition: '저고리 · 치마 · 속치마 · 허리끈',
+      careSteps: ['전문 드라이클리닝을 권장합니다. 물세탁 시 변형이 있을 수 있습니다.', '장시간 물기·마찰에 노출되면 변색될 수 있으니 주의해주세요.', '습기가 적은 곳에서 옷걸이에 걸어 보관해주세요.'],
+    },
+  };
+  MOON_PRODUCTS.dalbitwhayansobok = MOON_PRODUCTS['dalbitwhayansobok-hanbok'];
+
+
+
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
 
@@ -278,8 +375,12 @@
     renderReviews(reviews, stats);
   }
 
+  function getMoonConfig(product) {
+    return MOON_PRODUCTS[product.slug] || null;
+  }
+
   function isDalbitProduct(product) {
-    return ['dalbitwhayansobok', 'dalbitwhayansobok-hanbok'].includes(product.slug);
+    return !!getMoonConfig(product);
   }
 
   function prepareDalbitNewLayout(product) {
@@ -287,7 +388,7 @@
     const main = $('#pdpMain');
     main.className = 'moon-product';
     main.innerHTML = `
-      <div class="moon-gallery" aria-label="달빛하얀소복 상품 이미지 갤러리">
+      <div class="moon-gallery" aria-label="${product.name} 상품 이미지 갤러리">
         <div class="moon-gallery__stage">
           <img id="pdpMainImage" src="" alt="">
           <span id="pdpGalleryProgress" class="moon-gallery__progress"></span>
@@ -326,83 +427,75 @@
   }
 
   function renderDalbitEditorial(product) {
-    if (!isDalbitProduct(product)) return;
+    const cfg = getMoonConfig(product);
+    if (!cfg) return;
     const section = $('#dalbitEditorial');
-    const base = 'img/상품/달빛하얀소복';
+    const base = cfg.base;
     const sizeSpecs = (product.product_size_specs || []).slice().sort((a, b) => ['S', 'M', 'L'].indexOf(a.size) - ['S', 'M', 'L'].indexOf(b.size));
     const sizeRows = (sizeSpecs.length ? sizeSpecs : ['S', 'M', 'L'].map(size => ({ size }))).map(spec => `
       <tr><th>${spec.size}</th><td>${spec.chest || '확인 중'}</td><td>${spec.waist || '확인 중'}</td><td>${spec.length || '확인 중'}</td><td>${spec.sleeve || '확인 중'}</td></tr>`).join('');
+    const withItem = item => item.slug
+      ? `<figure><a href="product.html?slug=${encodeURIComponent(item.slug)}"><img src="${base}/${item.image}" alt="${item.caption}"></a><figcaption><a href="product.html?slug=${encodeURIComponent(item.slug)}">${item.caption}</a></figcaption></figure>`
+      : `<figure><img src="${base}/${item.image}" alt="${item.caption}"><figcaption>${item.caption}</figcaption></figure>`;
     section.hidden = false;
     section.innerHTML = `
       <nav class="moon-nav" aria-label="상품 상세 메뉴">
         <a class="is-active" href="#moonStory">상품 설명</a><a href="#moonDetails">디자인·소재</a><a href="#moonWith">구성품</a><a href="#pdpPurchaseInfo">배송 안내</a><a href="#pdpReviewsSection">구매 후기</a>
       </nav>
       <section id="moonStory" class="moon-story">
-        <p class="moon-kicker">YEONHWAJAESIL · DALBIT COLLECTION</p>
-        <h2>달빛 아래,<br>가장 순수한 순간</h2>
-        <p>설백색 위로 먹빛 산수가 은은하게 번지는 한 벌.<br>전통의 고요한 선을 오늘의 움직임에 맞게 담았습니다.</p>
-        <img src="${base}/하얀달빛소복01.png" alt="벚꽃 아래 달빛하얀소복을 착용한 모습">
+        <p class="moon-kicker">${cfg.collectionLabel}</p>
+        <h2>${cfg.storyTitle}</h2>
+        <p>${cfg.storyDesc}</p>
+        <img src="${base}/${cfg.storyImage}" alt="${cfg.storyImageAlt}">
       </section>
 
       <section class="moon-benefits">
-        <div class="moon-section-title"><span>WHY DALBIT</span><h3>달빛하얀소복을 선택하는<br>세 가지 이유</h3></div>
+        <div class="moon-section-title"><span>${cfg.whyLabel}</span><h3>${cfg.whyTitle}</h3></div>
         <div class="moon-benefits__grid">
-          <article><b>01</b><h4>그림처럼 이어지는 산수화</h4><p>치맛단 전체에 번지는 먹빛의 농담이 어느 각도에서도 깊은 인상을 남깁니다.</p></article>
-          <article><b>02</b><h4>빛을 머금은 겹과 결</h4><p>투명하고 가벼운 겹이 움직임에 따라 부드러운 윤곽과 은은한 광택을 만듭니다.</p></article>
-          <article><b>03</b><h4>전통과 일상을 잇는 균형</h4><p>단정한 깃과 편안한 실루엣으로 촬영과 행사 내내 자연스럽게 입을 수 있습니다.</p></article>
+          ${cfg.reasons.map((r, i) => `<article><b>0${i + 1}</b><h4>${r.title}</h4><p>${r.desc}</p></article>`).join('')}
         </div>
       </section>
 
       <section class="moon-editorial">
-        <figure><img src="${base}/하얀달빛소복02.png" alt="달빛하얀소복 정면 착용 이미지"><figcaption><span>THE SILHOUETTE</span><strong>가만히 서 있어도<br>선명한 존재감</strong></figcaption></figure>
-        <figure class="is-reverse"><img src="${base}/하얀달빛소복03.png" alt="달빛하얀소복 측면 착용 이미지"><figcaption><span>THE MOVEMENT</span><strong>걸음마다 피어나는<br>고요한 먹빛</strong></figcaption></figure>
+        ${cfg.editorial.map(e => `<figure${e.reverse ? ' class="is-reverse"' : ''}><img src="${base}/${e.image}" alt="${e.alt}"><figcaption><span>${e.label}</span><strong>${e.title}</strong></figcaption></figure>`).join('')}
       </section>
 
       <section id="moonDetails" class="moon-design">
-        <div class="moon-section-title"><span>DESIGN & FABRIC</span><h3>한복의 선을 지키고<br>입는 순간은 더 편안하게</h3><p>단아하게 여민 깃, 자연스럽게 모이는 허리선, 풍성하게 떨어지는 치마의 비율을 세심하게 조율했습니다. 설백색의 투명한 겉감과 먹빛 산수 표현이 겹치며 깊이를 만듭니다.</p></div>
+        <div class="moon-section-title"><span>DESIGN & FABRIC</span><h3>${cfg.designTitle}</h3><p>${cfg.designDesc}</p></div>
         <div class="moon-design__views">
-          <figure><img src="${base}/정면.png" alt="달빛하얀소복 정면 상품 이미지"><figcaption>FRONT · 정면</figcaption></figure>
-          <figure><img src="${base}/측면.png" alt="달빛하얀소복 측면 상품 이미지"><figcaption>SIDE · 측면</figcaption></figure>
+          ${cfg.designViews.map(v => `<figure><img src="${base}/${v.image}" alt="${product.name} ${v.caption} 상품 이미지"><figcaption>${v.caption}</figcaption></figure>`).join('')}
         </div>
-        <div class="moon-detail-notes"><article><b>단정한 여밈</b><p>목선을 부드럽게 감싸는 깃과 안정적인 허리 매듭</p></article><article><b>먹빛 산수 표현</b><p>치맛단을 따라 이어지는 섬세한 농담과 꽃 디테일</p></article><article><b>풍성한 실루엣</b><p>몸의 움직임을 따라 자연스럽게 퍼지는 여유로운 치마폭</p></article></div>
+        <div class="moon-detail-notes">${cfg.detailNotes.map(n => `<article><b>${n.title}</b><p>${n.desc}</p></article>`).join('')}</div>
         <div class="moon-closeup">
           <div class="moon-section-title"><span>SMALL DETAILS</span><h3>작은 디테일까지<br>세심하게</h3></div>
           <div class="moon-closeup__grid">
-            <figure><img src="${base}/하얀달빛소복02.png" alt="달빛하얀소복 깃과 허리선 디테일"><figcaption><b>단정한 깃과 허리선</b><span>겹쳐지는 선과 매듭의 균형을 확인해 주세요.</span></figcaption></figure>
-            <figure><img src="${base}/정면.png" alt="달빛하얀소복 치맛단 산수화 디테일"><figcaption><b>먹빛 산수화 치맛단</b><span>설백색 위로 번지는 먹빛의 농담을 담았습니다.</span></figcaption></figure>
-            <figure><img src="${base}/측면.png" alt="달빛하얀소복 소매와 측면 실루엣"><figcaption><b>가볍게 흐르는 소매</b><span>움직임에 따라 부드럽게 이어지는 실루엣입니다.</span></figcaption></figure>
+            ${cfg.closeups.map(c => `<figure><img src="${base}/${c.image}" alt="${c.alt}"><figcaption><b>${c.title}</b><span>${c.desc}</span></figcaption></figure>`).join('')}
           </div>
         </div>
       </section>
 
       <section id="moonWith" class="moon-with">
-        <div class="moon-section-title"><span>WITH ITEMS</span><h3>달빛의 차림을<br>완성하는 구성</h3><p>아래 이미지는 함께 선택할 수 있는 추가 상품입니다. 실제 선택 가능 여부와 가격은 상단 구매 영역에서 확인해 주세요.</p></div>
+        <div class="moon-section-title"><span>${cfg.withLabel}</span><h3>${cfg.withTitle}</h3><p>${cfg.withDesc}</p></div>
         <div class="moon-with__accessories">
-          <figure><img src="${base}/하얀달빛소복 악세사리 비녀.png" alt="달빛하얀소복 비녀"><figcaption>비녀</figcaption></figure>
-          <figure><img src="${base}/하얀달빛소복 악세사리 노리개.png" alt="달빛하얀소복 노리개"><figcaption>노리개</figcaption></figure>
-          <figure><img src="${base}/하얀달빛소복 악세사리 꽃신.png" alt="달빛하얀소복 꽃신"><figcaption>꽃신 · S 220 / M 230 / L 240</figcaption></figure>
+          ${cfg.withItems.map(withItem).join('')}
         </div>
       </section>
 
       <section class="moon-choice">
-        <div class="moon-section-title"><span>COLOR · OPTION · SIZE</span><h3>컬러, 옵션 &amp; 사이즈</h3></div>
-        <div class="moon-choice__color"><div class="moon-choice__swatches"><i class="is-white"></i><i class="is-ink"></i></div><div><b>COLOR</b><p>설백색 · 먹색</p><small>모니터 환경에 따라 실제 색상이 다르게 보일 수 있습니다.</small></div></div>
-        <div class="moon-choice__options">
-          <figure><img src="${base}/하얀달빛소복 악세사리 비녀.png" alt="추가 옵션 비녀"><figcaption>비녀</figcaption></figure>
-          <figure><img src="${base}/하얀달빛소복 악세사리 노리개.png" alt="추가 옵션 노리개"><figcaption>노리개</figcaption></figure>
-          <figure><img src="${base}/하얀달빛소복 악세사리 꽃신.png" alt="추가 옵션 꽃신"><figcaption>꽃신</figcaption></figure>
-        </div>
+        <div class="moon-section-title"><span>COLOR${cfg.choiceOptions.length ? ' · OPTION' : ''} · SIZE</span><h3>컬러${cfg.choiceOptions.length ? ', 옵션' : ''} &amp; 사이즈</h3></div>
+        <div class="moon-choice__color"><div class="moon-choice__swatches"><i class="is-white"></i><i class="is-ink"></i></div><div><b>COLOR</b><p>${cfg.colorText}</p><small>모니터 환경에 따라 실제 색상이 다르게 보일 수 있습니다.</small></div></div>
+        ${cfg.choiceOptions.length ? `<div class="moon-choice__options">${cfg.choiceOptions.map(o => `<figure><img src="${base}/${o.image}" alt="추가 옵션 ${o.caption}"><figcaption>${o.caption}</figcaption></figure>`).join('')}</div>` : ''}
         <div class="moon-choice__sizes"><b>SIZE</b><div><span>S</span><span>M</span><span>L</span></div><a href="#pdpMain">상단에서 사이즈 선택하기 ↑</a></div>
       </section>
 
       <section id="moonSizeInfo" class="moon-spec">
         <div class="moon-section-title"><span>PRODUCT INFORMATION</span><h3>구매 전<br>꼭 확인하세요</h3></div>
         <div class="moon-spec__layout">
-          <figure><img src="${base}/정면.png" alt="달빛하얀소복 정면 제품 정보 이미지"><figcaption>실제 정보는 판매 옵션에서 확인해 주세요.</figcaption></figure>
-          <dl><div><dt>브랜드명</dt><dd>연화재실</dd></div><div><dt>제품명</dt><dd>달빛하얀소복</dd></div><div><dt>색상</dt><dd>설백색 · 먹색</dd></div><div><dt>소재</dt><dd>${product.product_care && product.product_care.material ? product.product_care.material : '폴리에스터 혼방'}</dd></div><div><dt>구성</dt><dd>저고리 · 치마 · 노리개</dd></div><div><dt>사이즈</dt><dd>S · M · L</dd></div></dl>
+          <figure><img src="${base}/${cfg.specImage}" alt="${product.name} 정면 제품 정보 이미지"><figcaption>실제 정보는 판매 옵션에서 확인해 주세요.</figcaption></figure>
+          <dl><div><dt>브랜드명</dt><dd>연화재실</dd></div><div><dt>제품명</dt><dd>${product.name}</dd></div><div><dt>색상</dt><dd>${cfg.specColor}</dd></div><div><dt>소재</dt><dd>${product.product_care && product.product_care.material ? product.product_care.material : '폴리에스터 혼방'}</dd></div><div><dt>구성</dt><dd>${cfg.specComposition}</dd></div><div><dt>사이즈</dt><dd>S · M · L</dd></div></dl>
         </div>
         <div class="moon-size-chart">
-          <div class="moon-size-chart__visual"><img src="${base}/측면.png" alt="달빛하얀소복 실측 참고 이미지"><span>실측 위치 참고</span></div>
+          <div class="moon-size-chart__visual"><img src="img/컨셉사진/사이즈.png" alt="한복 실측 위치(어깨너비·가슴둘레·허리둘레·소매길이·소매너비·총기장) 안내 도식"><span>실측 위치 참고</span></div>
           <div class="moon-size-chart__table"><h4>정확한 사이즈</h4><p>단위: cm</p><table><thead><tr><th>사이즈</th><th>가슴</th><th>허리</th><th>총장</th><th>소매</th></tr></thead><tbody>${sizeRows}</tbody></table></div>
         </div>
         <p class="moon-spec__notice">제품 정보에 제공되지 않은 소재 및 실측 수치는 임의로 표기하지 않았습니다.</p>
@@ -411,7 +504,7 @@
 
       <section id="moonCare" class="moon-care">
         <div class="moon-section-title"><span>CARE GUIDE</span><h3>오래도록 아름답게</h3></div>
-        <ol><li><b>01</b><span>전문 드라이클리닝을 권장합니다.</span></li><li><b>02</b><span>자수와 얇은 원단이 거친 표면에 닿지 않도록 주의해 주세요.</span></li><li><b>03</b><span>착용 후 통풍이 잘되는 그늘에서 충분히 말린 뒤 걸어 보관해 주세요.</span></li></ol>
+        <ol>${cfg.careSteps.map((step, i) => `<li><b>0${i + 1}</b><span>${step}</span></li>`).join('')}</ol>
       </section>`;
   }
 
@@ -647,12 +740,9 @@
   }
 
   function renderGallery(product) {
-    const dalbitFiles = [
-      '하얀달빛소복01.png', '하얀달빛소복02.png', '하얀달빛소복03.png', '정면.png', '측면.png',
-      '하얀달빛소복 악세사리 비녀.png', '하얀달빛소복 악세사리 노리개.png', '하얀달빛소복 악세사리 꽃신.png'
-    ];
-    const images = isDalbitProduct(product)
-      ? dalbitFiles.map((file, index) => ({ image_url: `img/상품/달빛하얀소복/${file}`, sort_order: index + 1, alt_text: `${product.name} 상품 이미지 ${index + 1}` }))
+    const moonCfg = getMoonConfig(product);
+    const images = moonCfg
+      ? moonCfg.galleryFiles.map((file, index) => ({ image_url: `${moonCfg.base}/${file}`, sort_order: index + 1, alt_text: `${product.name} 상품 이미지 ${index + 1}` }))
       : (product.product_images || []).slice().sort((a, b) => a.sort_order - b.sort_order);
     const mainImg = $('#pdpMainImage');
     const thumbs = $('#pdpThumbs');
