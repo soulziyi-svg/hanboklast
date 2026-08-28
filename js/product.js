@@ -326,6 +326,18 @@
   MOON_PRODUCTS.dalbitwhayansobok = MOON_PRODUCTS['dalbitwhayansobok-hanbok'];
   MOON_PRODUCTS['mukhwayeonmu-hanbok'] = MOON_PRODUCTS.mukhwayeonmu;
 
+  // 비녀/노리개/꽃신 액세서리 상세(개별 페이지 + 컬렉션 통합 페이지)가 공유하는 정보입니다.
+  const ACCESSORY_COLLECTION_INFO = {
+    seolhwamukbi: { name: '설화먹비', dir: '설화먹비', filePrefix: '설화먹비', tone: '설백색과 먹빛의 단정한 대비' },
+    mukhwayeonmu: { name: '묵화연무', dir: '묵화연무', filePrefix: '묵화연무', tone: '수묵처럼 번지는 회색과 금빛의 조화' },
+    dalbitwhayansobok: { name: '달빛하얀소복', dir: '달빛하얀소복', filePrefix: '하얀달빛소복', tone: '달빛 같은 설백색과 은은한 회색의 조화' },
+  };
+  const ACCESSORY_TYPE_INFO = {
+    hairpin: { label: '비녀', wear: '비녀', position: '단정하게 올린 머리 위에서 한복의 선을 완성합니다.', tip: '낮게 묶은 쪽머리나 깔끔한 올림머리에 꽂아 장식이 정면과 측면에서 모두 보이게 연출해 주세요.' },
+    norigae: { label: '노리개', wear: '노리개', position: '고름과 허리선에 자연스럽게 늘어져 움직임마다 은은한 포인트가 됩니다.', tip: '치마 허리끈이나 저고리 고름 가까이에 매달아 술 장식이 곧게 떨어지도록 정리해 주세요.' },
+    flowershoes: { label: '꽃신', wear: '꽃신', position: '한복 치맛자락 아래에서 전체 색감과 실루엣을 정돈합니다.', tip: '발볼에 맞는 사이즈를 선택하고 치맛단이 신발 장식을 완전히 가리지 않도록 길이를 맞춰 주세요.' },
+  };
+
 
 
   const params = new URLSearchParams(window.location.search);
@@ -372,6 +384,12 @@
   if (slug.endsWith('-goods')) {
     const goodsCollectionSlug = slug.slice(0, -6);
     await renderCollectionGoodsPage(goodsCollectionSlug);
+    return;
+  }
+
+  if (slug.endsWith('-accessories')) {
+    const accessoryCollectionSlug = slug.slice(0, -12);
+    await renderCollectionAccessoriesPage(accessoryCollectionSlug);
     return;
   }
 
@@ -474,26 +492,16 @@
   function renderAccessoryEditorial(currentProduct) {
     const collection = currentProduct.collections || {};
     const category = currentProduct.categories || {};
-    const configs = {
-      seolhwamukbi:{dir:'설화먹비',hanbok:'설화먹비',tone:'설백색과 먹빛의 단정한 대비'},
-      mukhwayeonmu:{dir:'묵화연무',hanbok:'묵화연무',tone:'수묵처럼 번지는 회색과 금빛의 조화'},
-      dalbitwhayansobok:{dir:'달빛하얀소복',hanbok:'달빛하얀소복',tone:'달빛 같은 설백색과 은은한 회색의 조화'},
-    };
-    const types = {
-      hairpin:{label:'비녀',wear:'비녀',position:'단정하게 올린 머리 위에서 한복의 선을 완성합니다.',tip:'낮게 묶은 쪽머리나 깔끔한 올림머리에 꽂아 장식이 정면과 측면에서 모두 보이게 연출해 주세요.'},
-      norigae:{label:'노리개',wear:'노리개',position:'고름과 허리선에 자연스럽게 늘어져 움직임마다 은은한 포인트가 됩니다.',tip:'치마 허리끈이나 저고리 고름 가까이에 매달아 술 장식이 곧게 떨어지도록 정리해 주세요.'},
-      flowershoes:{label:'꽃신',wear:'꽃신',position:'한복 치맛자락 아래에서 전체 색감과 실루엣을 정돈합니다.',tip:'발볼에 맞는 사이즈를 선택하고 치맛단이 신발 장식을 완전히 가리지 않도록 길이를 맞춰 주세요.'},
-    };
-    const cfg = configs[collection.slug];
-    const type = types[category.slug];
+    const cfg = ACCESSORY_COLLECTION_INFO[collection.slug];
+    const type = ACCESSORY_TYPE_INFO[category.slug];
     if (!cfg || !type) return;
     const base = `img/상품/${cfg.dir}`;
     const section = $('#dalbitEditorial');
     section.className = 'accessory-detail';
     section.hidden = false;
     section.innerHTML = `<nav class="moon-nav"><a class="is-active" href="#accessoryMatch">한복과의 조화</a><a href="#accessoryWearing">착용 디테일</a><a href="#pdpPurchaseInfo">배송 안내</a><a href="#pdpReviewsSection">상품 후기</a></nav>
-      <section id="accessoryMatch" class="accessory-detail__intro"><p>COMPLETE YOUR HANBOK</p><h2>${cfg.hanbok} 한복과<br>가장 아름답게 어울리는 ${type.label}</h2><span>${cfg.tone}를 이어 받아 한복을 입었을 때 전체 인상을 더욱 섬세하고 완성도 있게 정리합니다.</span></section>
-      <section id="accessoryWearing" class="accessory-detail__wear"><figure><img src="${base}/착용컷-${type.wear}.png" alt="${cfg.hanbok} ${type.label} 착용 확대 이미지"><figcaption><small>WEARING DETAIL</small><h3>착용했을 때 더 선명해지는 아름다움</h3><p>${type.position}</p></figcaption></figure></section>
+      <section id="accessoryMatch" class="accessory-detail__intro"><p>COMPLETE YOUR HANBOK</p><h2>${cfg.name} 한복과<br>가장 아름답게 어울리는 ${type.label}</h2><span>${cfg.tone}를 이어 받아 한복을 입었을 때 전체 인상을 더욱 섬세하고 완성도 있게 정리합니다.</span></section>
+      <section id="accessoryWearing" class="accessory-detail__wear"><figure><img src="${base}/착용컷-${type.wear}.png" alt="${cfg.name} ${type.label} 착용 확대 이미지"><figcaption><small>WEARING DETAIL</small><h3>착용했을 때 더 선명해지는 아름다움</h3><p>${type.position}</p></figcaption></figure></section>
       <section class="accessory-detail__why"><h3>한복과 함께 선택해야 하는 이유</h3><div><article><b>01</b><strong>컬러의 연결</strong><p>${cfg.tone}를 그대로 이어 한복과 따로 노는 느낌이 없습니다.</p></article><article><b>02</b><strong>균형 잡힌 비율</strong><p>한복의 풍성한 실루엣과 어울리도록 장식의 크기와 길이를 조화롭게 구성했습니다.</p></article><article><b>03</b><strong>완성된 스타일</strong><p>하나만 더해도 특별한 날의 한복 차림을 정돈된 인상으로 완성합니다.</p></article></div></section>
       <section class="accessory-detail__tip"><p>STYLING TIP</p><h3>${type.label}를 더 아름답게 연출하는 방법</h3><span>${type.tip}</span></section>`;
   }
@@ -670,6 +678,124 @@
     await setupProductInquiries(product);
   }
 
+  async function renderCollectionAccessoriesPage(collectionSlug) {
+    const collection = ACCESSORY_COLLECTION_INFO[collectionSlug];
+    if (!collection) { $('#pdpLoading').hidden = true; $('#pdpNotFound').hidden = false; return; }
+    const base = `img/상품/${collection.dir}`;
+    const itemKeys = ['hairpin', 'norigae', 'shoes'];
+    const itemMeta = { hairpin: ACCESSORY_TYPE_INFO.hairpin, norigae: ACCESSORY_TYPE_INFO.norigae, shoes: ACCESSORY_TYPE_INFO.flowershoes };
+    const slugFor = key => `${collectionSlug}-${key}`;
+    const { data: accessories, error: accessoryError } = await supabaseClient.from('products')
+      .select('id,name,slug,regular_price,sale_price,discount_rate,product_variants(id,size,stock_quantity)')
+      .in('slug', itemKeys.map(slugFor)).eq('status', 'public');
+    if (accessoryError || !accessories || accessories.length < 3) {
+      $('#pdpLoading').hidden = true; $('#pdpNotFound').hidden = false; return;
+    }
+    const bySlug = new Map(accessories.map(item => [item.slug, item]));
+    const items = itemKeys.map(key => {
+      const meta = itemMeta[key];
+      const row = bySlug.get(slugFor(key));
+      return {
+        key, hasSizes: key === 'shoes', label: meta.label, position: meta.position, tip: meta.tip,
+        file: `${collection.filePrefix} 악세사리 ${meta.label}.png`,
+        wearFile: `착용컷-${meta.wear}.png`,
+        ...row,
+      };
+    });
+    product = { id: items[0].id, name: `${collection.name} 액세서리`, slug: `${collectionSlug}-accessories`, product_type: 'accessory' };
+    document.title = `${collection.name} 액세서리 | 연화재실`;
+    $('#pdpLoading').hidden = true;
+    $('#pdpMain').hidden = false;
+    $('#pdpBreadcrumb').textContent = `연화재실 - 액세서리 - ${collection.name} 액세서리`;
+    $('#pdpMain').className = 'custom-goods-product accessory-product';
+    $('#pdpMain').innerHTML = `
+      <div class="custom-goods-gallery">
+        <div class="custom-goods-gallery__stage"><img id="accMainImage" src="${base}/${items[0].file}" alt="${items[0].label}"></div>
+        <div class="custom-goods-gallery__thumbs">${items.map((item, i) => `<button type="button" data-acc-thumb="${i}"${i === 0 ? ' class="is-active"' : ''}><img src="${base}/${item.file}" alt="${item.label}"><span>${item.label}</span></button>`).join('')}</div>
+      </div>
+      <aside class="custom-goods-buy accessory-buy">
+        <p class="custom-goods-buy__kicker">${collectionSlug.toUpperCase()} · ACCESSORIES</p>
+        <h1>${collection.name} 액세서리</h1>
+        <p class="custom-goods-buy__desc">${collection.tone}를 이어 받은 비녀·노리개·꽃신,<br><strong>한복 차림을 완성하는 세 가지 구성입니다.</strong></p>
+        <div class="custom-goods-select accessory-select">
+          <b>액세서리 선택 <small>여러 개 선택 가능 · 상품별 수량 선택</small></b>
+          ${items.map((item, i) => `
+          <div class="custom-goods-select__item" data-acc-card="${i}">
+            <label><input type="checkbox" value="${item.slug}"${i === 0 ? ' checked' : ''}><img src="${base}/${item.file}" alt=""><span><strong>${item.label}</strong><small>${formatWon(item.sale_price)}</small></span></label>
+            <div class="custom-goods-select__order">
+              ${item.hasSizes ? `<select class="accessory-select__size" data-acc-size="${item.slug}">${['220', '230', '240'].map(size => { const v = (item.product_variants || []).find(x => x.size === size); const soldOut = !v || v.stock_quantity <= 0; return `<option value="${size}" ${soldOut ? 'disabled' : ''}>${{ '220': 'S [220]', '230': 'M [230]', '240': 'L [240]' }[size]}${soldOut ? ' (품절)' : ''}</option>`; }).join('')}</select>` : ''}
+              <div class="custom-goods-item-qty"><button type="button" data-acc-minus="${item.slug}" aria-label="${item.label} 수량 줄이기">−</button><b data-acc-qty="${item.slug}">1</b><button type="button" data-acc-plus="${item.slug}" aria-label="${item.label} 수량 늘리기">＋</button></div>
+              <em data-acc-price="${item.slug}">${formatWon(item.sale_price)}</em>
+            </div>
+          </div>`).join('')}
+        </div>
+        <div class="custom-goods-total"><span>총 상품금액</span><strong id="accTotal"></strong></div>
+        <div class="custom-goods-actions"><button id="accCartBtn" type="button">장바구니 담기</button><button id="accBuyBtn" type="button">바로 구매하기</button></div>
+      </aside>`;
+    $('#dalbitEditorial').className = 'custom-goods-detail accessory-detail';
+    $('#dalbitEditorial').hidden = false;
+    $('#dalbitEditorial').innerHTML = `
+      <nav class="moon-nav"><a class="is-active" href="#accStory">한복과의 조화</a><a href="#accLineup">구성</a><a href="#accWearing">착용 디테일</a><a href="#pdpReviewsSection">상품 후기</a><a href="#pdpInquirySection">상품 문의</a></nav>
+      <section id="accStory" class="custom-goods-story accessory-detail__intro"><p>COMPLETE YOUR HANBOK</p><h2>${collection.name} 한복과<br>가장 아름답게 어울리는 액세서리</h2><span>${collection.tone}를 이어 받아 한복을 입었을 때 전체 인상을 더욱 섬세하고 완성도 있게 정리합니다.</span></section>
+      <section id="accLineup" class="custom-goods-lineup"><div class="moon-section-title"><span>CHOOSE YOUR ITEM</span><h3>원하는 액세서리를<br>한 번에 골라보세요</h3></div><div>${items.map(item => `<article><img src="${base}/${item.file}" alt="${item.label}"><span>${item.label}</span><b>${formatWon(item.sale_price)}</b><p>${item.position}</p></article>`).join('')}</div></section>
+      <section id="accWearing" class="custom-goods-making">${items.map((item, i) => `<figure${i % 2 ? ' class="is-reverse"' : ''}><img src="${base}/${item.wearFile}" alt="${collection.name} ${item.label} 착용 확대 이미지"><figcaption><small>WEARING DETAIL · ${item.label}</small><h3>착용했을 때 더 선명해지는 아름다움</h3><p>${item.tip}</p></figcaption></figure>`).join('')}</section>
+      <section class="accessory-detail__why"><h3>한복과 함께 선택해야 하는 이유</h3><div><article><b>01</b><strong>컬러의 연결</strong><p>${collection.tone}를 그대로 이어 한복과 따로 노는 느낌이 없습니다.</p></article><article><b>02</b><strong>균형 잡힌 비율</strong><p>한복의 풍성한 실루엣과 어울리도록 장식의 크기와 길이를 조화롭게 구성했습니다.</p></article><article><b>03</b><strong>완성된 스타일</strong><p>하나만 더해도 특별한 날의 한복 차림을 정돈된 인상으로 완성합니다.</p></article></div></section>`;
+
+    const quantities = new Map(items.map(item => [item.slug, 1]));
+    const selectedSize = new Map(items.filter(item => item.hasSizes).map(item => {
+      const firstInStock = (item.product_variants || []).find(v => v.stock_quantity > 0);
+      return [item.slug, firstInStock ? firstInStock.size : '220'];
+    }));
+    const selected = () => items.filter(item => $(`[value="${item.slug}"]`).checked);
+    const variantFor = item => item.hasSizes
+      ? (item.product_variants || []).find(v => v.size === selectedSize.get(item.slug))
+      : (item.product_variants || [])[0];
+    const updateTotal = () => {
+      items.forEach(item => {
+        const qty = quantities.get(item.slug);
+        $(`[data-acc-qty="${item.slug}"]`).textContent = qty;
+        $(`[data-acc-price="${item.slug}"]`).textContent = formatWon(item.sale_price * qty);
+      });
+      $('#accTotal').textContent = formatWon(selected().reduce((sum, item) => sum + (item.sale_price * quantities.get(item.slug)), 0));
+    };
+    $all('[data-acc-thumb]').forEach(btn => btn.addEventListener('click', () => {
+      const item = items[Number(btn.dataset.accThumb)];
+      $('#accMainImage').src = `${base}/${item.file}`; $('#accMainImage').alt = item.label;
+      $all('[data-acc-thumb]').forEach(b => b.classList.toggle('is-active', b === btn));
+    }));
+    $all('.accessory-select input[type="checkbox"]').forEach(input => input.addEventListener('change', () => {
+      if (!selected().length) { input.checked = true; showToast('액세서리를 한 개 이상 선택해 주세요.'); }
+      updateTotal();
+    }));
+    $all('[data-acc-size]').forEach(select => select.addEventListener('change', () => selectedSize.set(select.dataset.accSize, select.value)));
+    $all('[data-acc-minus]').forEach(button => button.addEventListener('click', () => { const s = button.dataset.accMinus; quantities.set(s, Math.max(1, quantities.get(s) - 1)); updateTotal(); }));
+    $all('[data-acc-plus]').forEach(button => button.addEventListener('click', () => { const s = button.dataset.accPlus; quantities.set(s, Math.min(10, quantities.get(s) + 1)); updateTotal(); }));
+
+    async function submitAccessories(openCartAfter) {
+      const session = await getCurrentSession();
+      if (!session) { showToast('로그인이 필요합니다.'); setTimeout(() => location.href = `auth.html?mode=login&return=${encodeURIComponent(location.href)}`, 700); return; }
+      const chosen = selected();
+      for (const item of chosen) {
+        const variant = variantFor(item);
+        if (!variant || variant.stock_quantity <= 0) { showToast(`${item.label}의 선택한 옵션이 품절입니다.`); return; }
+      }
+      for (const item of chosen) {
+        const variant = variantFor(item);
+        await addToCart({ productId: item.id, variantId: variant.id, name: item.label, quantity: quantities.get(item.slug) });
+      }
+      showToast('선택한 액세서리가 장바구니에 담겼습니다.');
+      if (openCartAfter) { await renderCartModal(); openModal('cartModal'); }
+    }
+    $('#accCartBtn').addEventListener('click', () => submitAccessories(false));
+    $('#accBuyBtn').addEventListener('click', () => submitAccessories(true));
+    updateTotal();
+
+    $('#pdpReviewsSection').hidden = false;
+    const { data: accReviews } = await supabaseClient.from('reviews').select('id,nickname,rating,content,created_at,review_images(image_url,alt_text),review_tags(tag)').in('product_id', items.map(item => item.id)).eq('is_visible', true).order('created_at', { ascending: false });
+    renderReviews(accReviews || [], null);
+    await setupProductInquiries(product);
+  }
+
   function createMukhwaFallbackProduct() {
     const base = 'img/상품/묵화연무';
     return {
@@ -743,6 +869,7 @@
 
   function render(product, addons, reviews, stats, guides) {
     prepareDalbitNewLayout(product);
+    prepareAccessoryLayout(product);
     $('#pdpLoading').hidden = true;
     $('#pdpMain').hidden = false;
     $('#pdpPurchaseInfo').hidden = false;
@@ -850,6 +977,41 @@
     $('#dalbitEditorial').className = 'moon-detail';
     $('#pdpPurchaseInfo').className = 'moon-service';
     $('#pdpReviewsSection').className = 'moon-reviews';
+  }
+
+  function prepareAccessoryLayout(product) {
+    if (product.product_type !== 'accessory') return;
+    const main = $('#pdpMain');
+    main.className = 'custom-goods-product accessory-product';
+    main.innerHTML = `
+      <div class="custom-goods-gallery" aria-label="${product.name} 상품 이미지 갤러리">
+        <div class="custom-goods-gallery__stage"><img id="pdpMainImage" src="" alt=""><span id="pdpGalleryProgress" class="accessory-gallery__progress"></span></div>
+        <div id="pdpThumbs" class="custom-goods-gallery__thumbs accessory-gallery__thumbs"></div>
+      </div>
+      <aside class="custom-goods-buy accessory-buy">
+        <p id="pdpPath" class="custom-goods-buy__kicker"></p>
+        <h1 id="pdpName"></h1>
+        <p id="pdpDesc" class="custom-goods-buy__desc"></p>
+        <p id="pdpRating" class="accessory-buy__rating"></p>
+        <div id="pdpPrice" class="accessory-buy__price"></div>
+        <div id="pdpSizeWrap" class="accessory-option" hidden>
+          <span class="accessory-option__title">사이즈</span>
+          <div id="pdpSizeButtons" class="accessory-size-buttons"></div>
+        </div>
+        <div id="pdpAddonWrap" class="accessory-option" hidden>
+          <span class="accessory-option__title">추가 구매 옵션</span>
+          <div id="pdpAddons" class="accessory-addons"></div>
+        </div>
+        <div class="custom-goods-qty"><span>수량</span><div><button id="pdpQtyMinus" type="button" aria-label="수량 줄이기">−</button><b id="pdpQtyValue">1</b><button id="pdpQtyPlus" type="button" aria-label="수량 늘리기">＋</button></div></div>
+        <div class="custom-goods-total"><span>총 구매금액</span><strong id="pdpTotalPrice">0원</strong></div>
+        <div class="accessory-coupon">
+          <label for="pdpCoupon">쿠폰 적용</label>
+          <select id="pdpCoupon"><option value="">쿠폰을 선택하세요</option></select>
+          <p id="pdpCouponMessage">로그인하면 보유 쿠폰을 확인할 수 있습니다.</p>
+          <div class="accessory-coupon__discount"><span>쿠폰 할인</span><strong id="pdpCouponDiscount">-0원</strong></div>
+        </div>
+        <div class="custom-goods-actions"><button id="pdpAddToCartBtn" type="button">장바구니 담기</button><button id="pdpBuyNowBtn" type="button">바로 구매하기</button></div>
+      </aside>`;
   }
 
   function renderDalbitEditorial(product) {

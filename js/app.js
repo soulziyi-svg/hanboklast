@@ -133,7 +133,8 @@
   function goToProduct(p) {
     if (!p || !p.slug) { showToast('상세페이지 정보를 찾을 수 없습니다.'); return; }
     const goodsMatch = p.slug.match(/^(.+)-(stand|pouch|handbag|keyring|photocard)$/);
-    const targetSlug = goodsMatch ? `${goodsMatch[1]}-goods` : p.slug;
+    const accessoryMatch = p.slug.match(/^(.+)-(hairpin|norigae|shoes)$/);
+    const targetSlug = goodsMatch ? `${goodsMatch[1]}-goods` : accessoryMatch ? `${accessoryMatch[1]}-accessories` : p.slug;
     window.location.href = 'product.html?slug=' + encodeURIComponent(targetSlug);
   }
 
@@ -468,7 +469,12 @@
         const flowerSizes = item.categorySlug === 'flowershoes'
           ? ['220', '230', '240']
           : [];
-        const flowerSizeLabels = { '220': 'S [220]', '230': 'M [230]', '240': 'L [240]' };
+        const flowerStockLabel = flowerSizes.map(size => {
+          const variant = item.variants[size];
+          const soldOut = !variant || variant.stock <= 0;
+          return `<span class="${soldOut ? 'is-soldout' : ''}">[ ${size} · ${soldOut ? '품절' : `${variant.stock}개`} ]</span>`;
+        }).join('');
+        const flowerAllSoldOut = flowerSizes.length > 0 && flowerSizes.every(size => !item.variants[size] || item.variants[size].stock <= 0);
         const wearingType = { hairpin: '비녀', norigae: '노리개', flowershoes: '꽃신' }[item.categorySlug];
         const wearingSrc = isAccessory && wearingType ? imgPath(c.dir, `착용컷-${wearingType}.png`) : '';
         if (wearingSrc) { const preload = new Image(); preload.src = wearingSrc; }
@@ -479,16 +485,18 @@
             <p style="font-size:13px;color:#777;line-height:1.5;">${c.name} 컬렉션과 어울리는 구성품입니다.<br>선물 및 소장용으로 인기가 많습니다.</p>
             <div class="p-card__rating">★★★★☆ 4.7</div>
             ${priceMarkup(item, 'sub-card__price')}
-            ${flowerSizes.length ? `<label class="size-select-label">사이즈<select class="size-select">${flowerSizes.map(size => { const variant = item.variants[size]; return `<option value="${size}" ${!variant || variant.stock <= 0 ? 'disabled' : ''}>${flowerSizeLabels[size]}${!variant || variant.stock <= 0 ? ' (품절)' : ''}</option>`; }).join('')}</select></label>` : ''}
-            <div class="sub-card__footer"><div class="sub-card__stock">${isSoldOut ? '품절' : `[ ${item.stock} ]개 남았어요`}</div><button class="sub-card__cart" aria-label="${item.name} 장바구니 담기"><svg viewBox="0 0 36 32" aria-hidden="true"><path d="M2 3h4l3.2 17h18.5l3.1-12H8"/><circle cx="12" cy="27" r="2.5"/><circle cx="26" cy="27" r="2.5"/></svg></button></div>
+            <div class="sub-card__footer">
+              <div class="sub-card__stock${flowerSizes.length ? ' p-card__stock' : ''}">${flowerSizes.length ? flowerStockLabel : (isSoldOut ? '품절' : `[ ${item.stock} ]개 남았어요`)}</div>
+              <button class="sub-card__cart" aria-label="${item.name} 장바구니 담기"><svg viewBox="0 0 36 32" aria-hidden="true"><path d="M2 3h4l3.2 17h18.5l3.1-12H8"/><circle cx="12" cy="27" r="2.5"/><circle cx="26" cy="27" r="2.5"/></svg></button>
+            </div>
           </div>`;
         card.addEventListener('click', () => goToProduct(item));
         card.querySelector('.sub-card__cart').addEventListener('click', e => {
           e.stopPropagation();
-          if (isSoldOut) { showToast('품절된 상품입니다.'); return; }
-          const sizeSelect = card.querySelector('.size-select');
-          const selectedVariant = sizeSelect ? item.variants[sizeSelect.value] : null;
-          addToCart({ name: item.name, productId: item.productId, variantId: selectedVariant ? selectedVariant.id : item.variantId });
+          if (flowerSizes.length ? flowerAllSoldOut : isSoldOut) { showToast('품절된 상품입니다.'); return; }
+          const defaultFlowerVariant = flowerSizes.map(size => item.variants[size]).find(v => v && v.stock > 0);
+          const variantId = flowerSizes.length ? (defaultFlowerVariant ? defaultFlowerVariant.id : item.variantId) : item.variantId;
+          addToCart({ name: item.name, productId: item.productId, variantId });
         });
         cardWrap.appendChild(card);
       });
