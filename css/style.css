@@ -377,7 +377,7 @@ a{color:inherit;text-decoration:none;}
 .content1__title{font-family:var(--font-yeongwol);font-size:60px;font-weight:400;color:#6E6E6E;}
 .marquee{width:100%;overflow:hidden;}
 .marquee__track{display:flex;width:max-content;animation:marqueeScroll 40s linear infinite;}
-.marquee__track:hover{animation-play-state:paused;}
+.marquee__track:has(.p-card__imgwrap:hover){animation-play-state:paused;}
 @keyframes marqueeScroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
 
 .p-card{
