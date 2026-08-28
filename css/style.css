@@ -440,7 +440,7 @@ a{color:inherit;text-decoration:none;}
 
 /* ---------- 컨텐츠2 ---------- */
 .content2{width:100%;padding:64px 0;background:var(--content2-bg);}
-.section-title--purple{color:var(--gray-dark);font-family:var(--font-yeongwol);font-size:60px;font-weight:400;}
+.section-title--purple{color:var(--gray-dark);font-family:var(--font-yeongwol);font-size:60px;font-weight:400;margin-top:80px;}
 .coverflow{position:relative;display:flex;align-items:center;justify-content:center;height:450px;gap:0;}
 .coverflow__track{display:flex;align-items:center;justify-content:center;height:100%;position:relative;width:100%;}
 .coverflow__track img{
