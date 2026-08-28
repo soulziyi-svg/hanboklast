@@ -369,6 +369,12 @@
   let product = null;
   let error = null;
 
+  if (slug.endsWith('-goods')) {
+    const goodsCollectionSlug = slug.slice(0, -6);
+    await renderCollectionGoodsPage(goodsCollectionSlug);
+    return;
+  }
+
   if (supabaseClient && !isAdminPreview) {
     const result = await supabaseClient.from('products').select(`
       id, name, slug, product_type, short_description, description,
@@ -462,7 +468,35 @@
     .order('step_number') : { data: [] };
 
   render(product, addons, reviews || [], stats, guides || []);
+  if (product.product_type === 'accessory') renderAccessoryEditorial(product);
   await setupProductInquiries(product);
+
+  function renderAccessoryEditorial(currentProduct) {
+    const collection = currentProduct.collections || {};
+    const category = currentProduct.categories || {};
+    const configs = {
+      seolhwamukbi:{dir:'설화먹비',hanbok:'설화먹비',tone:'설백색과 먹빛의 단정한 대비'},
+      mukhwayeonmu:{dir:'묵화연무',hanbok:'묵화연무',tone:'수묵처럼 번지는 회색과 금빛의 조화'},
+      dalbitwhayansobok:{dir:'달빛하얀소복',hanbok:'달빛하얀소복',tone:'달빛 같은 설백색과 은은한 회색의 조화'},
+    };
+    const types = {
+      hairpin:{label:'비녀',wear:'비녀',position:'단정하게 올린 머리 위에서 한복의 선을 완성합니다.',tip:'낮게 묶은 쪽머리나 깔끔한 올림머리에 꽂아 장식이 정면과 측면에서 모두 보이게 연출해 주세요.'},
+      norigae:{label:'노리개',wear:'노리개',position:'고름과 허리선에 자연스럽게 늘어져 움직임마다 은은한 포인트가 됩니다.',tip:'치마 허리끈이나 저고리 고름 가까이에 매달아 술 장식이 곧게 떨어지도록 정리해 주세요.'},
+      flowershoes:{label:'꽃신',wear:'꽃신',position:'한복 치맛자락 아래에서 전체 색감과 실루엣을 정돈합니다.',tip:'발볼에 맞는 사이즈를 선택하고 치맛단이 신발 장식을 완전히 가리지 않도록 길이를 맞춰 주세요.'},
+    };
+    const cfg = configs[collection.slug];
+    const type = types[category.slug];
+    if (!cfg || !type) return;
+    const base = `img/상품/${cfg.dir}`;
+    const section = $('#dalbitEditorial');
+    section.className = 'accessory-detail';
+    section.hidden = false;
+    section.innerHTML = `<nav class="moon-nav"><a class="is-active" href="#accessoryMatch">한복과의 조화</a><a href="#accessoryWearing">착용 디테일</a><a href="#pdpPurchaseInfo">배송 안내</a><a href="#pdpReviewsSection">상품 후기</a></nav>
+      <section id="accessoryMatch" class="accessory-detail__intro"><p>COMPLETE YOUR HANBOK</p><h2>${cfg.hanbok} 한복과<br>가장 아름답게 어울리는 ${type.label}</h2><span>${cfg.tone}를 이어 받아 한복을 입었을 때 전체 인상을 더욱 섬세하고 완성도 있게 정리합니다.</span></section>
+      <section id="accessoryWearing" class="accessory-detail__wear"><figure><img src="${base}/착용컷-${type.wear}.png" alt="${cfg.hanbok} ${type.label} 착용 확대 이미지"><figcaption><small>WEARING DETAIL</small><h3>착용했을 때 더 선명해지는 아름다움</h3><p>${type.position}</p></figcaption></figure></section>
+      <section class="accessory-detail__why"><h3>한복과 함께 선택해야 하는 이유</h3><div><article><b>01</b><strong>컬러의 연결</strong><p>${cfg.tone}를 그대로 이어 한복과 따로 노는 느낌이 없습니다.</p></article><article><b>02</b><strong>균형 잡힌 비율</strong><p>한복의 풍성한 실루엣과 어울리도록 장식의 크기와 길이를 조화롭게 구성했습니다.</p></article><article><b>03</b><strong>완성된 스타일</strong><p>하나만 더해도 특별한 날의 한복 차림을 정돈된 인상으로 완성합니다.</p></article></div></section>
+      <section class="accessory-detail__tip"><p>STYLING TIP</p><h3>${type.label}를 더 아름답게 연출하는 방법</h3><span>${type.tip}</span></section>`;
+  }
 
   async function setupProductInquiries(currentProduct) {
     const section = $('#pdpInquirySection');
@@ -526,6 +560,114 @@
     });
 
     await loadProductInquiries();
+  }
+
+  async function renderCollectionGoodsPage(collectionSlug) {
+    const collectionConfigs = {
+      seolhwamukbi:{name:'설화먹비',dir:'설화먹비',files:{stand:'아크릴스텐드.png',pouch:'복주머니 손거울.png',keyring:'키링.png',photocard:'포토카드.png'}},
+      bombitchyeonbunhong:{name:'봄빛연분홍',dir:'봄빛연분홍',files:{stand:'봄빛연분홍 아크릴 스텐드.png',pouch:'봄빛연분홍 복주머니.png',keyring:'봄빛연분홍 키링.png',photocard:'봄빛연분홍 포토카드.png'}},
+      mukhwayeonmu:{name:'묵화연무',dir:'묵화연무',files:{stand:'묵화연무 아크릴 스텐드.png',pouch:'묵화연무 복주머니.png',keyring:'묵화연무 키링.png',photocard:'묵화연무 포토카드.png'}},
+      meokbitwhayeon:{name:'먹빛화연',dir:'먹빛화연',files:{stand:'먹빛화연 아크릴 스텐드.png',pouch:'먹빛화연 복주머니.png',keyring:'먹빛화연 키링.png',photocard:'먹빛화연 포토카드.png'}},
+      dalbitwhayansobok:{name:'달빛하얀소복',dir:'달빛하얀소복',files:{stand:'하얀달빛소복 아크릴 스텐드.png',pouch:'하얀달빛소복 복주머니.png',keyring:'하얀달빛소복 키링.png',photocard:'하얀달빛소복 포토카드.png'}},
+      heukcheongwolhwa:{name:'흑청월화',dir:'흑청월화',files:{stand:'흑청월화 아크릴스텐드.png',handbag:'흑청월화 손가방.png',keyring:'흑청월화 키링.png',photocard:'흑청월화 포토카드.png'}},
+      hongyeonhwadam:{name:'홍연화담',dir:'홍연화담',files:{stand:'아크릴스텐드.png',pouch:'복주머니.png',keyring:'키링.png',photocard:'포토카드.png'}},
+    };
+    const collection = collectionConfigs[collectionSlug];
+    if (!collection) { $('#pdpLoading').hidden=true; $('#pdpNotFound').hidden=false; return; }
+    const itemInfo = {
+      stand:{label:'아크릴 스탠드',copy:'내 사진으로 만드는 투명한 입체 오브제',customizable:true},
+      pouch:{label:'복주머니',copy:`${collection.name} 패턴을 담은 실용적인 패브릭 굿즈`,customizable:false},
+      handbag:{label:'손가방',copy:`${collection.name} 디자인을 담은 실용적인 패브릭 가방`,customizable:false},
+      keyring:{label:'키링',copy:'내 사진을 매일 간직하는 특별한 맞춤 장식',customizable:true},
+      photocard:{label:'포토카드',copy:'좋아하는 사진을 선명하게 남기는 카드 세트',customizable:true},
+    };
+    const goodsConfig = Object.entries(collection.files).map(([key,file])=>({slug:`${collectionSlug}-${key}`,file,...itemInfo[key]}));
+    const base = `img/상품/${collection.dir}`;
+    const { data: goods, error: goodsError } = await supabaseClient.from('products')
+      .select('id,name,slug,regular_price,sale_price,discount_rate,product_variants(id,size,stock_quantity)')
+      .in('slug', goodsConfig.map(item => item.slug)).eq('status','public');
+    if (goodsError || !goods || goods.length < 4) {
+      $('#pdpLoading').hidden = true; $('#pdpNotFound').hidden = false; return;
+    }
+    const bySlug = new Map(goods.map(item => [item.slug,item]));
+    const items = goodsConfig.map(config => ({ ...config, ...bySlug.get(config.slug) }));
+    product = { id:items[0].id, name:`${collection.name} 맞춤 굿즈`, slug:`${collectionSlug}-goods`, product_type:'goods' };
+    document.title = `${collection.name} 맞춤 굿즈 | 연화재실`;
+    $('#pdpLoading').hidden = true;
+    $('#pdpMain').hidden = false;
+    $('#pdpBreadcrumb').textContent = `연화재실 - 굿즈 - ${collection.name} 맞춤 굿즈`;
+    $('#pdpMain').className = 'custom-goods-product';
+    $('#pdpMain').innerHTML = `
+      <div class="custom-goods-gallery">
+        <div class="custom-goods-gallery__stage"><img id="customGoodsMainImage" src="${base}/${items[0].file}" alt="${items[0].label}"></div>
+        <div class="custom-goods-gallery__thumbs">${items.map((item,i)=>`<button type="button" data-goods-thumb="${i}"${i===0?' class="is-active"':''}><img src="${base}/${item.file}" alt="${item.label}"><span>${item.label}</span></button>`).join('')}</div>
+      </div>
+      <aside class="custom-goods-buy">
+        <p class="custom-goods-buy__kicker">${collectionSlug.toUpperCase()} · CUSTOM GOODS</p>
+        <h1>${collection.name} 맞춤 굿즈</h1>
+        <p class="custom-goods-buy__desc">포토카드·아크릴 스탠드·키링은<br><strong>내 사진으로 하나뿐인 굿즈를 만들 수 있습니다.</strong></p>
+        <div class="custom-goods-custom-note"><b>사진 맞춤 제작 3종</b><span>포토카드 · 아크릴 스탠드 · 키링</span></div>
+        <div class="custom-goods-select"><b>굿즈 선택 <small>여러 개 선택 가능 · 상품별 수량 선택</small></b>${items.map((item,i)=>`<div class="custom-goods-select__item" data-goods-card="${i}"><label><input type="checkbox" value="${item.slug}"${i===0?' checked':''}><img src="${base}/${item.file}" alt=""><span><strong>${item.label}${item.customizable?'<mark>사진 맞춤</mark>':''}</strong><small>${item.copy}</small></span></label><div class="custom-goods-select__order"><div class="custom-goods-item-qty"><button type="button" data-goods-minus="${item.slug}" aria-label="${item.label} 수량 줄이기">−</button><b data-goods-qty="${item.slug}">1</b><button type="button" data-goods-plus="${item.slug}" aria-label="${item.label} 수량 늘리기">＋</button></div><em data-goods-price="${item.slug}">${formatWon(item.sale_price)}</em></div></div>`).join('')}</div>
+        <div class="custom-photo-upload">
+          <div><b>나만의 사진 넣기 <span>맞춤 3종 선택 시 필수</span></b><p>포토카드·아크릴 스탠드·키링 제작용 / JPG·PNG·WEBP / 최대 10MB</p></div>
+          <label for="customGoodsPhoto">사진 선택</label><input id="customGoodsPhoto" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+          <div id="customGoodsPreview" class="custom-photo-upload__preview"><span>선택한 사진이 여기에 표시됩니다.</span></div>
+        </div>
+        <div class="custom-goods-total"><span>총 상품금액</span><strong id="customGoodsTotal"></strong></div>
+        <div class="custom-goods-actions"><button id="customGoodsCart" type="button">장바구니 담기</button><button id="customGoodsBuy" type="button">바로 구매하기</button></div>
+      </aside>`;
+    $('#dalbitEditorial').className = 'custom-goods-detail';
+    $('#dalbitEditorial').hidden = false;
+    $('#dalbitEditorial').innerHTML = `
+      <nav class="moon-nav"><a class="is-active" href="#customGoodsStory">맞춤 제작</a><a href="#customGoodsLineup">상품 구성</a><a href="#customGoodsProcess">제작 과정</a><a href="#pdpReviewsSection">상품 후기</a><a href="#pdpInquirySection">상품 문의</a></nav>
+      <section id="customGoodsStory" class="custom-goods-story"><p>MY PHOTO · MY STORY</p><h2>당신의 순간을<br>${collection.name}에 담다</h2><span><strong>포토카드·아크릴 스탠드·키링, 세 가지 상품을 내 사진으로 제작할 수 있습니다.</strong><br>사진 속 인물의 모습과 비율은 그대로 유지하고 ${collection.name} 컬렉션 디자인 안에 정성스럽게 배치합니다.</span><div class="custom-goods-custom-types">${items.filter(item=>item.customizable).map(item=>`<figure><img src="${base}/${item.file}" alt="사진 맞춤 ${item.label}"><figcaption><b>${item.label}</b><span>내 사진으로 맞춤 제작</span></figcaption></figure>`).join('')}</div><img src="${base}/${items.find(item=>item.slug.endsWith('-photocard')).file}" alt="${collection.name} 맞춤 포토카드 예시"></section>
+      <section id="customGoodsLineup" class="custom-goods-lineup"><div class="moon-section-title"><span>CHOOSE YOUR GOODS</span><h3>원하는 굿즈를<br>한 번에 골라보세요</h3></div><div>${items.map(item=>`<article><img src="${base}/${item.file}" alt="${item.label}"><span>${item.label}</span><b>${formatWon(item.sale_price)}</b><p>${item.copy}</p></article>`).join('')}</div></section>
+      <section id="customGoodsProcess" class="custom-goods-process"><div class="moon-section-title"><span>CUSTOM ORDER</span><h3>사진 한 장으로 완성되는<br>맞춤 제작 과정</h3></div><ol><li><b>01</b><strong>굿즈 선택</strong><p>원하는 상품을 하나 이상 선택합니다.</p></li><li><b>02</b><strong>사진 업로드</strong><p>얼굴과 전신이 선명한 원본 사진을 올려주세요.</p></li><li><b>03</b><strong>제작 및 배송</strong><p>사진 확인 후 ${collection.name} 디자인에 맞춰 제작합니다.</p></li></ol></section>
+      <section class="custom-goods-making"><figure><img src="img/컨셉사진/굿즈-제작과정.png" alt="맞춤 굿즈를 제작하고 검수하는 과정"><figcaption><small>MADE FOR YOU</small><h3>한 장의 사진이<br>굿즈가 되는 순간</h3><p>사진의 선명도와 인물의 외곽선을 확인한 뒤 출력·재단·조립하고, 보호 필름과 마감 상태를 하나씩 검수합니다.</p></figcaption></figure><figure class="is-reverse"><img src="img/컨셉사진/굿즈-사용컷.png" alt="가방에 착용한 맞춤 키링 사용 예시"><figcaption><small>WITH YOUR DAY</small><h3>소중한 순간을<br>매일 가까이</h3><p>완성된 키링은 가방에 달아 일상에서 함께하고, 포토카드와 스탠드는 좋아하는 공간을 특별하게 꾸며줍니다.</p></figcaption></figure></section>
+      <section class="custom-goods-guide"><h3>사진을 고를 때 확인해 주세요</h3><div><p><b>선명한 원본</b>화면 캡처보다 원본 사진을 권장합니다.</p><p><b>충분한 여백</b>인물 주변에 여백이 있는 사진이 좋습니다.</p><p><b>제작 전 확인</b>해상도가 부족하면 별도로 안내드립니다.</p></div></section>`;
+
+    const quantities = new Map(items.map(item => [item.slug, 1]));
+    let photoFile = null;
+    const selected = () => items.filter(item => $(`[value="${item.slug}"]`).checked);
+    const updateTotal = () => {
+      items.forEach(item => {
+        const qty = quantities.get(item.slug);
+        $(`[data-goods-qty="${item.slug}"]`).textContent = qty;
+        $(`[data-goods-price="${item.slug}"]`).textContent = formatWon(item.sale_price * qty);
+      });
+      $('#customGoodsTotal').textContent = formatWon(selected().reduce((sum,item)=>sum+(item.sale_price * quantities.get(item.slug)),0));
+    };
+    $all('[data-goods-thumb]').forEach(btn => btn.addEventListener('click',()=>{ const item=items[Number(btn.dataset.goodsThumb)]; $('#customGoodsMainImage').src=`${base}/${item.file}`; $('#customGoodsMainImage').alt=item.label; $all('[data-goods-thumb]').forEach(b=>b.classList.toggle('is-active',b===btn)); }));
+    $all('.custom-goods-select input').forEach(input => input.addEventListener('change',()=>{ if(!selected().length){input.checked=true;showToast('굿즈를 한 개 이상 선택해 주세요.');} updateTotal(); }));
+    $all('[data-goods-minus]').forEach(button => button.addEventListener('click',()=>{const slug=button.dataset.goodsMinus;quantities.set(slug,Math.max(1,quantities.get(slug)-1));updateTotal();}));
+    $all('[data-goods-plus]').forEach(button => button.addEventListener('click',()=>{const slug=button.dataset.goodsPlus;quantities.set(slug,Math.min(10,quantities.get(slug)+1));updateTotal();}));
+    $('#customGoodsPhoto').addEventListener('change',event=>{photoFile=event.target.files[0]||null;if(!photoFile)return;const url=URL.createObjectURL(photoFile);$('#customGoodsPreview').innerHTML=`<img src="${url}" alt="업로드한 맞춤 제작 사진 미리보기"><button type="button" id="customGoodsPhotoRemove">사진 변경</button>`;$('#customGoodsPhotoRemove').addEventListener('click',()=>$('#customGoodsPhoto').click());});
+    async function submitCustomGoods(openCartAfter) {
+      const session = await getCurrentSession();
+      if(!session){showToast('맞춤 굿즈 주문은 로그인 후 이용할 수 있습니다.');setTimeout(()=>location.href=`auth.html?mode=login&return=${encodeURIComponent(location.href)}`,700);return;}
+      const chosen=selected();
+      if(chosen.some(item=>item.customizable) && !photoFile){showToast('사진 맞춤 상품 제작에 사용할 사진을 선택해 주세요.');$('#customGoodsPhoto').click();return;}
+      let path=null;
+      if(photoFile){
+      const ext=(photoFile.name.split('.').pop()||'jpg').toLowerCase();
+      path=`${session.user.id}/${crypto.randomUUID()}.${ext}`;
+      const { error:uploadError }=await supabaseClient.storage.from('custom-goods').upload(path,photoFile,{contentType:photoFile.type,upsert:false});
+      if(uploadError){showToast('사진 업로드에 실패했습니다.');return;}
+      }
+      const { error:requestError }=await supabaseClient.from('custom_goods_requests').insert({user_id:session.user.id,collection_slug:collectionSlug,selected_items:chosen.map(item=>({product_id:item.id,slug:item.slug,name:item.label,quantity:quantities.get(item.slug)})),photo_url:path,quantity:chosen.reduce((sum,item)=>sum+quantities.get(item.slug),0)});
+      if(requestError){showToast('맞춤 제작 요청 저장에 실패했습니다.');return;}
+      for(const item of chosen){const variant=(item.product_variants||[])[0];await addToCart({productId:item.id,variantId:variant&&variant.id,name:item.label,quantity:quantities.get(item.slug)});}
+      showToast('맞춤 굿즈가 장바구니에 담겼습니다.');
+      if(openCartAfter){await renderCartModal();openModal('cartModal');}
+    }
+    $('#customGoodsCart').addEventListener('click',()=>submitCustomGoods(false));
+    $('#customGoodsBuy').addEventListener('click',()=>submitCustomGoods(true));
+    updateTotal();
+
+    $('#pdpReviewsSection').hidden=false;
+    const { data:goodsReviews }=await supabaseClient.from('reviews').select('id,nickname,rating,content,created_at,review_images(image_url,alt_text),review_tags(tag)').in('product_id',items.map(item=>item.id)).eq('is_visible',true).order('created_at',{ascending:false});
+    renderReviews(goodsReviews||[],null);
+    await setupProductInquiries(product);
   }
 
   function createMukhwaFallbackProduct() {
@@ -1341,7 +1483,7 @@
       : '이 상품의 후기';
     const grid = $('#pdpReviews');
     if (!reviews.length) {
-      grid.innerHTML = `<div class="review-board"><div class="review-board__notice"><span>공지</span><b>상품후기 운영 안내</b></div><div class="review-board__toolbar"><strong>총 0개</strong><span>최근등록순</span></div><p class="pdp-reviews-empty">아직 등록된 후기가 없습니다. 첫 구매 후기를 남겨보세요!</p></div>`;
+      grid.innerHTML = `<div class="review-board"><div class="review-board__toolbar"><strong>총 0개</strong><span>최근등록순</span></div><p class="pdp-reviews-empty">아직 등록된 후기가 없습니다. 첫 구매 후기를 남겨보세요!</p></div>`;
       return;
     }
     const safe = value => String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -1350,7 +1492,6 @@
       ? `<video src="${file.image_url}" muted playsinline preload="metadata" aria-label="${safe(file.nickname)}님의 영상 후기"></video>`
       : `<img src="${file.image_url}" alt="${safe(file.alt_text || file.nickname + '님의 사진 후기')}">`).join('');
     grid.innerHTML = `<div class="review-board">
-      <div class="review-board__notice"><span>공지</span><b>상품후기 운영 안내</b></div>
       ${photoStrip ? `<div class="review-board__photos">${photoStrip}<button type="button">+ 더보기</button></div>` : ''}
       <div class="review-board__toolbar"><strong>총 ${reviews.length}개</strong><select aria-label="후기 정렬"><option value="new">최근등록순</option><option value="rating">별점높은순</option></select></div>
       <div class="review-board__list"></div>

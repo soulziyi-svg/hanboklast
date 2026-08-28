@@ -12,6 +12,25 @@
 /* 첨부 화면을 참고한 공통 후기 게시판 */
 .review-board{width:min(1120px,100%);margin:0 auto;grid-column:1/-1;background:#fff;padding:0 24px 30px}.review-board__notice{display:flex;align-items:center;gap:12px;padding:18px 0;border-top:1px solid #222;border-bottom:1px solid #e8e8e8;font-size:14px}.review-board__notice span{padding:4px 10px;background:#f3f3f3;color:#777;font-size:12px}.review-board__photos{position:relative;display:grid;grid-template-columns:repeat(8,1fr);gap:3px;padding:20px 0;overflow:hidden}.review-board__photos img,.review-board__photos video{width:100%;aspect-ratio:1/1;object-fit:cover;background:#eee}.review-board__photos button{position:absolute;right:0;top:20px;width:calc(12.5% - 3px);aspect-ratio:1/1;border:0;background:rgba(0,0,0,.48);color:#fff;font-size:14px;font-weight:800;cursor:pointer}.review-board__toolbar{display:flex;justify-content:space-between;align-items:center;padding:12px 0 16px;border-bottom:1px solid #222;font-size:14px}.review-board__toolbar select{padding:8px 32px 8px 12px;border:1px solid #ddd;background:#fff;font:inherit}.review-board__row{display:grid;grid-template-columns:170px minmax(0,1fr) 110px;gap:28px;padding:30px 16px;border-bottom:1px solid #ececec;background:#fff}.review-board__author{display:flex;align-items:flex-start;gap:8px;font-size:14px}.review-board__member{padding:3px 7px;background:#b51f2e;color:#fff;font-size:10px;font-weight:800;white-space:nowrap}.review-board__body{min-width:0}.review-board__body .review-card__rating{margin:0 0 8px;color:#b51f2e}.review-card__product{margin:0 0 10px;color:#888;font-size:13px}.review-board__body .review-card__text{margin:0 0 14px;font-size:15px;line-height:1.75}.review-board__body time{display:block;margin-top:12px;color:#999;font-size:12px}.review-board__body .review-card__media-grid{display:flex;gap:4px}.review-board__body .review-card__media{width:110px;height:110px;aspect-ratio:auto;object-fit:cover}.review-board__helpful{align-self:end;padding:8px 12px;border:1px solid #ddd;border-radius:18px;background:#fff;color:#888;cursor:pointer}.review-board__helpful:active{transform:scale(.96)}
 @media(max-width:700px){.review-board{padding-inline:14px}.review-board__photos{grid-template-columns:repeat(4,1fr)}.review-board__photos>*:nth-child(n+5){display:none}.review-board__photos button{display:block!important;width:calc(25% - 3px)}.review-board__row{grid-template-columns:1fr;gap:12px;padding-inline:4px}.review-board__helpful{justify-self:start}.review-board__author{order:0}}
+
+/* 메인페이지 후기: 첨부 화면처럼 넓은 1열 목록으로 표시 */
+#reviews.reviews{padding:92px 0 110px;background:#fff!important}
+#reviews .reviews__heading{display:flex;align-items:baseline;gap:18px;width:min(1120px,calc(100% - 48px));margin:0 auto 36px}
+#reviews .reviews__title{width:auto;margin:0;text-align:left;font-family:var(--font-yeongwol);font-size:42px;font-weight:400}
+#reviews .reviews__summary{margin:0;color:#888;font-family:var(--font-pretendard);font-size:13px;font-weight:600}
+#reviews #reviewGrid{display:block;width:100%;max-width:none;padding:0 24px}
+#reviews .review-board{width:min(1120px,100%);margin:0 auto;padding:0;background:#fff}
+#reviews .review-board__notice{padding:18px 16px}
+#reviews .review-board__toolbar{padding:18px 0}
+#reviews .review-board__row{min-height:0;padding:24px 16px;grid-template-columns:145px 120px minmax(0,1fr);gap:24px;align-items:start}
+#reviews .review-board__row-media{width:120px;min-height:96px;display:flex;gap:4px;overflow:hidden;background:#f7f7f7}
+#reviews .review-board__row-media .review-card__media{flex:0 0 120px;width:120px;height:96px;object-fit:cover}
+#reviews .review-board__row-media>span{display:grid;place-items:center;width:100%;color:#aaa;font-size:11px}
+#reviews .review-board__body .review-card__text{max-width:none;margin-top:8px;line-height:1.7}
+#reviews .review-board__photos img,#reviews .review-board__row-media img{cursor:zoom-in;transition:filter .2s ease,transform .2s ease}
+#reviews .review-board__photos img:hover,#reviews .review-board__row-media img:hover{filter:brightness(.92);transform:scale(1.02)}
+.review-lightbox[hidden]{display:none}.review-lightbox{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:70px 24px 24px;background:rgba(0,0,0,.78)}.review-lightbox img{display:block;width:auto;height:auto;max-width:min(90vw,1000px);max-height:82vh;object-fit:contain;background:#fff;box-shadow:0 20px 70px rgba(0,0,0,.45);animation:reviewZoomIn .2s ease-out}.review-lightbox button{position:fixed;top:24px;right:28px;padding:12px 18px;border:2px solid #fff;background:#b51f2e;color:#fff;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.28)}.review-lightbox button:hover{transform:scale(1.04)}@keyframes reviewZoomIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+@media(max-width:700px){#reviews.reviews{padding:64px 0 78px}#reviews .reviews__heading{display:block;width:calc(100% - 32px);margin-bottom:26px}#reviews .reviews__title{font-size:34px}#reviews .reviews__summary{margin-top:8px}#reviews #reviewGrid{padding:0 16px}#reviews .review-board__row{grid-template-columns:88px minmax(0,1fr);gap:12px;padding:20px 4px}#reviews .review-board__author{grid-column:1/-1}#reviews .review-board__row-media{grid-column:1;width:88px;min-height:82px}#reviews .review-board__row-media .review-card__media{flex-basis:88px;width:88px;height:82px}#reviews .review-board__body{grid-column:2}#reviews .review-board__body .review-card__text{font-size:14px}}
 @font-face {
   font-family: 'Samulnori';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2505@1.0/CallifontSamulnori-Medium.woff2') format('woff2');
@@ -484,6 +503,13 @@ a{color:inherit;text-decoration:none;}
 .sub-card__img{width:100%;height:400px;object-fit:cover;position:relative;transition:transform .25s ease;}
 .sub-card:hover .sub-card__img{transform:scale(1.05);}
 .sub-card.sub-card--accessory .sub-card__img{height:500px;}
+.sub-card.sub-card--accessory .sub-card__imagewrap{height:500px;background:var(--content2-bg);}
+.sub-card.sub-card--accessory .sub-card__img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--content2-bg);transform:none;transition:none;}
+.sub-card.sub-card--accessory .sub-card__img--original{z-index:1;opacity:1;}
+.sub-card.sub-card--accessory .sub-card__img--wear{z-index:2;opacity:0;}
+.sub-card.sub-card--accessory .sub-card__imagewrap:hover .sub-card__img--original{opacity:0;}
+.sub-card.sub-card--accessory .sub-card__imagewrap:hover .sub-card__img--wear{opacity:1;}
+.sub-card.sub-card--accessory:hover .sub-card__img{transform:none;}
 .sub-card__footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:8px;}
 .sub-card__cart{flex:0 0 auto;display:grid;place-items:center;color:var(--brand-red);background:#fff;border:1px solid var(--brand-red);border-radius:50%;width:36px;height:36px;}
 .sub-card__cart:active{transform:scale(.9);box-shadow:none;}

@@ -49,7 +49,8 @@
     if (byKey.content2_goods && byKey.content2_goods.representative_color) {
       $('#content2').style.background = byKey.content2_goods.representative_color;
     }
-    setText($('#reviews .reviews__title'), byKey.reviews && byKey.reviews.title);
+    // 후기 제목은 확정된 영월체 문구를 유지합니다.
+    setText($('#reviews .reviews__title'), '상품의 후기를 남기오');
     if (byKey.reviews && byKey.reviews.representative_color) {
       $('#reviews').style.background = byKey.reviews.representative_color;
     }
@@ -131,7 +132,9 @@
 
   function goToProduct(p) {
     if (!p || !p.slug) { showToast('상세페이지 정보를 찾을 수 없습니다.'); return; }
-    window.location.href = 'product.html?slug=' + encodeURIComponent(p.slug);
+    const goodsMatch = p.slug.match(/^(.+)-(stand|pouch|handbag|keyring|photocard)$/);
+    const targetSlug = goodsMatch ? `${goodsMatch[1]}-goods` : p.slug;
+    window.location.href = 'product.html?slug=' + encodeURIComponent(targetSlug);
   }
 
   const megaHanbok = $('#megaHanbok');
@@ -466,8 +469,11 @@
           ? ['220', '230', '240']
           : [];
         const flowerSizeLabels = { '220': 'S [220]', '230': 'M [230]', '240': 'L [240]' };
+        const wearingType = { hairpin: '비녀', norigae: '노리개', flowershoes: '꽃신' }[item.categorySlug];
+        const wearingSrc = isAccessory && wearingType ? imgPath(c.dir, `착용컷-${wearingType}.png`) : '';
+        if (wearingSrc) { const preload = new Image(); preload.src = wearingSrc; }
         card.innerHTML = `
-          <div class="sub-card__imagewrap"><img class="sub-card__img" src="${imgPath(c.dir, item.file)}" alt="${item.name}"><span class="sub-card__more">자세히보기 →</span></div>
+          <div class="sub-card__imagewrap"><img class="sub-card__img sub-card__img--original" src="${imgPath(c.dir, item.file)}" alt="${item.name}">${wearingSrc ? `<img class="sub-card__img sub-card__img--wear" src="${wearingSrc}" alt="${item.name} 착용 확대 이미지">` : ''}<span class="sub-card__more">자세히보기 →</span></div>
           <div class="sub-card__body">
             <div><b>${item.name}</b></div>
             <p style="font-size:13px;color:#777;line-height:1.5;">${c.name} 컬렉션과 어울리는 구성품입니다.<br>선물 및 소장용으로 인기가 많습니다.</p>
@@ -502,16 +508,18 @@
       .order('created_at', { ascending: false })
       .limit(12);
     if (!reviews || !reviews.length) {
+      $('#reviewSummary').textContent = '후기 0개 · 평균 별점 0.0 / 5';
       grid.innerHTML = '<p class="reviews__empty">아직 등록된 후기가 없습니다. 첫 구매 후기를 남겨보세요!</p>';
       return;
     }
+    const averageRating = (reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / reviews.length).toFixed(1);
+    $('#reviewSummary').textContent = `후기 ${reviews.length}개 · 평균 별점 ${averageRating} / 5`;
     const safe = value => String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const photoFiles = reviews.flatMap(r => (r.review_images || []).map(file => ({ ...file, nickname: r.nickname })));
     const photoStrip = photoFiles.slice(0, 8).map((file, index) => /.(mp4|webm|mov)(\?|$)/i.test(file.image_url)
       ? `<video src="${file.image_url}" muted playsinline preload="metadata" aria-label="${safe(file.nickname)}님의 영상 후기"></video>`
       : `<img src="${file.image_url}" alt="${safe(file.alt_text || file.nickname + '님의 사진 후기')}" loading="lazy">`).join('');
     grid.innerHTML = `<div class="review-board">
-      <div class="review-board__notice"><span>공지</span><b>상품후기 운영 안내</b></div>
       ${photoStrip ? `<div class="review-board__photos">${photoStrip}<button type="button">+ 더보기</button></div>` : ''}
       <div class="review-board__toolbar"><strong>총 ${reviews.length}개</strong><select aria-label="후기 정렬"><option value="new">최근등록순</option><option value="rating">별점높은순</option></select></div>
       <div class="review-board__list"></div>
@@ -531,16 +539,31 @@
         const article = document.createElement('article');
         article.className = 'review-board__row';
         article.innerHTML = `<div class="review-board__author"><span class="review-board__member">구매회원</span><b>${safe(r.nickname)}</b></div>
+          <div class="review-board__row-media">${media || '<span>첨부 이미지 없음</span>'}</div>
           <div class="review-board__body"><div class="review-card__rating">${stars} ${r.rating}</div>
           <p class="review-card__product">${safe(r.products ? r.products.name : '')}${tags ? ` · ${safe(tags)}` : ''}</p>
-          <p class="review-card__text">${safe(r.content)}</p>${media ? `<div class="review-card__media-grid">${media}</div>` : ''}
-          <time>${date}</time></div><button class="review-board__helpful" type="button">♡ 도움돼요</button>`;
+          <p class="review-card__text">${safe(r.content)}</p><time>${date}</time></div>`;
         list.appendChild(article);
       });
     };
     renderRows(reviews);
     grid.querySelector('select').addEventListener('change', event => renderRows(event.target.value === 'rating'
       ? [...reviews].sort((a,b) => b.rating - a.rating) : reviews));
+
+    const lightbox = $('#reviewLightbox');
+    const lightboxImage = $('#reviewLightboxImage');
+    const closeLightbox = () => { lightbox.hidden = true; lightboxImage.src = ''; document.body.style.overflow = ''; };
+    grid.addEventListener('click', event => {
+      const image = event.target.closest('.review-board__photos img, .review-board__row-media img');
+      if (!image) return;
+      lightboxImage.src = image.currentSrc || image.src;
+      lightboxImage.alt = image.alt || '확대된 후기 이미지';
+      lightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+    });
+    $('#reviewLightboxClose').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && !lightbox.hidden) closeLightbox(); });
   }
   await renderHomeReviews();
 
